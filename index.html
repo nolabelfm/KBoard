@@ -318,11 +318,11 @@
       <div class="hero-main">
         <h1 class="title">Konqi Dashboard</h1>
         <p class="subtitle">
-          A single-file dashboard for Cloudflare Pages. It logs in with Supabase Auth, checks your allowed-user record,
-          and then reads or writes bot data through RLS. The Discord bot stays on Railway; the dashboard stays static.
+          A single-file dashboard for Cloudflare Pages. It signs in, checks your allowed-user record,
+          and then reads or writes bot data through row-level access. The Discord bot stays on Railway; the dashboard stays static.
         </p>
         <div class="badge-row">
-          <span class="badge">Supabase Auth</span>
+          <span class="badge">Auth</span>
           <span class="badge">RLS-controlled</span>
           <span class="badge">Guild settings</span>
           <span class="badge">Roles</span>
@@ -343,15 +343,9 @@
       <aside class="panel sidebar">
         <div class="card">
           <h2>Login</h2>
-          <p class="muted">Sign in with Supabase Auth. The dashboard will only unlock if your row in <code>allowed_users</code> grants access.</p>
+          <p class="muted">Sign in to unlock the dashboard. The dashboard will only unlock if your row in <code>allowed_users</code> grants access.</p>
 
           <div class="auth-grid">
-            <label for="supabaseUrl">Supabase URL</label>
-            <input id="supabaseUrl" placeholder="https://your-project.supabase.co" />
-
-            <label for="supabaseAnonKey">Supabase Anon Key</label>
-            <textarea id="supabaseAnonKey" placeholder="Paste anon/public key here"></textarea>
-
             <label for="email">Email</label>
             <input id="email" type="email" autocomplete="email" placeholder="you@example.com" />
 
@@ -447,7 +441,7 @@
           <div class="section-head">
             <div>
               <h2>Sync Status</h2>
-              <div class="muted tiny">These values come from Supabase tables populated by the bot.</div>
+              <div class="muted tiny">These values come from tables populated by the bot.</div>
             </div>
           </div>
           <div class="cards-3">
@@ -538,7 +532,7 @@
           <div class="cards-2">
             <div class="panel" style="padding:14px;">
               <h3 style="margin:0 0 8px;">Admin commands</h3>
-              <div class="tiny">Save the current channel settings, or use the raw SQL data model through Supabase.</div>
+              <div class="tiny">Save the current channel settings, or use the raw data model directly.</div>
               <button id="saveAgainBtn" class="secondary">Save settings again</button>
             </div>
             <div class="panel" style="padding:14px;">
@@ -552,9 +546,11 @@
   </div>
 
   <script>
+    const SUPABASE_URL = 'https://fzaeyhihqlznfenkyrhv.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ6YWV5aGlocWx6bmZlbmt5cmh2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIyODk2MDYsImV4cCI6MjA3Nzg2NTYwNn0.dNA9OSZXqaTXLLcE3TakJhzfHZ9xfy51empFBWGbR7k';
+
     const STORAGE_KEYS = {
-      url: 'konqi.supabase.url',
-      key: 'konqi.supabase.anon',
+      user: 'konqi.dashboard.user',
     };
 
     const state = {
@@ -577,8 +573,6 @@
       bootStatus: document.getElementById('bootStatus'),
       accessBox: document.getElementById('accessBox'),
       userBox: document.getElementById('userBox'),
-      supabaseUrl: document.getElementById('supabaseUrl'),
-      supabaseAnonKey: document.getElementById('supabaseAnonKey'),
       email: document.getElementById('email'),
       password: document.getElementById('password'),
       signInBtn: document.getElementById('signInBtn'),
@@ -697,14 +691,7 @@
     }
 
     async function ensureClient() {
-      const url = els.supabaseUrl.value.trim();
-      const key = els.supabaseAnonKey.value.trim();
-      if (!url || !key) {
-        throw new Error('Please enter the Supabase URL and anon key.');
-      }
-      state.client = window.supabase.createClient(url, key);
-      saveLocal(STORAGE_KEYS.url, url);
-      saveLocal(STORAGE_KEYS.key, key);
+      state.client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
       return state.client;
     }
 
@@ -941,8 +928,6 @@
     }
 
     function restoreInputs() {
-      els.supabaseUrl.value = loadLocal(STORAGE_KEYS.url);
-      els.supabaseAnonKey.value = loadLocal(STORAGE_KEYS.key);
       setStatus('Ready to sign in.');
     }
 
@@ -972,17 +957,7 @@
     }
 
     async function bootstrapSession() {
-      const url = loadLocal(STORAGE_KEYS.url);
-      const key = loadLocal(STORAGE_KEYS.key);
-      if (url) els.supabaseUrl.value = url;
-      if (key) els.supabaseAnonKey.value = key;
-
-      if (!url || !key) {
-        setStatus('Enter the Supabase URL and anon key to begin.', 'warn');
-        return;
-      }
-
-      state.client = window.supabase.createClient(url, key);
+      state.client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
       const { data } = await state.client.auth.getSession();
       if (data.session) {
         state.user = data.session.user;
