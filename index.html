@@ -600,6 +600,7 @@
         <button class="sn-item" data-tab="members"><div class="sn-dot"></div>Members</button>
         <button class="sn-item" data-tab="roles"><div class="sn-dot"></div>Roles</button>
         <button class="sn-item" data-tab="channels"><div class="sn-dot"></div>Channels</button>
+        <button class="sn-item" data-tab="messages"><div class="sn-dot"></div>Messages</button>
       </div>
       <div class="sn-section">
         <div class="sn-label">System</div>
@@ -762,6 +763,55 @@
         </div>
       </div>
 
+      <!-- ── MESSAGES TAB ── -->
+      <div id="tab-messages" class="hidden">
+        <div class="page-head">
+          <div><h1>Messages</h1><div class="sub">Send, delete, or edit messages as the bot</div></div>
+          <button class="btn-ghost" id="refreshMsgsBtn">↺ Refresh</button>
+        </div>
+        <div class="section">
+          <div class="section-head"><h2>Message composer</h2></div>
+          <div class="section-body">
+            <div class="ctrl-row cols-3">
+              <div class="ctrl">
+                <label>Channel</label>
+                <select id="msgChannelSelect"></select>
+              </div>
+              <div class="ctrl">
+                <label>Message</label>
+                <input id="msgInput" placeholder="Send a message as the bot..." />
+              </div>
+              <div class="ctrl" style="display:flex;align-items:flex-end;">
+                <button class="btn-primary" id="loadMsgsBtn">Load messages</button>
+              </div>
+            </div>
+            <div id="editingBar" class="status-strip hidden" style="margin-bottom:16px;">
+              <div class="dot"></div>
+              <span id="editingLabel">Editing message...</span>
+              <div class="nav-spacer"></div>
+              <button class="btn-ghost" id="cancelEditBtn" style="font-size:10px;padding:3px 8px;">Cancel</button>
+            </div>
+            <div class="tbl-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Author</th>
+                    <th>Message ID</th>
+                    <th>Content</th>
+                    <th>Created</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="msgBody"></tbody>
+              </table>
+            </div>
+            <div style="display:flex;justify-content:flex-end;margin-top:16px;">
+              <button class="btn-primary" id="sendMsgBtn">Send</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- ── DIAGNOSTICS TAB ── -->
       <div id="tab-diag" class="hidden">
         <div class="page-head">
@@ -788,6 +838,8 @@
     guilds: [], guildId: '', guildSettings: null,
     channels: [], roles: [], members: [], allMembers: [],
     search: '', isAdmin: false, isBot: false,
+    editingMsgId: null,
+    currentMessages: [],
   };
 
   // ── DOM refs ──────────────────────────────────────────────────────
@@ -828,11 +880,20 @@
     channelsBody:       document.getElementById('channelsBody'),
     membersBody:        document.getElementById('membersBody'),
     diagBox:            document.getElementById('diagBox'),
+    msgChannelSelect:   document.getElementById('msgChannelSelect'),
+    loadMsgsBtn:        document.getElementById('loadMsgsBtn'),
+    refreshMsgsBtn:     document.getElementById('refreshMsgsBtn'),
+    msgBody:            document.getElementById('msgBody'),
+    msgInput:           document.getElementById('msgInput'),
+    sendMsgBtn:         document.getElementById('sendMsgBtn'),
+    editingBar:         document.getElementById('editingBar'),
+    editingLabel:       document.getElementById('editingLabel'),
+    cancelEditBtn:      document.getElementById('cancelEditBtn'),
   };
 
   // ── Tab switching ────────────────────────────────────────────────
 
-  const tabs = ['overview','settings','members','roles','channels','diag'];
+  const tabs = ['overview','settings','members','roles','channels','messages','diag'];
 
   function switchTab(name) {
     tabs.forEach(t => {
@@ -852,6 +913,17 @@
   function setStatus(msg, tone = '') {
     els.statusText.textContent = msg;
     els.statusStrip.className = 'status-strip' + (tone ? ' ' + tone : '');
+  }
+
+  function apiCall(method, path, body) {
+    const opts = { method, headers: { 'Content-Type': 'application/json' } };
+    if (body) opts.body = JSON.stringify(body);
+    return fetch(path, opts).then(async res => {
+      let data = {};
+      try { data = await res.json(); } catch {}
+      if (!res.ok) throw new Error(data.error || 'API error');
+      return data;
+    });
   }
 
   // ── Login ────────────────────────────────────────────────────────
@@ -972,6 +1044,10 @@
     return state.guilds.find(g => g.guild_id === state.guildId) || null;
   }
 
+  function textChannels() {
+    return state.channels.filter(c => c.channel_type === 0 || c.channel_type === 5);
+  }
+
   // ── Data loading ─────────────────────────────────────────────────
 
   async function loadAccess() {
@@ -1021,7 +1097,7 @@
   async function loadGuildData() {
     const guildId = state.guildId;
     if (!guildId) {
-      state.guildSettings = null; state.channels = []; state.roles = []; state.members = []; state.allMembers = [];
+      state.guildSettings = null; state.channels = []; state.roles = []; state.members = []; state.allMembers = []; state.currentMessages = []; state.editingMsgId = null;
       renderEverything(); return;
     }
 
@@ -1042,7 +1118,101 @@
     state.roles         = rr.data || [];
     state.members       = mr.data || [];
     state.allMembers    = state.members;
+    state.currentMessages = [];
+    state.editingMsgId = null;
     renderEverything();
+  }
+
+  function renderMessages(msgs) {
+    state.currentMessages = Array.isArray(msgs) ? msgs : [];
+    if (!state.currentMessages.length) {
+      els.msgBody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--muted2);padding:24px;">No messages</td></tr>';
+      return;
+    }
+
+    els.msgBody.innerHTML = state.currentMessages.map(m => {
+      const messageId = m.id || m.message_id || '';
+      const created = m.created_at || m.timestamp || m.createdAt || '—';
+      const content = m.content || '—';
+      const author = m.author?.username || m.author?.tag || m.author || '—';
+      return `<tr>
+        <td>${esc(author)}</td>
+        <td>${esc(messageId || '—')}</td>
+        <td>${esc(content)}</td>
+        <td>${esc(created)}</td>
+        <td>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;">
+            <button class="btn-ghost" data-action="edit" data-id="${encodeURIComponent(messageId)}" data-content="${encodeURIComponent(content)}">edit</button>
+            <button class="btn-ghost" data-action="delete" data-id="${encodeURIComponent(messageId)}">del</button>
+          </div>
+        </td>
+      </tr>`;
+    }).join('');
+  }
+
+  async function loadMessages() {
+    const channelId = els.msgChannelSelect.value;
+    if (!channelId) {
+      setStatus('Select a channel first.', 'warn');
+      return;
+    }
+    setStatus('Loading messages...');
+    try {
+      const msgs = await apiCall('GET', '/api/messages?channelId=' + encodeURIComponent(channelId));
+      renderMessages(Array.isArray(msgs) ? msgs : (msgs.messages || []));
+      setStatus('Messages loaded.', 'ok');
+    } catch (err) {
+      setStatus(err.message, 'bad');
+    }
+  }
+
+  async function sendMessage() {
+    const channelId = els.msgChannelSelect.value;
+    const content = els.msgInput.value.trim();
+    if (!channelId) return setStatus('Select a channel first.', 'warn');
+    if (!content) return;
+
+    try {
+      if (state.editingMsgId) {
+        await apiCall('PATCH', '/api/messages', { channelId, messageId: state.editingMsgId, content });
+        cancelEdit();
+        els.msgInput.value = '';
+        await loadMessages();
+        setStatus('Message edited.', 'ok');
+      } else {
+        await apiCall('POST', '/api/messages', { channelId, content });
+        els.msgInput.value = '';
+        await loadMessages();
+        setStatus('Message sent.', 'ok');
+      }
+    } catch (err) {
+      setStatus(err.message, 'bad');
+    }
+  }
+
+  async function deleteMsg(messageId) {
+    const channelId = els.msgChannelSelect.value;
+    if (!channelId || !messageId) return;
+    try {
+      await apiCall('DELETE', '/api/messages', { channelId, messageId });
+      await loadMessages();
+      setStatus('Message deleted.', 'ok');
+    } catch (err) {
+      setStatus(err.message, 'bad');
+    }
+  }
+
+  function startEdit(messageId, content) {
+    state.editingMsgId = messageId;
+    els.msgInput.value = content || '';
+    els.editingLabel.textContent = 'Editing message — press Send to save';
+    els.editingBar.classList.remove('hidden');
+  }
+
+  function cancelEdit() {
+    state.editingMsgId = null;
+    els.msgInput.value = '';
+    els.editingBar.classList.add('hidden');
   }
 
   function renderEverything() {
@@ -1080,6 +1250,11 @@
     els.verifyChannel.innerHTML = opts;
     els.welcomeChannel.innerHTML = opts;
 
+    els.msgChannelSelect.innerHTML = ['<option value="">— select channel —</option>']
+      .concat(textChannels().map(ch =>
+        '<option value="' + esc(ch.channel_id) + '"># ' + esc(ch.channel_name) + '</option>'
+      )).join('');
+
     if (state.guildSettings) {
       els.logChannel.value     = state.guildSettings.log_channel_id     || '';
       els.verifyChannel.value  = state.guildSettings.verify_channel_id  || '';
@@ -1116,6 +1291,10 @@
       <td>${esc(m.joined_at || '—')}</td>
       <td>${esc(m.last_seen_at || '—')}</td>
     </tr>`).join('');
+
+    if (!state.currentMessages.length) {
+      els.msgBody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--muted2);padding:24px;">Select a channel and load messages</td></tr>';
+    }
   }
 
   async function saveSettings() {
@@ -1137,7 +1316,10 @@
 
   async function signOut() {
     if (state.client) await state.client.auth.signOut();
-    Object.assign(state, { user:null, access:null, guilds:[], guildId:'', guildSettings:null, channels:[], roles:[], members:[], allMembers:[], isAdmin:false, isBot:false });
+    Object.assign(state, { user:null, access:null, guilds:[], guildId:'', guildSettings:null, channels:[], roles:[], members:[], allMembers:[], isAdmin:false, isBot:false, editingMsgId:null, currentMessages:[] });
+    els.msgBody.innerHTML = '';
+    els.msgInput.value = '';
+    els.editingBar.classList.add('hidden');
     showLogin();
   }
 
@@ -1146,6 +1328,20 @@
   els.signOutBtn.addEventListener('click',     () => signOut().catch(err => setStatus(err.message, 'bad')));
   els.saveSettingsBtn.addEventListener('click',() => saveSettings().catch(err => setStatus(err.message, 'bad')));
   els.saveAgainBtn.addEventListener('click',   () => saveSettings().catch(err => setStatus(err.message, 'bad')));
+  els.loadMsgsBtn.addEventListener('click',    () => loadMessages());
+  els.refreshMsgsBtn.addEventListener('click', () => loadMessages());
+  els.sendMsgBtn.addEventListener('click',     () => sendMessage());
+  els.cancelEditBtn.addEventListener('click',  () => cancelEdit());
+  els.msgInput.addEventListener('keydown', e => { if (e.key === 'Enter') sendMessage(); });
+  els.msgBody.addEventListener('click', e => {
+    const btn = e.target.closest('button[data-action]');
+    if (!btn) return;
+    const action = btn.dataset.action;
+    const id = decodeURIComponent(btn.dataset.id || '');
+    const content = decodeURIComponent(btn.dataset.content || '');
+    if (action === 'edit') startEdit(id, content);
+    if (action === 'delete') deleteMsg(id);
+  });
 
   els.guildSelect.addEventListener('change', async () => {
     state.guildId = els.guildSelect.value;
