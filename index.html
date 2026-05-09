@@ -4,1991 +4,288 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="color-scheme" content="dark" />
-  <title>Konqi Dashboard</title>
+  <title>Konqi</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
     :root {
-      --bg: #07111f;
-      --bg2: #091a31;
-      --panel: rgba(12, 21, 38, 0.88);
-      --panel-border: rgba(146, 179, 255, 0.15);
-      --text: #eef4ff;
-      --muted: #9db2d7;<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="color-scheme" content="dark" />
-  <title>Konqi Dashboard</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <style>
-    :root {
-      --bg: #07111f;
-      --bg2: #091a31;
-      --panel: rgba(12, 21, 38, 0.88);
-      --panel-border: rgba(146, 179, 255, 0.15);
-      --text: #eef4ff;
-      --muted: #9db2d7;
-      --accent: #6de3ba;
-      --accent2: #7aa8ff;
-      --danger: #ff7474;
-      --warn: #ffd36a;
-      --shadow: 0 24px 80px rgba(0, 0, 0, 0.4);
-      --radius: 18px;
-      --radius-sm: 12px;
-      --gap: 16px;
-      --max: 1500px;
-      --font: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --gold:   #e8a020;
+      --amber:  #f5c842;
+      --ember:  #c96a10;
+      --bg:     #090909;
+      --surface:#0e0e0e;
+      --edge:   rgba(232, 160, 32, 0.18);
+      --muted:  #5a5a5a;
+      --text:   #f0ece4;
+      --sans:   'Syne', sans-serif;
+      --mono:   'DM Mono', monospace;
     }
 
-    * { box-sizing: border-box; }
-
     html, body {
-      margin: 0;
-      min-height: 100%;
-      background:
-        radial-gradient(circle at top left, rgba(109, 227, 186, 0.18), transparent 28%),
-        radial-gradient(circle at top right, rgba(122, 168, 255, 0.2), transparent 26%),
-        linear-gradient(180deg, var(--bg) 0%, var(--bg2) 100%);
+      height: 100%;
+      background: var(--bg);
       color: var(--text);
-      font-family: var(--font);
+      font-family: var(--sans);
+      -webkit-font-smoothing: antialiased;
     }
 
     body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
       min-height: 100vh;
-    }
-
-    a { color: inherit; }
-
-    .wrap {
-      max-width: var(--max);
-      margin: 0 auto;
-      padding: 20px;
-    }
-
-    .hero {
-      display: grid;
-      grid-template-columns: 1.2fr 0.8fr;
-      gap: var(--gap);
-      margin-bottom: var(--gap);
-    }
-
-    .panel {
-      background: var(--panel);
-      border: 1px solid var(--panel-border);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(14px);
+      position: relative;
       overflow: hidden;
     }
 
-    .hero-main, .hero-side, .card {
-      padding: 18px;
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 55% 40% at 15% 5%,  rgba(200, 100, 10, 0.22) 0%, transparent 65%),
+        radial-gradient(ellipse 40% 50% at 88% 92%, rgba(232, 160, 32, 0.16) 0%, transparent 60%),
+        radial-gradient(ellipse 30% 30% at 50% 50%, rgba(245, 200, 66, 0.04) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
     }
 
-    .title {
-      margin: 0;
-      font-size: clamp(28px, 5vw, 52px);
-      line-height: 1;
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(232,160,32,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(232,160,32,0.03) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .card {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 400px;
+      padding: 48px 44px 44px;
+      background: rgba(12, 12, 12, 0.92);
+      border: 1px solid rgba(232, 160, 32, 0.14);
+      border-radius: 4px;
+      backdrop-filter: blur(24px);
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 12%; right: 12%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      opacity: 0.6;
+    }
+
+    .eyebrow {
+      margin-bottom: 36px;
+    }
+
+    .logo-text {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.22em;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+
+    h1 {
+      font-size: 32px;
+      font-weight: 700;
       letter-spacing: -0.04em;
+      line-height: 1;
+      margin-bottom: 10px;
+      background: linear-gradient(135deg, #f0ece4 30%, #c07010);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
 
-    .subtitle {
-      margin: 12px 0 0;
-      color: var(--muted);
-      line-height: 1.6;
-      max-width: 70ch;
+    .divider {
+      width: 32px;
+      height: 2px;
+      background: linear-gradient(90deg, var(--gold), var(--amber));
+      margin-bottom: 32px;
+      border-radius: 1px;
     }
 
-    .badge-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 18px;
-    }
-
-    .badge {
-      padding: 8px 12px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.08);
-      color: var(--text);
-      font-size: 13px;
-    }
-
-    .hero-side {
-      display: grid;
-      gap: 12px;
-      align-content: start;
-    }
-
-    .status-box {
-      padding: 14px;
-      border-radius: var(--radius-sm);
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.08);
-      color: var(--muted);
-      min-height: 58px;
-      white-space: pre-wrap;
-    }
-
-    .auth-grid {
-      display: grid;
-      gap: 10px;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: 320px minmax(0, 1fr);
-      gap: var(--gap);
-    }
-
-    .sidebar {
-      position: sticky;
-      top: 16px;
-      align-self: start;
-    }
-
-    .content {
-      display: grid;
-      gap: var(--gap);
-    }
-
-    .section {
-      display: grid;
-      gap: 12px;
-    }
-
-    .section-head {
-      display: flex;
-      align-items: end;
-      justify-content: space-between;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    h2 {
-      margin: 0;
-      font-size: 20px;
-      letter-spacing: -0.02em;
-    }
-
-    .muted {
-      color: var(--muted);
-      line-height: 1.5;
+    .field {
+      margin-bottom: 20px;
     }
 
     label {
       display: block;
-      font-size: 12px;
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.18em;
       color: var(--muted);
-      margin: 12px 0 6px;
       text-transform: uppercase;
-      letter-spacing: 0.08em;
+      margin-bottom: 8px;
     }
 
-    input, select, button, textarea {
+    input {
       width: 100%;
-      border-radius: 12px;
-      border: 1px solid rgba(255,255,255,0.11);
-      background: rgba(255,255,255,0.04);
-      color: var(--text);
-      font: inherit;
-      padding: 12px 14px;
-      outline: none;
-    }
-
-    textarea {
-      min-height: 110px;
-      resize: vertical;
-    }
-
-    button {
-      cursor: pointer;
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      color: #08111f;
-      font-weight: 800;
-      border: 0;
-      margin-top: 12px;
-    }
-
-    button.secondary {
-      background: rgba(255,255,255,0.06);
-      color: var(--text);
-      border: 1px solid rgba(255,255,255,0.12);
-    }
-
-    button.danger {
-      background: rgba(255, 116, 116, 0.15);
-      color: #ffdede;
-      border: 1px solid rgba(255, 116, 116, 0.25);
-    }
-
-    .pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 6px 10px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.06);
-      color: var(--text);
-      font-size: 13px;
-    }
-
-    .split {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 12px;
-    }
-
-    .cards-2 {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 12px;
-    }
-
-    .cards-3 {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 12px;
-    }
-
-    .table-wrap {
-      overflow: auto;
-      border-radius: var(--radius-sm);
-      border: 1px solid rgba(255,255,255,0.08);
+      padding: 13px 16px;
       background: rgba(255,255,255,0.03);
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      min-width: 850px;
-    }
-
-    th, td {
-      padding: 10px 10px;
-      text-align: left;
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-      vertical-align: top;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 3px;
+      color: var(--text);
+      font-family: var(--sans);
       font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s, background 0.2s;
+      letter-spacing: 0.01em;
     }
 
-    th {
-      position: sticky;
-      top: 0;
-      background: rgba(8, 16, 30, 0.95);
-      color: var(--muted);
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
+    input:focus {
+      border-color: rgba(232, 160, 32, 0.5);
+      background: rgba(232, 160, 32, 0.03);
     }
 
-    .table-actions {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .table-actions button {
-      width: auto;
-      margin: 0;
-      padding: 8px 10px;
+    input::placeholder {
+      color: rgba(255,255,255,0.15);
       font-size: 13px;
     }
 
-    .hidden { display: none !important; }
-
-    .tiny {
-      font-size: 12px;
-      color: var(--muted);
-    }
-
-    .error {
-      color: #ffb1b1;
-    }
-
-    .good {
-      color: #b8ffd8;
-    }
-
-    .warn {
-      color: #ffe39b;
-    }
-
-    @media (max-width: 1120px) {
-      .hero, .grid, .cards-2, .cards-3, .split {
-        grid-template-columns: 1fr;
-      }
-
-      .sidebar {
-        position: static;
-      }
-    }
-  </style>
-</head>
-<body>
-  <div class="wrap">
-    <section class="panel hero">
-      <div class="hero-main">
-        <h1 class="title">Konqi Dashboard</h1>
-        <p class="subtitle">
-          A single-file dashboard for Cloudflare Pages. It signs in, checks your access record,
-          and then reads or writes bot data through the shared data layer. The Discord bot stays on Railway; the dashboard stays static.
-        </p>
-        <div class="badge-row">
-          <span class="badge">Secure login</span>
-          <span class="badge">Access-controlled</span>
-          <span class="badge">Guild settings</span>
-          <span class="badge">Roles</span>
-          <span class="badge">Members</span>
-          <span class="badge">Cloudflare Pages ready</span>
-        </div>
-      </div>
-
-      <div class="hero-side">
-        <div class="status-box" id="bootStatus">Loading dashboard...</div>
-        <div class="tiny">
-          If your account is not approved, you get denied even if you can sign in.
-        </div>
-      </div>
-    </section>
-
-    <section class="grid">
-      <aside class="panel sidebar">
-        <div class="card">
-          <h2>Login</h2>
-          <p class="muted">Sign in to unlock the dashboard. Access is granted only if your account is approved.</p>
-
-          <div class="auth-grid">
-            <label for="email">Email</label>
-            <input id="email" type="email" autocomplete="email" placeholder="you@example.com" />
-
-            <label for="password">Password</label>
-            <input id="password" type="password" autocomplete="current-password" placeholder="Your password" />
-
-            <button id="signInBtn">Sign in</button>
-            <button id="signOutBtn" class="secondary hidden">Sign out</button>
-          </div>
-        </div>
-
-        <div class="card" style="margin-top: 12px;">
-          <h2>Access</h2>
-          <div class="status-box" id="accessBox">Waiting for sign in...</div>
-        </div>
-
-        <div class="card" style="margin-top: 12px;">
-          <h2>Current User</h2>
-          <div class="tiny" id="userBox">No user signed in.</div>
-        </div>
-      </aside>
-
-      <main class="content">
-        <section class="panel section hidden" id="appShell">
-          <div class="section-head">
-            <div>
-              <h2>Guild Overview</h2>
-              <div class="muted tiny">Select a guild to view channels, roles, members, and settings.</div>
-            </div>
-          </div>
-
-          <div class="cards-3">
-            <div>
-              <label for="guildSelect">Guild</label>
-              <select id="guildSelect"></select>
-            </div>
-            <div>
-              <label for="search">Search members</label>
-              <input id="search" placeholder="type a name or user id" />
-            </div>
-            <div>
-              <label>&nbsp;</label>
-              <button class="secondary" id="refreshBtn">Refresh</button>
-            </div>
-          </div>
-
-          <div class="split">
-            <div class="panel" style="padding:14px;">
-              <span class="pill">Guild ID</span>
-              <div class="tiny" id="guildIdBox">-</div>
-            </div>
-            <div class="panel" style="padding:14px;">
-              <span class="pill">Members</span>
-              <div class="tiny" id="guildMemberCount">-</div>
-            </div>
-            <div class="panel" style="padding:14px;">
-              <span class="pill">Roles</span>
-              <div class="tiny" id="guildRoleCount">-</div>
-            </div>
-          </div>
-        </section>
-
-        <section class="panel section hidden" id="settingsPanel">
-          <div class="section-head">
-            <div>
-              <h2>Guild Settings</h2>
-              <div class="muted tiny">Logs, verify, and welcome channels are editable if your account is allowed.</div>
-            </div>
-            <div class="tiny" id="settingsAccessLabel"></div>
-          </div>
-
-          <div class="cards-2">
-            <div>
-              <label for="logChannel">Logs channel</label>
-              <select id="logChannel"></select>
-            </div>
-            <div>
-              <label for="verifyChannel">Verify channel</label>
-              <select id="verifyChannel"></select>
-            </div>
-            <div>
-              <label for="welcomeChannel">Welcome channel</label>
-              <select id="welcomeChannel"></select>
-            </div>
-            <div>
-              <label>&nbsp;</label>
-              <button id="saveSettingsBtn">Save settings</button>
-            </div>
-          </div>
-        </section>
-
-        <section class="panel section hidden" id="statsPanel">
-          <div class="section-head">
-            <div>
-              <h2>Sync Status</h2>
-              <div class="muted tiny">These values come from tables populated by the bot.</div>
-            </div>
-          </div>
-          <div class="cards-3">
-            <div class="panel" style="padding:14px;"><span class="pill">Channels</span><div class="tiny" id="channelStat">-</div></div>
-            <div class="panel" style="padding:14px;"><span class="pill">Roles</span><div class="tiny" id="roleStat">-</div></div>
-            <div class="panel" style="padding:14px;"><span class="pill">Members</span><div class="tiny" id="memberStat">-</div></div>
-          </div>
-        </section>
-
-        <section class="panel section hidden" id="rolesPanel">
-          <div class="section-head">
-            <div>
-              <h2>Roles</h2>
-              <div class="muted tiny">Synced from Discord. Permissions are displayed as Discord permission flags.</div>
-            </div>
-          </div>
-          <div class="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Role ID</th>
-                  <th>Position</th>
-                  <th>Color</th>
-                  <th>Flags</th>
-                  <th>Permissions</th>
-                </tr>
-              </thead>
-              <tbody id="rolesBody"></tbody>
-            </table>
-          </div>
-        </section>
-
-        <section class="panel section hidden" id="channelsPanel">
-          <div class="section-head">
-            <div>
-              <h2>Channels</h2>
-              <div class="muted tiny">Synced channel directory. Useful when setting logs, verify, or welcome channels.</div>
-            </div>
-          </div>
-          <div class="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Channel ID</th>
-                  <th>Type</th>
-                  <th>Parent</th>
-                </tr>
-              </thead>
-              <tbody id="channelsBody"></tbody>
-            </table>
-          </div>
-        </section>
-
-        <section class="panel section hidden" id="membersPanel">
-          <div class="section-head">
-            <div>
-              <h2>Members</h2>
-              <div class="muted tiny">Synced member directory from Discord IDs through the bot.</div>
-            </div>
-          </div>
-          <div class="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Display</th>
-                  <th>User ID</th>
-                  <th>Username</th>
-                  <th>Global</th>
-                  <th>Joined</th>
-                  <th>Last Seen</th>
-                </tr>
-              </thead>
-              <tbody id="membersBody"></tbody>
-            </table>
-          </div>
-        </section>
-
-        <section class="panel section hidden" id="actionsPanel">
-          <div class="section-head">
-            <div>
-              <h2>Actions</h2>
-              <div class="muted tiny">These operate only if your account has the right permissions.</div>
-            </div>
-          </div>
-
-          <div class="cards-2">
-            <div class="panel" style="padding:14px;">
-              <h3 style="margin:0 0 8px;">Admin commands</h3>
-              <div class="tiny">Save the current channel settings, or use the raw data model directly.</div>
-              <button id="saveAgainBtn" class="secondary">Save settings again</button>
-            </div>
-            <div class="panel" style="padding:14px;">
-              <h3 style="margin:0 0 8px;">Diagnostics</h3>
-              <div class="tiny" id="diagBox">-</div>
-            </div>
-          </div>
-        </section>
-      </main>
-    </section>
-  </div>
-
-  <script>
-    const SUPABASE_URL = 'https://fzaeyhihqlznfenkyrhv.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ6YWV5aGlocWx6bmZlbmt5cmh2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIyODk2MDYsImV4cCI6MjA3Nzg2NTYwNn0.dNA9OSZXqaTXLLcE3TakJhzfHZ9xfy51empFBWGbR7k';
-
-    const STORAGE_KEYS = {
-      user: 'konqi.dashboard.user',
-    };
-
-    const state = {
-      client: null,
-      user: null,
-      access: null,
-      guilds: [],
-      guildId: '',
-      guildSettings: null,
-      channels: [],
-      roles: [],
-      members: [],
-      allMembers: [],
-      search: '',
-      isAdmin: false,
-      isBot: false,
-    };
-
-    const els = {
-      bootStatus: document.getElementById('bootStatus'),
-      accessBox: document.getElementById('accessBox'),
-      userBox: document.getElementById('userBox'),
-      email: document.getElementById('email'),
-      password: document.getElementById('password'),
-      signInBtn: document.getElementById('signInBtn'),
-      signOutBtn: document.getElementById('signOutBtn'),
-      appShell: document.getElementById('appShell'),
-      settingsPanel: document.getElementById('settingsPanel'),
-      statsPanel: document.getElementById('statsPanel'),
-      rolesPanel: document.getElementById('rolesPanel'),
-      channelsPanel: document.getElementById('channelsPanel'),
-      membersPanel: document.getElementById('membersPanel'),
-      actionsPanel: document.getElementById('actionsPanel'),
-      guildSelect: document.getElementById('guildSelect'),
-      search: document.getElementById('search'),
-      refreshBtn: document.getElementById('refreshBtn'),
-      saveSettingsBtn: document.getElementById('saveSettingsBtn'),
-      saveAgainBtn: document.getElementById('saveAgainBtn'),
-      logChannel: document.getElementById('logChannel'),
-      verifyChannel: document.getElementById('verifyChannel'),
-      welcomeChannel: document.getElementById('welcomeChannel'),
-      settingsAccessLabel: document.getElementById('settingsAccessLabel'),
-      guildIdBox: document.getElementById('guildIdBox'),
-      guildMemberCount: document.getElementById('guildMemberCount'),
-      guildRoleCount: document.getElementById('guildRoleCount'),
-      channelStat: document.getElementById('channelStat'),
-      roleStat: document.getElementById('roleStat'),
-      memberStat: document.getElementById('memberStat'),
-      rolesBody: document.getElementById('rolesBody'),
-      channelsBody: document.getElementById('channelsBody'),
-      membersBody: document.getElementById('membersBody'),
-      diagBox: document.getElementById('diagBox'),
-    };
-
-    function setStatus(message, tone = '') {
-      els.bootStatus.innerHTML = tone ? '<span class="' + tone + '">' + escapeHtml(message) + '</span>' : escapeHtml(message);
-    }
-
-    function escapeHtml(value) {
-      return String(value ?? '')
-        .replaceAll('&', '&amp;')
-        .replaceAll('<', '&lt;')
-        .replaceAll('>', '&gt;')
-        .replaceAll('"', '&quot;')
-        .replaceAll("'", '&#39;');
-    }
-
-    function saveLocal(key, value) {
-      localStorage.setItem(key, value);
-    }
-
-    function loadLocal(key) {
-      return localStorage.getItem(key) || '';
-    }
-
-    function channelTypeName(type) {
-      const map = {
-        0: 'text',
-        2: 'voice',
-        4: 'category',
-        5: 'announcement',
-        10: 'announcement thread',
-        11: 'public thread',
-        12: 'private thread',
-        13: 'stage',
-        15: 'forum',
-        16: 'media',
-      };
-      return map[type] || String(type);
-    }
-
-    function roleFlags(role) {
-      const flags = [];
-      if (role.hoist) flags.push('hoist');
-      if (role.mentionable) flags.push('mentionable');
-      if (role.managed) flags.push('managed');
-      return flags.length ? flags.join(', ') : 'none';
-    }
-
-    function normalizeChannels(channels) {
-      return [...channels].sort((a, b) => String(a.channel_name).localeCompare(String(b.channel_name)));
-    }
-
-    function normalizeRoles(roles) {
-      return [...roles].sort((a, b) => Number(b.position || 0) - Number(a.position || 0));
-    }
-
-    function normalizeMembers(members) {
-      const q = state.search.trim().toLowerCase();
-      const filtered = q ? members.filter(m => {
-        return [
-          m.user_id,
-          m.username,
-          m.global_name,
-          m.display_name,
-        ].some(v => String(v || '').toLowerCase().includes(q));
-      }) : members;
-
-      return [...filtered].sort((a, b) => String(a.display_name || a.username || '').localeCompare(String(b.display_name || b.username || '')));
-    }
-
-    function currentGuild() {
-      return state.guilds.find(g => g.guild_id === state.guildId) || null;
-    }
-
-    function setVisible(visible) {
-      [
-        els.appShell,
-        els.settingsPanel,
-        els.statsPanel,
-        els.rolesPanel,
-        els.channelsPanel,
-        els.membersPanel,
-        els.actionsPanel,
-      ].forEach(el => el.classList.toggle('hidden', !visible));
-
-      els.signOutBtn.classList.toggle('hidden', !visible);
-    }
-
-    async function ensureClient() {
-      state.client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-      return state.client;
-    }
-
-    async function loadAccess() {
-      const { data, error } = await state.client
-        .from('allowed_users')
-        .select('supabase_user_id, discord_id, email, can_access, is_admin, is_bot')
-        .eq('supabase_user_id', state.user.id)
-        .maybeSingle();
-
-      if (error) throw error;
-      if (!data || !data.can_access) {
-        await state.client.auth.signOut();
-        state.access = null;
-        setVisible(false);
-        els.accessBox.innerHTML = '<span class="error">Access denied.</span> Your account is not approved.';
-        setStatus('Signed in but denied by access rules.', 'error');
-        throw new Error('Access denied.');
-      }
-
-      state.access = data;
-      state.isAdmin = Boolean(data.is_admin);
-      state.isBot = Boolean(data.is_bot);
-      els.accessBox.innerHTML =
-        '<span class="good">Access granted.</span><br />' +
-        'Email: ' + escapeHtml(data.email || state.user.email || '-') + '<br />' +
-        'Admin: ' + (data.is_admin ? 'yes' : 'no') + '<br />' +
-        'Bot: ' + (data.is_bot ? 'yes' : 'no');
-      els.settingsAccessLabel.textContent = data.is_admin || data.is_bot ? 'You can edit settings.' : 'Read-only.';
-      return data;
-    }
-
-    async function loadGuilds() {
-      const { data, error } = await state.client.from('guilds').select('*').order('guild_name', { ascending: true });
-      if (error) throw error;
-      state.guilds = data || [];
-      if (!state.guildId && state.guilds.length) state.guildId = state.guilds[0].guild_id;
-      renderGuilds();
-    }
-
-    function renderGuilds() {
-      els.guildSelect.innerHTML = state.guilds.map(g => (
-        '<option value="' + escapeHtml(g.guild_id) + '">' +
-          escapeHtml(g.guild_name || g.guild_id) +
-        '</option>'
-      )).join('');
-      if (state.guildId) els.guildSelect.value = state.guildId;
-    }
-
-    async function loadGuildData() {
-      const guildId = state.guildId;
-      if (!guildId) {
-        state.guildSettings = null;
-        state.channels = [];
-        state.roles = [];
-        state.members = [];
-        state.allMembers = [];
-        renderEverything();
-        return;
-      }
-
-      const [settingsRes, channelsRes, rolesRes, membersRes] = await Promise.all([
-        state.client.from('guild_settings').select('*').eq('guild_id', guildId).maybeSingle(),
-        state.client.from('guild_channels').select('*').eq('guild_id', guildId).order('channel_name', { ascending: true }),
-        state.client.from('guild_roles').select('*').eq('guild_id', guildId).order('position', { ascending: false }),
-        state.client.from('guild_members').select('*').eq('guild_id', guildId).order('display_name', { ascending: true, nullsFirst: false }),
-      ]);
-
-      if (settingsRes.error) throw settingsRes.error;
-      if (channelsRes.error) throw channelsRes.error;
-      if (rolesRes.error) throw rolesRes.error;
-      if (membersRes.error) throw membersRes.error;
-
-      state.guildSettings = settingsRes.data || null;
-      state.channels = channelsRes.data || [];
-      state.roles = rolesRes.data || [];
-      state.members = membersRes.data || [];
-      state.allMembers = state.members;
-
-      renderEverything();
-    }
-
-    function renderEverything() {
-      const guild = currentGuild();
-      const channels = normalizeChannels(state.channels);
-      const roles = normalizeRoles(state.roles);
-      const members = normalizeMembers(state.members);
-
-      els.guildIdBox.textContent = guild ? guild.guild_id : '-';
-      els.guildMemberCount.textContent = guild ? String(guild.member_count ?? members.length ?? '-') : '-';
-      els.guildRoleCount.textContent = String(roles.length);
-      els.channelStat.textContent = String(channels.length) + ' channel(s) synced';
-      els.roleStat.textContent = String(roles.length) + ' role(s) synced';
-      els.memberStat.textContent = String(state.members.length) + ' member(s) synced';
-      els.diagBox.textContent =
-        'Auth: ' + (state.user ? 'signed in' : 'signed out') + '\n' +
-        'Access: ' + (state.access ? 'allowed' : 'none') + '\n' +
-        'Admin: ' + (state.isAdmin ? 'yes' : 'no') + '\n' +
-        'Bot: ' + (state.isBot ? 'yes' : 'no');
-
-      populateSettingsSelects(channels);
-      renderRolesTable(roles);
-      renderChannelsTable(channels);
-      renderMembersTable(members);
-
-      if (state.guildSettings) {
-        els.logChannel.value = state.guildSettings.log_channel_id || '';
-        els.verifyChannel.value = state.guildSettings.verify_channel_id || '';
-        els.welcomeChannel.value = state.guildSettings.welcome_channel_id || '';
-      }
-
-      setVisible(true);
-    }
-
-    function populateSettingsSelects(channels) {
-      const options = ['<option value="">Not set</option>']
-        .concat(channels.map(ch => '<option value="' + escapeHtml(ch.channel_id) + '">' + escapeHtml(ch.channel_name) + ' (' + escapeHtml(channelTypeName(ch.channel_type)) + ')</option>'))
-        .join('');
-      els.logChannel.innerHTML = options;
-      els.verifyChannel.innerHTML = options;
-      els.welcomeChannel.innerHTML = options;
-    }
-
-    function renderRolesTable(roles) {
-      els.rolesBody.innerHTML = roles.map(role => {
-        const perms = Array.isArray(role.permissions) ? role.permissions.join(', ') : String(role.permissions_bitfield || '');
-        return `
-          <tr>
-            <td>${escapeHtml(role.role_name)}</td>
-            <td>${escapeHtml(role.role_id)}</td>
-            <td>${escapeHtml(role.position)}</td>
-            <td>${escapeHtml(role.color)}</td>
-            <td>${escapeHtml(roleFlags(role))}</td>
-            <td>${escapeHtml(perms || 'none')}</td>
-          </tr>
-        `;
-      }).join('');
-    }
-
-    function renderChannelsTable(channels) {
-      els.channelsBody.innerHTML = channels.map(channel => `
-        <tr>
-          <td>${escapeHtml(channel.channel_name)}</td>
-          <td>${escapeHtml(channel.channel_id)}</td>
-          <td>${escapeHtml(channelTypeName(channel.channel_type))}</td>
-          <td>${escapeHtml(channel.parent_id || '-')}</td>
-        </tr>
-      `).join('');
-    }
-
-    function renderMembersTable(members) {
-      els.membersBody.innerHTML = members.map(member => `
-        <tr>
-          <td>${escapeHtml(member.display_name || member.username || '-')}</td>
-          <td>${escapeHtml(member.user_id)}</td>
-          <td>${escapeHtml(member.username || '-')}</td>
-          <td>${escapeHtml(member.global_name || '-')}</td>
-          <td>${escapeHtml(member.joined_at || '-')}</td>
-          <td>${escapeHtml(member.last_seen_at || '-')}</td>
-        </tr>
-      `).join('');
-    }
-
-    async function saveSettings() {
-      if (!state.isAdmin && !state.isBot) {
-        throw new Error('You do not have permission to edit settings.');
-      }
-
-      const payload = {
-        guild_id: state.guildId,
-        log_channel_id: els.logChannel.value || null,
-        verify_channel_id: els.verifyChannel.value || null,
-        welcome_channel_id: els.welcomeChannel.value || null,
-        updated_at: new Date().toISOString(),
-      };
-
-      const { data, error } = await state.client
-        .from('guild_settings')
-        .upsert(payload, { onConflict: 'guild_id' })
-        .select('*')
-        .single();
-
-      if (error) throw error;
-      state.guildSettings = data;
-      renderEverything();
-      setStatus('Settings saved.', 'good');
-    }
-
-    async function refreshAll() {
-      setStatus('Refreshing data...');
-      await loadGuilds();
-      await loadGuildData();
-      setStatus('Dashboard refreshed.', 'good');
-    }
-
-    async function signIn() {
-      const client = await ensureClient();
-      const email = els.email.value.trim();
-      const password = els.password.value;
-      if (!email || !password) throw new Error('Enter your email and password.');
-
-      const { data, error } = await client.auth.signInWithPassword({ email, password });
-      if (error) throw error;
-
-      state.user = data.user;
-      els.userBox.innerHTML =
-        '<div><strong>' + escapeHtml(state.user.email || '-') + '</strong></div>' +
-        '<div class="tiny">User ID: ' + escapeHtml(state.user.id) + '</div>';
-
-      setStatus('Signed in. Checking access...');
-      await loadAccess();
-      await loadGuilds();
-      await loadGuildData();
-      setStatus('Signed in and loaded.', 'good');
-    }
-
-    async function signOut() {
-      if (state.client) {
-        await state.client.auth.signOut();
-      }
-      state.user = null;
-      state.access = null;
-      state.guilds = [];
-      state.guildId = '';
-      state.guildSettings = null;
-      state.channels = [];
-      state.roles = [];
-      state.members = [];
-      state.allMembers = [];
-      els.userBox.textContent = 'No user signed in.';
-      els.accessBox.textContent = 'Waiting for sign in...';
-      setVisible(false);
-      setStatus('Signed out.', 'warn');
-    }
-
-    function restoreInputs() {
-      setStatus('Ready to sign in.');
-    }
-
-    function bindEvents() {
-      els.signInBtn.addEventListener('click', () => signIn().catch(err => {
-        setStatus(err.message, 'error');
-        els.accessBox.innerHTML = '<span class="error">Login failed.</span> ' + escapeHtml(err.message);
-      }));
-
-      els.signOutBtn.addEventListener('click', () => signOut().catch(err => {
-        setStatus(err.message, 'error');
-      }));
-
-      els.guildSelect.addEventListener('change', async () => {
-        state.guildId = els.guildSelect.value;
-        await loadGuildData().catch(err => setStatus(err.message, 'error'));
-      });
-
-      els.search.addEventListener('input', async () => {
-        state.search = els.search.value;
-        renderEverything();
-      });
-
-      els.refreshBtn.addEventListener('click', () => refreshAll().catch(err => setStatus(err.message, 'error')));
-      els.saveSettingsBtn.addEventListener('click', () => saveSettings().catch(err => setStatus(err.message, 'error')));
-      els.saveAgainBtn.addEventListener('click', () => saveSettings().catch(err => setStatus(err.message, 'error')));
-    }
-
-    async function bootstrapSession() {
-      state.client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-      const { data } = await state.client.auth.getSession();
-      if (data.session) {
-        state.user = data.session.user;
-        els.userBox.innerHTML =
-          '<div><strong>' + escapeHtml(state.user.email || '-') + '</strong></div>' +
-          '<div class="tiny">User ID: ' + escapeHtml(state.user.id) + '</div>';
-        try {
-          await loadAccess();
-          await loadGuilds();
-          await loadGuildData();
-          setStatus('Restored session and loaded data.', 'good');
-        } catch (err) {
-          if (String(err.message || '').toLowerCase().includes('access denied')) return;
-          setStatus(err.message, 'error');
-        }
-      }
-
-      state.client.auth.onAuthStateChange(async (_event, session) => {
-        if (!session) return;
-        state.user = session.user;
-        try {
-          await loadAccess();
-          await loadGuilds();
-          await loadGuildData();
-          setStatus('Auth state changed and data loaded.', 'good');
-        } catch (err) {
-          setStatus(err.message, 'error');
-        }
-      });
-    }
-
-    bindEvents();
-    restoreInputs();
-    bootstrapSession().catch(err => setStatus(err.message, 'error'));
-  </script>
-</body>
-</html>
-
-      --accent: #6de3ba;
-      --accent2: #7aa8ff;
-      --danger: #ff7474;
-      --warn: #ffd36a;
-      --shadow: 0 24px 80px rgba(0, 0, 0, 0.4);
-      --radius: 18px;
-      --radius-sm: 12px;
-      --gap: 16px;
-      --max: 1500px;
-      --font: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    }
-
-    * { box-sizing: border-box; }
-
-    html, body {
-      margin: 0;
-      min-height: 100%;
-      background:
-        radial-gradient(circle at top left, rgba(109, 227, 186, 0.18), transparent 28%),
-        radial-gradient(circle at top right, rgba(122, 168, 255, 0.2), transparent 26%),
-        linear-gradient(180deg, var(--bg) 0%, var(--bg2) 100%);
-      color: var(--text);
-      font-family: var(--font);
-    }
-
-    body {
-      min-height: 100vh;
-    }
-
-    a { color: inherit; }
-
-    .wrap {
-      max-width: var(--max);
-      margin: 0 auto;
-      padding: 20px;
-    }
-
-    .hero {
-      display: grid;
-      grid-template-columns: 1.2fr 0.8fr;
-      gap: var(--gap);
-      margin-bottom: var(--gap);
-    }
-
-    .panel {
-      background: var(--panel);
-      border: 1px solid var(--panel-border);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(14px);
-      overflow: hidden;
-    }
-
-    .hero-main, .hero-side, .card {
-      padding: 18px;
-    }
-
-    .title {
-      margin: 0;
-      font-size: clamp(28px, 5vw, 52px);
-      line-height: 1;
-      letter-spacing: -0.04em;
-    }
-
-    .subtitle {
-      margin: 12px 0 0;
-      color: var(--muted);
-      line-height: 1.6;
-      max-width: 70ch;
-    }
-
-    .badge-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 18px;
-    }
-
-    .badge {
-      padding: 8px 12px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.08);
-      color: var(--text);
-      font-size: 13px;
-    }
-
-    .hero-side {
-      display: grid;
-      gap: 12px;
-      align-content: start;
-    }
-
-    .status-box {
+    .btn {
+      width: 100%;
+      margin-top: 28px;
       padding: 14px;
-      border-radius: var(--radius-sm);
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.08);
+      position: relative;
+      background: linear-gradient(135deg, #c96a10, #e8a020 60%, #f5c842);
+      border: none;
+      border-radius: 3px;
+      color: #0a0600;
+      font-family: var(--sans);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      cursor: pointer;
+      overflow: hidden;
+      transition: opacity 0.15s, transform 0.1s;
+    }
+
+    .btn::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.12), transparent);
+      pointer-events: none;
+    }
+
+    .btn:hover { opacity: 0.88; }
+    .btn:active { transform: scale(0.992); }
+    .btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+    .status {
+      margin-top: 20px;
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.06em;
       color: var(--muted);
-      min-height: 58px;
-      white-space: pre-wrap;
-    }
-
-    .auth-grid {
-      display: grid;
-      gap: 10px;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: 320px minmax(0, 1fr);
-      gap: var(--gap);
-    }
-
-    .sidebar {
-      position: sticky;
-      top: 16px;
-      align-self: start;
-    }
-
-    .content {
-      display: grid;
-      gap: var(--gap);
-    }
-
-    .section {
-      display: grid;
-      gap: 12px;
-    }
-
-    .section-head {
-      display: flex;
-      align-items: end;
-      justify-content: space-between;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    h2 {
-      margin: 0;
-      font-size: 20px;
-      letter-spacing: -0.02em;
-    }
-
-    .muted {
-      color: var(--muted);
+      min-height: 16px;
+      text-align: center;
       line-height: 1.5;
     }
 
-    label {
-      display: block;
-      font-size: 12px;
-      color: var(--muted);
-      margin: 12px 0 6px;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
+    .status.error { color: #c05030; }
+    .status.good  { color: #90a050; }
+
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.2; }
     }
 
-    input, select, button, textarea {
-      width: 100%;
-      border-radius: 12px;
-      border: 1px solid rgba(255,255,255,0.11);
-      background: rgba(255,255,255,0.04);
-      color: var(--text);
-      font: inherit;
-      padding: 12px 14px;
-      outline: none;
-    }
-
-    textarea {
-      min-height: 110px;
-      resize: vertical;
-    }
-
-    button {
-      cursor: pointer;
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      color: #08111f;
-      font-weight: 800;
-      border: 0;
-      margin-top: 12px;
-    }
-
-    button.secondary {
-      background: rgba(255,255,255,0.06);
-      color: var(--text);
-      border: 1px solid rgba(255,255,255,0.12);
-    }
-
-    button.danger {
-      background: rgba(255, 116, 116, 0.15);
-      color: #ffdede;
-      border: 1px solid rgba(255, 116, 116, 0.25);
-    }
-
-    .pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 6px 10px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.06);
-      color: var(--text);
-      font-size: 13px;
-    }
-
-    .split {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 12px;
-    }
-
-    .cards-2 {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 12px;
-    }
-
-    .cards-3 {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 12px;
-    }
-
-    .table-wrap {
-      overflow: auto;
-      border-radius: var(--radius-sm);
-      border: 1px solid rgba(255,255,255,0.08);
-      background: rgba(255,255,255,0.03);
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      min-width: 850px;
-    }
-
-    th, td {
-      padding: 10px 10px;
-      text-align: left;
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-      vertical-align: top;
-      font-size: 14px;
-    }
-
-    th {
-      position: sticky;
-      top: 0;
-      background: rgba(8, 16, 30, 0.95);
-      color: var(--muted);
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-    }
-
-    .table-actions {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .table-actions button {
-      width: auto;
-      margin: 0;
-      padding: 8px 10px;
-      font-size: 13px;
-    }
-
-    .hidden { display: none !important; }
-
-    .tiny {
-      font-size: 12px;
-      color: var(--muted);
-    }
-
-    .error {
-      color: #ffb1b1;
-    }
-
-    .good {
-      color: #b8ffd8;
-    }
-
-    .warn {
-      color: #ffe39b;
-    }
-
-    @media (max-width: 1120px) {
-      .hero, .grid, .cards-2, .cards-3, .split {
-        grid-template-columns: 1fr;
-      }
-
-      .sidebar {
-        position: static;
-      }
-    }
+    .loading-dot { animation: pulse-dot 1s ease-in-out infinite; display: inline-block; }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <section class="panel hero">
-      <div class="hero-main">
-        <h1 class="title">Konqi Dashboard</h1>
-        <p class="subtitle">
-          A single-file dashboard for Cloudflare Pages. It signs in, checks your allowed-user record,
-          and then reads or writes bot data through row-level access. The Discord bot stays on Railway; the dashboard stays static.
-        </p>
-        <div class="badge-row">
-          <span class="badge">Auth</span>
-          <span class="badge">RLS-controlled</span>
-          <span class="badge">Guild settings</span>
-          <span class="badge">Roles</span>
-          <span class="badge">Members</span>
-          <span class="badge">Cloudflare Pages ready</span>
-        </div>
-      </div>
+  <div class="card">
+    <div class="eyebrow">
+      <span class="logo-text">Konqi-bot</span>
+    </div>
 
-      <div class="hero-side">
-        <div class="status-box" id="bootStatus">Loading dashboard...</div>
-        <div class="tiny">
-          If you are not in <code>allowed_users</code>, you get denied even if you can sign in.
-        </div>
-      </div>
-    </section>
+    <h1>Sign in</h1>
+    <div class="divider"></div>
 
-    <section class="grid">
-      <aside class="panel sidebar">
-        <div class="card">
-          <h2>Login</h2>
-          <p class="muted">Sign in to unlock the dashboard. The dashboard will only unlock if your row in <code>allowed_users</code> grants access.</p>
+    <div class="field">
+      <label for="email">Email</label>
+      <input id="email" type="email" autocomplete="email" placeholder="you@example.com" />
+    </div>
 
-          <div class="auth-grid">
-            <label for="email">Email</label>
-            <input id="email" type="email" autocomplete="email" placeholder="you@example.com" />
+    <div class="field">
+      <label for="password">Password</label>
+      <input id="password" type="password" autocomplete="current-password" placeholder="••••••••" />
+    </div>
 
-            <label for="password">Password</label>
-            <input id="password" type="password" autocomplete="current-password" placeholder="Your password" />
+    <button class="btn" id="signInBtn">Continue</button>
 
-            <button id="signInBtn">Sign in</button>
-            <button id="signOutBtn" class="secondary hidden">Sign out</button>
-          </div>
-        </div>
-
-        <div class="card" style="margin-top: 12px;">
-          <h2>Access</h2>
-          <div class="status-box" id="accessBox">Waiting for sign in...</div>
-        </div>
-
-        <div class="card" style="margin-top: 12px;">
-          <h2>Current User</h2>
-          <div class="tiny" id="userBox">No user signed in.</div>
-        </div>
-      </aside>
-
-      <main class="content">
-        <section class="panel section hidden" id="appShell">
-          <div class="section-head">
-            <div>
-              <h2>Guild Overview</h2>
-              <div class="muted tiny">Select a guild to view channels, roles, members, and settings.</div>
-            </div>
-          </div>
-
-          <div class="cards-3">
-            <div>
-              <label for="guildSelect">Guild</label>
-              <select id="guildSelect"></select>
-            </div>
-            <div>
-              <label for="search">Search members</label>
-              <input id="search" placeholder="type a name or user id" />
-            </div>
-            <div>
-              <label>&nbsp;</label>
-              <button class="secondary" id="refreshBtn">Refresh</button>
-            </div>
-          </div>
-
-          <div class="split">
-            <div class="panel" style="padding:14px;">
-              <span class="pill">Guild ID</span>
-              <div class="tiny" id="guildIdBox">-</div>
-            </div>
-            <div class="panel" style="padding:14px;">
-              <span class="pill">Members</span>
-              <div class="tiny" id="guildMemberCount">-</div>
-            </div>
-            <div class="panel" style="padding:14px;">
-              <span class="pill">Roles</span>
-              <div class="tiny" id="guildRoleCount">-</div>
-            </div>
-          </div>
-        </section>
-
-        <section class="panel section hidden" id="settingsPanel">
-          <div class="section-head">
-            <div>
-              <h2>Guild Settings</h2>
-              <div class="muted tiny">Logs, verify, and welcome channels are editable if your user is allowed.</div>
-            </div>
-            <div class="tiny" id="settingsAccessLabel"></div>
-          </div>
-
-          <div class="cards-2">
-            <div>
-              <label for="logChannel">Logs channel</label>
-              <select id="logChannel"></select>
-            </div>
-            <div>
-              <label for="verifyChannel">Verify channel</label>
-              <select id="verifyChannel"></select>
-            </div>
-            <div>
-              <label for="welcomeChannel">Welcome channel</label>
-              <select id="welcomeChannel"></select>
-            </div>
-            <div>
-              <label>&nbsp;</label>
-              <button id="saveSettingsBtn">Save settings</button>
-            </div>
-          </div>
-        </section>
-
-        <section class="panel section hidden" id="statsPanel">
-          <div class="section-head">
-            <div>
-              <h2>Sync Status</h2>
-              <div class="muted tiny">These values come from tables populated by the bot.</div>
-            </div>
-          </div>
-          <div class="cards-3">
-            <div class="panel" style="padding:14px;"><span class="pill">Channels</span><div class="tiny" id="channelStat">-</div></div>
-            <div class="panel" style="padding:14px;"><span class="pill">Roles</span><div class="tiny" id="roleStat">-</div></div>
-            <div class="panel" style="padding:14px;"><span class="pill">Members</span><div class="tiny" id="memberStat">-</div></div>
-          </div>
-        </section>
-
-        <section class="panel section hidden" id="rolesPanel">
-          <div class="section-head">
-            <div>
-              <h2>Roles</h2>
-              <div class="muted tiny">Synced from Discord. Permissions are displayed as Discord permission flags.</div>
-            </div>
-          </div>
-          <div class="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Role ID</th>
-                  <th>Position</th>
-                  <th>Color</th>
-                  <th>Flags</th>
-                  <th>Permissions</th>
-                </tr>
-              </thead>
-              <tbody id="rolesBody"></tbody>
-            </table>
-          </div>
-        </section>
-
-        <section class="panel section hidden" id="channelsPanel">
-          <div class="section-head">
-            <div>
-              <h2>Channels</h2>
-              <div class="muted tiny">Synced channel directory. Useful when setting logs, verify, or welcome channels.</div>
-            </div>
-          </div>
-          <div class="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Channel ID</th>
-                  <th>Type</th>
-                  <th>Parent</th>
-                </tr>
-              </thead>
-              <tbody id="channelsBody"></tbody>
-            </table>
-          </div>
-        </section>
-
-        <section class="panel section hidden" id="membersPanel">
-          <div class="section-head">
-            <div>
-              <h2>Members</h2>
-              <div class="muted tiny">Synced member directory from Discord IDs through the bot.</div>
-            </div>
-          </div>
-          <div class="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Display</th>
-                  <th>User ID</th>
-                  <th>Username</th>
-                  <th>Global</th>
-                  <th>Joined</th>
-                  <th>Last Seen</th>
-                </tr>
-              </thead>
-              <tbody id="membersBody"></tbody>
-            </table>
-          </div>
-        </section>
-
-        <section class="panel section hidden" id="actionsPanel">
-          <div class="section-head">
-            <div>
-              <h2>Actions</h2>
-              <div class="muted tiny">These operate only if your user has the right RLS permissions.</div>
-            </div>
-          </div>
-
-          <div class="cards-2">
-            <div class="panel" style="padding:14px;">
-              <h3 style="margin:0 0 8px;">Admin commands</h3>
-              <div class="tiny">Save the current channel settings, or use the raw data model directly.</div>
-              <button id="saveAgainBtn" class="secondary">Save settings again</button>
-            </div>
-            <div class="panel" style="padding:14px;">
-              <h3 style="margin:0 0 8px;">Diagnostics</h3>
-              <div class="tiny" id="diagBox">-</div>
-            </div>
-          </div>
-        </section>
-      </main>
-    </section>
+    <div class="status" id="status"></div>
   </div>
 
   <script>
-    const SUPABASE_URL = 'https://fzaeyhihqlznfenkyrhv.supabase.co';
+    const SUPABASE_URL      = 'https://fzaeyhihqlznfenkyrhv.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ6YWV5aGlocWx6bmZlbmt5cmh2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIyODk2MDYsImV4cCI6MjA3Nzg2NTYwNn0.dNA9OSZXqaTXLLcE3TakJhzfHZ9xfy51empFBWGbR7k';
 
-    const STORAGE_KEYS = {
-      user: 'konqi.dashboard.user',
-    };
+    const client   = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const emailEl  = document.getElementById('email');
+    const passEl   = document.getElementById('password');
+    const btn      = document.getElementById('signInBtn');
+    const statusEl = document.getElementById('status');
 
-    const state = {
-      client: null,
-      user: null,
-      access: null,
-      guilds: [],
-      guildId: '',
-      guildSettings: null,
-      channels: [],
-      roles: [],
-      members: [],
-      allMembers: [],
-      search: '',
-      isAdmin: false,
-      isBot: false,
-    };
-
-    const els = {
-      bootStatus: document.getElementById('bootStatus'),
-      accessBox: document.getElementById('accessBox'),
-      userBox: document.getElementById('userBox'),
-      email: document.getElementById('email'),
-      password: document.getElementById('password'),
-      signInBtn: document.getElementById('signInBtn'),
-      signOutBtn: document.getElementById('signOutBtn'),
-      appShell: document.getElementById('appShell'),
-      settingsPanel: document.getElementById('settingsPanel'),
-      statsPanel: document.getElementById('statsPanel'),
-      rolesPanel: document.getElementById('rolesPanel'),
-      channelsPanel: document.getElementById('channelsPanel'),
-      membersPanel: document.getElementById('membersPanel'),
-      actionsPanel: document.getElementById('actionsPanel'),
-      guildSelect: document.getElementById('guildSelect'),
-      search: document.getElementById('search'),
-      refreshBtn: document.getElementById('refreshBtn'),
-      saveSettingsBtn: document.getElementById('saveSettingsBtn'),
-      saveAgainBtn: document.getElementById('saveAgainBtn'),
-      logChannel: document.getElementById('logChannel'),
-      verifyChannel: document.getElementById('verifyChannel'),
-      welcomeChannel: document.getElementById('welcomeChannel'),
-      settingsAccessLabel: document.getElementById('settingsAccessLabel'),
-      guildIdBox: document.getElementById('guildIdBox'),
-      guildMemberCount: document.getElementById('guildMemberCount'),
-      guildRoleCount: document.getElementById('guildRoleCount'),
-      channelStat: document.getElementById('channelStat'),
-      roleStat: document.getElementById('roleStat'),
-      memberStat: document.getElementById('memberStat'),
-      rolesBody: document.getElementById('rolesBody'),
-      channelsBody: document.getElementById('channelsBody'),
-      membersBody: document.getElementById('membersBody'),
-      diagBox: document.getElementById('diagBox'),
-    };
-
-    function setStatus(message, tone = '') {
-      els.bootStatus.innerHTML = tone ? '<span class="' + tone + '">' + escapeHtml(message) + '</span>' : escapeHtml(message);
-    }
-
-    function escapeHtml(value) {
-      return String(value ?? '')
-        .replaceAll('&', '&amp;')
-        .replaceAll('<', '&lt;')
-        .replaceAll('>', '&gt;')
-        .replaceAll('"', '&quot;')
-        .replaceAll("'", '&#39;');
-    }
-
-    function saveLocal(key, value) {
-      localStorage.setItem(key, value);
-    }
-
-    function loadLocal(key) {
-      return localStorage.getItem(key) || '';
-    }
-
-    function channelTypeName(type) {
-      const map = {
-        0: 'text',
-        2: 'voice',
-        4: 'category',
-        5: 'announcement',
-        10: 'announcement thread',
-        11: 'public thread',
-        12: 'private thread',
-        13: 'stage',
-        15: 'forum',
-        16: 'media',
-      };
-      return map[type] || String(type);
-    }
-
-    function roleFlags(role) {
-      const flags = [];
-      if (role.hoist) flags.push('hoist');
-      if (role.mentionable) flags.push('mentionable');
-      if (role.managed) flags.push('managed');
-      return flags.length ? flags.join(', ') : 'none';
-    }
-
-    function normalizeChannels(channels) {
-      return [...channels].sort((a, b) => String(a.channel_name).localeCompare(String(b.channel_name)));
-    }
-
-    function normalizeRoles(roles) {
-      return [...roles].sort((a, b) => Number(b.position || 0) - Number(a.position || 0));
-    }
-
-    function normalizeMembers(members) {
-      const q = state.search.trim().toLowerCase();
-      const filtered = q ? members.filter(m => {
-        return [
-          m.user_id,
-          m.username,
-          m.global_name,
-          m.display_name,
-        ].some(v => String(v || '').toLowerCase().includes(q));
-      }) : members;
-
-      return [...filtered].sort((a, b) => String(a.display_name || a.username || '').localeCompare(String(b.display_name || b.username || '')));
-    }
-
-    function currentGuild() {
-      return state.guilds.find(g => g.guild_id === state.guildId) || null;
-    }
-
-    function setVisible(visible) {
-      [
-        els.appShell,
-        els.settingsPanel,
-        els.statsPanel,
-        els.rolesPanel,
-        els.channelsPanel,
-        els.membersPanel,
-        els.actionsPanel,
-      ].forEach(el => el.classList.toggle('hidden', !visible));
-
-      els.signOutBtn.classList.toggle('hidden', !visible);
-    }
-
-    async function ensureClient() {
-      state.client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-      return state.client;
-    }
-
-    async function loadAccess() {
-      const { data, error } = await state.client
-        .from('allowed_users')
-        .select('supabase_user_id, discord_id, email, can_access, is_admin, is_bot')
-        .eq('supabase_user_id', state.user.id)
-        .maybeSingle();
-
-      if (error) throw error;
-      if (!data || !data.can_access) {
-        await state.client.auth.signOut();
-        state.access = null;
-        setVisible(false);
-        els.accessBox.innerHTML = '<span class="error">Access denied.</span> Your account is not in <code>allowed_users</code>.';
-        setStatus('Signed in but denied by RLS/allowed list.', 'error');
-        throw new Error('Access denied.');
-      }
-
-      state.access = data;
-      state.isAdmin = Boolean(data.is_admin);
-      state.isBot = Boolean(data.is_bot);
-      els.accessBox.innerHTML =
-        '<span class="good">Access granted.</span><br />' +
-        'Email: ' + escapeHtml(data.email || state.user.email || '-') + '<br />' +
-        'Admin: ' + (data.is_admin ? 'yes' : 'no') + '<br />' +
-        'Bot: ' + (data.is_bot ? 'yes' : 'no');
-      els.settingsAccessLabel.textContent = data.is_admin || data.is_bot ? 'You can edit settings.' : 'Read-only.';
-      return data;
-    }
-
-    async function loadGuilds() {
-      const { data, error } = await state.client.from('guilds').select('*').order('guild_name', { ascending: true });
-      if (error) throw error;
-      state.guilds = data || [];
-      if (!state.guildId && state.guilds.length) state.guildId = state.guilds[0].guild_id;
-      renderGuilds();
-    }
-
-    function renderGuilds() {
-      els.guildSelect.innerHTML = state.guilds.map(g => (
-        '<option value="' + escapeHtml(g.guild_id) + '">' +
-          escapeHtml(g.guild_name || g.guild_id) +
-        '</option>'
-      )).join('');
-      if (state.guildId) els.guildSelect.value = state.guildId;
-    }
-
-    async function loadGuildData() {
-      const guildId = state.guildId;
-      if (!guildId) {
-        state.guildSettings = null;
-        state.channels = [];
-        state.roles = [];
-        state.members = [];
-        state.allMembers = [];
-        renderEverything();
-        return;
-      }
-
-      const [settingsRes, channelsRes, rolesRes, membersRes] = await Promise.all([
-        state.client.from('guild_settings').select('*').eq('guild_id', guildId).maybeSingle(),
-        state.client.from('guild_channels').select('*').eq('guild_id', guildId).order('channel_name', { ascending: true }),
-        state.client.from('guild_roles').select('*').eq('guild_id', guildId).order('position', { ascending: false }),
-        state.client.from('guild_members').select('*').eq('guild_id', guildId).order('display_name', { ascending: true, nullsFirst: false }),
-      ]);
-
-      if (settingsRes.error) throw settingsRes.error;
-      if (channelsRes.error) throw channelsRes.error;
-      if (rolesRes.error) throw rolesRes.error;
-      if (membersRes.error) throw membersRes.error;
-
-      state.guildSettings = settingsRes.data || null;
-      state.channels = channelsRes.data || [];
-      state.roles = rolesRes.data || [];
-      state.members = membersRes.data || [];
-      state.allMembers = state.members;
-
-      renderEverything();
-    }
-
-    function renderEverything() {
-      const guild = currentGuild();
-      const channels = normalizeChannels(state.channels);
-      const roles = normalizeRoles(state.roles);
-      const members = normalizeMembers(state.members);
-
-      els.guildIdBox.textContent = guild ? guild.guild_id : '-';
-      els.guildMemberCount.textContent = guild ? String(guild.member_count ?? members.length ?? '-') : '-';
-      els.guildRoleCount.textContent = String(roles.length);
-      els.channelStat.textContent = String(channels.length) + ' channel(s) synced';
-      els.roleStat.textContent = String(roles.length) + ' role(s) synced';
-      els.memberStat.textContent = String(state.members.length) + ' member(s) synced';
-      els.diagBox.textContent =
-        'Auth: ' + (state.user ? 'signed in' : 'signed out') + '\n' +
-        'Access: ' + (state.access ? 'allowed' : 'none') + '\n' +
-        'Admin: ' + (state.isAdmin ? 'yes' : 'no') + '\n' +
-        'Bot: ' + (state.isBot ? 'yes' : 'no');
-
-      populateSettingsSelects(channels);
-      renderRolesTable(roles);
-      renderChannelsTable(channels);
-      renderMembersTable(members);
-
-      if (state.guildSettings) {
-        els.logChannel.value = state.guildSettings.log_channel_id || '';
-        els.verifyChannel.value = state.guildSettings.verify_channel_id || '';
-        els.welcomeChannel.value = state.guildSettings.welcome_channel_id || '';
-      }
-
-      setVisible(true);
-    }
-
-    function populateSettingsSelects(channels) {
-      const options = ['<option value="">Not set</option>']
-        .concat(channels.map(ch => '<option value="' + escapeHtml(ch.channel_id) + '">' + escapeHtml(ch.channel_name) + ' (' + escapeHtml(channelTypeName(ch.channel_type)) + ')</option>'))
-        .join('');
-      els.logChannel.innerHTML = options;
-      els.verifyChannel.innerHTML = options;
-      els.welcomeChannel.innerHTML = options;
-    }
-
-    function renderRolesTable(roles) {
-      els.rolesBody.innerHTML = roles.map(role => {
-        const perms = Array.isArray(role.permissions) ? role.permissions.join(', ') : String(role.permissions_bitfield || '');
-        return `
-          <tr>
-            <td>${escapeHtml(role.role_name)}</td>
-            <td>${escapeHtml(role.role_id)}</td>
-            <td>${escapeHtml(role.position)}</td>
-            <td>${escapeHtml(role.color)}</td>
-            <td>${escapeHtml(roleFlags(role))}</td>
-            <td>${escapeHtml(perms || 'none')}</td>
-          </tr>
-        `;
-      }).join('');
-    }
-
-    function renderChannelsTable(channels) {
-      els.channelsBody.innerHTML = channels.map(channel => `
-        <tr>
-          <td>${escapeHtml(channel.channel_name)}</td>
-          <td>${escapeHtml(channel.channel_id)}</td>
-          <td>${escapeHtml(channelTypeName(channel.channel_type))}</td>
-          <td>${escapeHtml(channel.parent_id || '-')}</td>
-        </tr>
-      `).join('');
-    }
-
-    function renderMembersTable(members) {
-      els.membersBody.innerHTML = members.map(member => `
-        <tr>
-          <td>${escapeHtml(member.display_name || member.username || '-')}</td>
-          <td>${escapeHtml(member.user_id)}</td>
-          <td>${escapeHtml(member.username || '-')}</td>
-          <td>${escapeHtml(member.global_name || '-')}</td>
-          <td>${escapeHtml(member.joined_at || '-')}</td>
-          <td>${escapeHtml(member.last_seen_at || '-')}</td>
-        </tr>
-      `).join('');
-    }
-
-    async function saveSettings() {
-      if (!state.isAdmin && !state.isBot) {
-        throw new Error('You do not have permission to edit settings.');
-      }
-
-      const payload = {
-        guild_id: state.guildId,
-        log_channel_id: els.logChannel.value || null,
-        verify_channel_id: els.verifyChannel.value || null,
-        welcome_channel_id: els.welcomeChannel.value || null,
-        updated_at: new Date().toISOString(),
-      };
-
-      const { data, error } = await state.client
-        .from('guild_settings')
-        .upsert(payload, { onConflict: 'guild_id' })
-        .select('*')
-        .single();
-
-      if (error) throw error;
-      state.guildSettings = data;
-      renderEverything();
-      setStatus('Settings saved.', 'good');
-    }
-
-    async function refreshAll() {
-      setStatus('Refreshing data...');
-      await loadGuilds();
-      await loadGuildData();
-      setStatus('Dashboard refreshed.', 'good');
+    function setStatus(msg, tone = '') {
+      statusEl.textContent = msg;
+      statusEl.className = 'status ' + tone;
     }
 
     async function signIn() {
-      const client = await ensureClient();
-      const email = els.email.value.trim();
-      const password = els.password.value;
-      if (!email || !password) throw new Error('Enter your email and password.');
+      const email    = emailEl.value.trim();
+      const password = passEl.value;
+      if (!email || !password) { setStatus('Enter your email and password.', 'error'); return; }
 
-      const { data, error } = await client.auth.signInWithPassword({ email, password });
-      if (error) throw error;
+      btn.disabled = true;
+      statusEl.innerHTML = '<span class="loading-dot">—</span>';
+      statusEl.className = 'status';
 
-      state.user = data.user;
-      els.userBox.innerHTML =
-        '<div><strong>' + escapeHtml(state.user.email || '-') + '</strong></div>' +
-        '<div class="tiny">User ID: ' + escapeHtml(state.user.id) + '</div>';
+      try {
+        const { data, error } = await client.auth.signInWithPassword({ email, password });
+        if (error) throw error;
 
-      setStatus('Signed in. Checking access...');
-      await loadAccess();
-      await loadGuilds();
-      await loadGuildData();
-      setStatus('Signed in and loaded.', 'good');
-    }
+        const { data: access, error: accessErr } = await client
+          .from('allowed_users')
+          .select('can_access')
+          .eq('supabase_user_id', data.user.id)
+          .maybeSingle();
 
-    async function signOut() {
-      if (state.client) {
-        await state.client.auth.signOut();
-      }
-      state.user = null;
-      state.access = null;
-      state.guilds = [];
-      state.guildId = '';
-      state.guildSettings = null;
-      state.channels = [];
-      state.roles = [];
-      state.members = [];
-      state.allMembers = [];
-      els.userBox.textContent = 'No user signed in.';
-      els.accessBox.textContent = 'Waiting for sign in...';
-      setVisible(false);
-      setStatus('Signed out.', 'warn');
-    }
-
-    function restoreInputs() {
-      setStatus('Ready to sign in.');
-    }
-
-    function bindEvents() {
-      els.signInBtn.addEventListener('click', () => signIn().catch(err => {
-        setStatus(err.message, 'error');
-        els.accessBox.innerHTML = '<span class="error">Login failed.</span> ' + escapeHtml(err.message);
-      }));
-
-      els.signOutBtn.addEventListener('click', () => signOut().catch(err => {
-        setStatus(err.message, 'error');
-      }));
-
-      els.guildSelect.addEventListener('change', async () => {
-        state.guildId = els.guildSelect.value;
-        await loadGuildData().catch(err => setStatus(err.message, 'error'));
-      });
-
-      els.search.addEventListener('input', async () => {
-        state.search = els.search.value;
-        renderEverything();
-      });
-
-      els.refreshBtn.addEventListener('click', () => refreshAll().catch(err => setStatus(err.message, 'error')));
-      els.saveSettingsBtn.addEventListener('click', () => saveSettings().catch(err => setStatus(err.message, 'error')));
-      els.saveAgainBtn.addEventListener('click', () => saveSettings().catch(err => setStatus(err.message, 'error')));
-    }
-
-    async function bootstrapSession() {
-      state.client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-      const { data } = await state.client.auth.getSession();
-      if (data.session) {
-        state.user = data.session.user;
-        els.userBox.innerHTML =
-          '<div><strong>' + escapeHtml(state.user.email || '-') + '</strong></div>' +
-          '<div class="tiny">User ID: ' + escapeHtml(state.user.id) + '</div>';
-        try {
-          await loadAccess();
-          await loadGuilds();
-          await loadGuildData();
-          setStatus('Restored session and loaded data.', 'good');
-        } catch (err) {
-          if (String(err.message || '').toLowerCase().includes('access denied')) return;
-          setStatus(err.message, 'error');
+        if (accessErr) throw accessErr;
+        if (!access || !access.can_access) {
+          await client.auth.signOut();
+          throw new Error('Access denied.');
         }
-      }
 
-      state.client.auth.onAuthStateChange(async (_event, session) => {
-        if (!session) return;
-        state.user = session.user;
-        try {
-          await loadAccess();
-          await loadGuilds();
-          await loadGuildData();
-          setStatus('Auth state changed and data loaded.', 'good');
-        } catch (err) {
-          setStatus(err.message, 'error');
-        }
-      });
+        setStatus('Authenticated.', 'good');
+        setTimeout(() => { window.location.href = '/dashboard'; }, 700);
+
+      } catch (err) {
+        setStatus(err.message, 'error');
+        btn.disabled = false;
+      }
     }
 
-    bindEvents();
-    restoreInputs();
-    bootstrapSession().catch(err => setStatus(err.message, 'error'));
+    btn.addEventListener('click', signIn);
+    [emailEl, passEl].forEach(el =>
+      el.addEventListener('keydown', e => { if (e.key === 'Enter') signIn(); })
+    );
   </script>
 </body>
 </html>
