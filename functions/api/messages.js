@@ -84,8 +84,9 @@ async function discordRequest(env, path, init = {}) {
   }
 
   if (!res.ok) {
-    const message = data && typeof data === 'object' && data.message ? data.message : `Discord API error (${res.status})`;
-    throw new Error(message);
+    const message = data && typeof data === 'object' && data.message ? data.message : (typeof data === 'string' ? data : `Discord API error (${res.status})`);
+    const code = data && typeof data === 'object' && data.code ? ` (code ${data.code})` : '';
+    throw new Error(`Discord ${res.status}${code}: ${message}`);
   }
 
   return data;
