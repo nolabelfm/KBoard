@@ -207,6 +207,7 @@
     }
 
     .loading-dot { animation: pulse-dot 1s ease-in-out infinite; display: inline-block; }
+    .hidden { display: none !important; }
   </style>
 </head>
 <body>
@@ -215,7 +216,7 @@
       <span class="logo-text">Konqi-bot</span>
     </div>
 
-    <h1>Sign in</h1>
+    <h1 id="heading">Sign in</h1>
     <div class="divider"></div>
 
     <div class="field">
@@ -228,27 +229,62 @@
       <input id="password" type="password" autocomplete="current-password" placeholder="••••••••" />
     </div>
 
-    <button class="btn" id="signInBtn">Continue</button>
+    <div class="field hidden" id="confirmField">
+      <label for="confirm">Confirm password</label>
+      <input id="confirm" type="password" autocomplete="new-password" placeholder="••••••••" />
+    </div>
+
+    <button class="btn" id="submitBtn">Continue</button>
 
     <div class="status" id="status"></div>
+
+    <div style="margin-top:22px;text-align:center;">
+      <span id="toggleText" style="font-family:var(--mono);font-size:11px;color:var(--muted);">Don't have an account?</span>
+      <button id="toggleBtn" style="background:none;border:none;padding:0;margin-left:6px;font-family:var(--mono);font-size:11px;color:var(--gold);cursor:pointer;text-decoration:underline;text-underline-offset:3px;width:auto;margin-top:0;">Register</button>
+    </div>
   </div>
 
   <script>
     const SUPABASE_URL      = 'https://fzaeyhihqlznfenkyrhv.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ6YWV5aGlocWx6bmZlbmt5cmh2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIyODk2MDYsImV4cCI6MjA3Nzg2NTYwNn0.dNA9OSZXqaTXLLcE3TakJhzfHZ9xfy51empFBWGbR7k';
 
-    const client   = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    const emailEl  = document.getElementById('email');
-    const passEl   = document.getElementById('password');
-    const btn      = document.getElementById('signInBtn');
-    const statusEl = document.getElementById('status');
+    const client       = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const emailEl      = document.getElementById('email');
+    const passEl       = document.getElementById('password');
+    const confirmEl    = document.getElementById('confirm');
+    const confirmField = document.getElementById('confirmField');
+    const btn          = document.getElementById('submitBtn');
+    const statusEl     = document.getElementById('status');
+    const heading      = document.getElementById('heading');
+    const toggleBtn    = document.getElementById('toggleBtn');
+    const toggleText   = document.getElementById('toggleText');
+
+    let mode = 'login';
 
     function setStatus(msg, tone = '') {
       statusEl.textContent = msg;
       statusEl.className = 'status ' + tone;
     }
 
-    async function signIn() {
+    toggleBtn.addEventListener('click', () => {
+      mode = mode === 'login' ? 'register' : 'login';
+      if (mode === 'register') {
+        heading.textContent = 'Register';
+        btn.textContent = 'Create account';
+        confirmField.classList.remove('hidden');
+        toggleText.textContent = 'Already have an account?';
+        toggleBtn.textContent = 'Sign in';
+      } else {
+        heading.textContent = 'Sign in';
+        btn.textContent = 'Continue';
+        confirmField.classList.add('hidden');
+        toggleText.textContent = "Don't have an account?";
+        toggleBtn.textContent = 'Register';
+      }
+      setStatus('');
+    });
+
+    async function submit() {
       const email    = emailEl.value.trim();
       const password = passEl.value;
       if (!email || !password) { setStatus('Enter your email and password.', 'error'); return; }
@@ -258,6 +294,18 @@
       statusEl.className = 'status';
 
       try {
+        if (mode === 'register') {
+          if (password !== confirmEl.value) throw new Error('Passwords do not match.');
+          if (password.length < 6) throw new Error('Password must be at least 6 characters.');
+
+          const { error } = await client.auth.signUp({ email, password });
+          if (error) throw error;
+
+          setStatus('Account created. Wait for access approval before signing in.', 'good');
+          btn.disabled = false;
+          return;
+        }
+
         const { data, error } = await client.auth.signInWithPassword({ email, password });
         if (error) throw error;
 
@@ -282,9 +330,9 @@
       }
     }
 
-    btn.addEventListener('click', signIn);
-    [emailEl, passEl].forEach(el =>
-      el.addEventListener('keydown', e => { if (e.key === 'Enter') signIn(); })
+    btn.addEventListener('click', submit);
+    [emailEl, passEl, confirmEl].forEach(el =>
+      el.addEventListener('keydown', e => { if (e.key === 'Enter') submit(); })
     );
   </script>
 </body>
