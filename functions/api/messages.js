@@ -107,59 +107,76 @@ function formatMessage(m) {
 }
 
 async function handleRequest(request, env) {
-  if (request.method === 'OPTIONS') {
-    return new Response(null, { status: 204, headers: { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'Content-Type, Authorization', 'Access-Control-Allow-Methods': 'GET,POST,PATCH,DELETE,OPTIONS' } });
-  }
-
-  if (!env.SUPABASE_URL || !env.SUPABASE_ANON_KEY || !env.DISCORD_BOT_TOKEN) {
-    return json(500, { error: 'Missing environment variables' });
-  }
-
-  const accessToken = getBearerToken(request);
-  if (!accessToken) {
-    return json(401, { error: 'Missing Bearer token' });
-  }
-
-  let user;
-  let accessRow;
   try {
-    user = await supabaseAuthUser(env, accessToken);
-    accessRow = await supabaseAllowedUser(env, accessToken, user.id);
-  } catch (err) {
-    return json(401, { error: err.message || 'Unauthorized' });
-  }
-
-  if (!accessRow || !accessRow.can_access) {
-    return json(403, { error: 'Access denied' });
-  }
-
-  const url = new URL(request.url);
-
-  if (request.method === 'GET') {
-    const channelId = url.searchParams.get('channelId');
-    if (!channelId) return json(400, { error: 'channelId required' });
-
-    try {
-      const msgs = await discordRequest(env, `/channels/${channelId}/messages?limit=10`);
-      return json(200, Array.isArray(msgs) ? msgs.map(formatMessage) : []);
-    } catch (err) {
-      return json(500, { error: err.message });
+    if (request.method === 'OPTIONS') {
+      return new Response(null, { status: 204, headers: { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'Content-Type, Authorization', 'Access-Control-Allow-Methods': 'GET,POST,PATCH,DELETE,OPTIONS' } });
     }
-  }
 
-  if (!accessRow.is_admin && !accessRow.is_bot) {
-    return json(403, { error: 'Admin or bot access required' });
-  }
+    if (!env.SUPABASE_URL || !env.SUPABASE_ANON_KEY || !env.DISCORD_BOT_TOKEN) {
+      return json(500, {
+        error: 'Missing environment variables',
+        details: {
+          SUPABASE_URL: Boolean(env.SUPABASE_URL),
+          SUPABASE_ANON_KEY: Boolean(env.SUPABASE_ANON_KEY),
+          DISCORD_BOT_TOKEN: Boolean(env.DISCORD_BOT_TOKEN),
+        },
+      });
+    }
 
-  try {
+    const accessToken = getBearerToken(request);
+    if (!accessToken) {
+      return json(401, { error: 'Missing Bearer token' });
+    }
+
+    let user;
+    let accessRow;
+    try {
+      user = await supabaseAuthUser(env, accessToken);
+      accessRow = await supabaseAllowedUser(env, accessToken, user.id);
+    } catch (err) {
+      return json(401, { error: err.message || 'Unauthorized' });
+    }
+
+    if (!accessRow || !accessRow.can_access) {
+      return json(403, { error: 'Access denied' });
+    }
+
+    const url = new URL(request.url);
+
+    if (request.method === 'GET') {
+      const channelId = url.searchParams.get('channelId');
+      const messageId = url.searchParams.get('messageId');
+      if (!channelId) return json(400, { error: 'channelId required' });
+
+      try {
+        if (messageId) {
+          const msg = await discordRequest(env, `/channels/${channelId}/messages/${messageId}`);
+          return json(200, formatMessage(msg));
+        }
+        const msgs = await discordRequest(env, `/channels/${channelId}/messages?limit=10`);
+        return json(200, Array.isArray(msgs) ? msgs.map(formatMessage) : []);
+      } catch (err) {
+        return json(500, { error: err.message, where: 'GET /api/messages' });
+      }
+    }
+
+    if (!accessRow.is_admin && !accessRow.is_bot) {
+      return json(403, { error: 'Admin or bot access required' });
+    }
+
     if (request.method === 'POST') {
-      const { channelId, content } = await readJson(request);
+      const { channelId, content, reactionEmoji } = await readJson(request);
       if (!channelId || !content) return json(400, { error: 'channelId and content required' });
       const msg = await discordRequest(env, `/channels/${channelId}/messages`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ content }),
       });
+      if (reactionEmoji) {
+        await discordRequest(env, `/channels/${channelId}/messages/${msg.id}/reactions/${encodeURIComponent(reactionEmoji)}/@me`, {
+          method: 'PUT',
+        });
+      }
       return json(200, formatMessage(msg));
     }
 
@@ -182,11 +199,10 @@ async function handleRequest(request, env) {
       });
       return json(200, { ok: true });
     }
+    return json(405, { error: 'Method Not Allowed' });
   } catch (err) {
-    return json(500, { error: err.message });
+    return json(500, { error: err.message, stack: String(err?.stack || '') });
   }
-
-  return json(405, { error: 'Method Not Allowed' });
 }
 
 export async function onRequest(context) {
