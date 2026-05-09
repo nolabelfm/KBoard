@@ -408,7 +408,7 @@
       text-transform: uppercase; margin-bottom: 6px;
     }
 
-    .ctrl input, .ctrl select {
+    .ctrl input, .ctrl select, .ctrl textarea {
       width: 100%; padding: 8px 10px;
       background: var(--bg3);
       border: 1px solid var(--border2);
@@ -419,7 +419,9 @@
       transition: border-color 0.15s;
     }
 
-    .ctrl input:focus, .ctrl select:focus { border-color: rgba(232,160,32,0.4); }
+    .ctrl textarea { min-height: 96px; resize: vertical; line-height: 1.6; }
+
+    .ctrl input:focus, .ctrl select:focus, .ctrl textarea:focus { border-color: rgba(232,160,32,0.4); }
 
     .ctrl select option { background: var(--bg3); }
 
@@ -579,7 +581,7 @@
 
   <nav class="topnav">
     <div class="nav-brand">Konqi</div>
-    <div class="nav-crumb">Current &amp; Servers / <span id="navGuildName">—</span></div>
+    <div class="nav-crumb">Workers &amp; Pages / <span id="navGuildName">—</span></div>
     <div class="nav-spacer"></div>
     <div class="nav-user">
       <span id="navUserEmail" class="fg-gold"></span>
@@ -697,6 +699,33 @@
               <div class="ctrl" style="display:flex;align-items:flex-end;">
                 <button class="btn-primary" id="saveAgainBtn">Save settings</button>
               </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-head">
+            <h2>Verification message</h2>
+            <span class="badge" id="verifyMessageState">—</span>
+          </div>
+          <div class="section-body">
+            <div class="ctrl-row cols-2" style="margin-bottom:12px;">
+              <div class="ctrl">
+                <label>Message ID</label>
+                <input id="verifyMessageId" readonly placeholder="Not posted yet" />
+              </div>
+              <div class="ctrl">
+                <label>Posted in channel</label>
+                <input id="verifyMessageChannel" readonly placeholder="Select verify channel" />
+              </div>
+            </div>
+            <div class="ctrl" style="margin-bottom:12px;">
+              <label>Verification text</label>
+              <textarea id="verifyMessageContent" placeholder="React with ✅ to verify yourself and unlock access."></textarea>
+            </div>
+            <div style="display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;">
+              <button class="btn-ghost" id="loadVerifyMsgBtn">Load current</button>
+              <button class="btn-primary" id="publishVerifyMsgBtn">Publish / update message</button>
             </div>
           </div>
         </div>
@@ -868,6 +897,12 @@
     logChannel:         document.getElementById('logChannel'),
     verifyChannel:      document.getElementById('verifyChannel'),
     welcomeChannel:     document.getElementById('welcomeChannel'),
+    verifyMessageId:    document.getElementById('verifyMessageId'),
+    verifyMessageChannel:document.getElementById('verifyMessageChannel'),
+    verifyMessageContent:document.getElementById('verifyMessageContent'),
+    verifyMessageState:  document.getElementById('verifyMessageState'),
+    loadVerifyMsgBtn:    document.getElementById('loadVerifyMsgBtn'),
+    publishVerifyMsgBtn: document.getElementById('publishVerifyMsgBtn'),
     settingsAccessLabel:document.getElementById('settingsAccessLabel'),
     guildIdBox:         document.getElementById('guildIdBox'),
     guildMemberCount:   document.getElementById('guildMemberCount'),
@@ -930,7 +965,13 @@
     if (body) opts.body = JSON.stringify(body);
     return fetch(path, opts).then(async res => {
       let data = {};
-      try { data = await res.json(); } catch {}
+      let raw = '';
+      try {
+        raw = await res.text();
+        data = raw ? JSON.parse(raw) : {};
+      } catch {
+        data = raw || {};
+      }
       if (!res.ok) throw new Error(data.error || 'API error');
       return data;
     });
@@ -1056,6 +1097,10 @@
 
   function textChannels() {
     return state.channels.filter(c => c.channel_type === 0 || c.channel_type === 5);
+  }
+
+  function defaultVerifyMessage() {
+    return 'React with ✅ to verify yourself and unlock access.';
   }
 
   // ── Data loading ─────────────────────────────────────────────────
@@ -1271,6 +1316,17 @@
       els.welcomeChannel.value = state.guildSettings.welcome_channel_id || '';
     }
 
+    const verifyContent = (state.guildSettings?.verify_message_content || defaultVerifyMessage()).trim();
+    const verifyMessageId = state.guildSettings?.verify_message_id || '';
+    const verifyChannelId = state.guildSettings?.verify_channel_id || '';
+    els.verifyMessageId.value = verifyMessageId || '— not posted yet —';
+    els.verifyMessageChannel.value = verifyChannelId ? ('# ' + (channels.find(ch => ch.channel_id === verifyChannelId)?.channel_name || verifyChannelId)) : 'Select verify channel';
+    els.verifyMessageState.textContent = verifyMessageId ? 'Posted' : 'Not posted';
+    els.publishVerifyMsgBtn.textContent = verifyMessageId ? 'Update message' : 'Publish message';
+    if (document.activeElement !== els.verifyMessageContent || !els.verifyMessageContent.value) {
+      els.verifyMessageContent.value = verifyContent;
+    }
+
     // roles table
     els.rolesBody.innerHTML = roles.map(r => {
       const perms = Array.isArray(r.permissions) ? r.permissions.join(', ') : String(r.permissions_bitfield || '—');
@@ -1309,10 +1365,13 @@
 
   async function saveSettings() {
     if (!state.isAdmin && !state.isBot) throw new Error('No permission to edit settings.');
+    const verifyChannelChanged = (state.guildSettings?.verify_channel_id || '') !== (els.verifyChannel.value || '');
     const payload = {
       guild_id:          state.guildId,
       log_channel_id:    els.logChannel.value    || null,
       verify_channel_id: els.verifyChannel.value || null,
+      verify_message_id: verifyChannelChanged ? null : (state.guildSettings?.verify_message_id || null),
+      verify_message_content: (els.verifyMessageContent.value || state.guildSettings?.verify_message_content || defaultVerifyMessage()).trim(),
       welcome_channel_id:els.welcomeChannel.value|| null,
       updated_at:        new Date().toISOString(),
     };
@@ -1322,6 +1381,61 @@
     state.guildSettings = data;
     renderEverything();
     setStatus('Settings saved.', 'ok');
+  }
+
+  async function loadVerifyMessage() {
+    const channelId = els.verifyChannel.value;
+    if (!channelId) return setStatus('Select the verify channel first.', 'warn');
+
+    const messageId = state.guildSettings?.verify_message_id || '';
+    if (messageId) {
+      try {
+        const msg = await apiCall('GET', '/api/messages?channelId=' + encodeURIComponent(channelId) + '&messageId=' + encodeURIComponent(messageId));
+        els.verifyMessageContent.value = msg.content || defaultVerifyMessage();
+        els.verifyMessageState.textContent = 'Loaded';
+        setStatus('Verification message loaded.', 'ok');
+        return;
+      } catch (err) {
+        setStatus(err.message, 'bad');
+        return;
+      }
+    }
+
+    els.verifyMessageContent.value = defaultVerifyMessage();
+    els.verifyMessageState.textContent = 'Not posted';
+    setStatus('No verification message saved yet.', 'warn');
+  }
+
+  async function publishVerifyMessage() {
+    if (!state.isAdmin && !state.isBot) throw new Error('No permission to edit settings.');
+    const channelId = els.verifyChannel.value;
+    if (!channelId) throw new Error('Select the verify channel first.');
+
+    const content = (els.verifyMessageContent.value || defaultVerifyMessage()).trim();
+    const existingId = state.guildSettings?.verify_message_id || '';
+
+    const result = existingId
+      ? await apiCall('PATCH', '/api/messages', { channelId, messageId: existingId, content })
+      : await apiCall('POST', '/api/messages', { channelId, content, reactionEmoji: '✅' });
+
+    const payload = {
+      guild_id: state.guildId,
+      verify_channel_id: channelId,
+      verify_message_id: result.id || result.message_id || existingId || null,
+      verify_message_content: content,
+      updated_at: new Date().toISOString(),
+    };
+
+    const { data, error } = await state.client
+      .from('guild_settings')
+      .upsert(payload, { onConflict: 'guild_id' })
+      .select('*')
+      .single();
+
+    if (error) throw error;
+    state.guildSettings = data;
+    renderEverything();
+    setStatus(existingId ? 'Verification message updated.' : 'Verification message published.', 'ok');
   }
 
   async function signOut() {
@@ -1338,6 +1452,8 @@
   els.signOutBtn.addEventListener('click',     () => signOut().catch(err => setStatus(err.message, 'bad')));
   els.saveSettingsBtn.addEventListener('click',() => saveSettings().catch(err => setStatus(err.message, 'bad')));
   els.saveAgainBtn.addEventListener('click',   () => saveSettings().catch(err => setStatus(err.message, 'bad')));
+  els.loadVerifyMsgBtn.addEventListener('click', () => loadVerifyMessage().catch(err => setStatus(err.message, 'bad')));
+  els.publishVerifyMsgBtn.addEventListener('click', () => publishVerifyMessage().catch(err => setStatus(err.message, 'bad')));
   els.loadMsgsBtn.addEventListener('click',    () => loadMessages());
   els.refreshMsgsBtn.addEventListener('click', () => loadMessages());
   els.sendMsgBtn.addEventListener('click',     () => sendMessage());
