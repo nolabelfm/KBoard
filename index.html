@@ -915,8 +915,18 @@
     els.statusStrip.className = 'status-strip' + (tone ? ' ' + tone : '');
   }
 
-  function apiCall(method, path, body) {
-    const opts = { method, headers: { 'Content-Type': 'application/json' } };
+  async function apiCall(method, path, body) {
+    const { data } = await state.client.auth.getSession();
+    const token = data?.session?.access_token;
+    if (!token) throw new Error('Not signed in.');
+
+    const opts = {
+      method,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token,
+      },
+    };
     if (body) opts.body = JSON.stringify(body);
     return fetch(path, opts).then(async res => {
       let data = {};
