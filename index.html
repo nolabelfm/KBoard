@@ -7,48 +7,41 @@
   <title>Konqi Dashboard</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --gold:   #e8a020;
-      --amber:  #f5c842;
-      --ember:  #c96a10;
-      --bg: #07111f;
-      --bg2: #091a31;
-      --panel: rgba(12, 21, 38, 0.88);
-      --panel-border: rgba(146, 179, 255, 0.15);
-      --text: #eef4ff;
-      --muted: #9db2d7;
-      --accent: #6de3ba;
-      --accent2: #7aa8ff;
-      --danger: #ff7474;
-      --warn: #ffd36a;
-      --shadow: 0 24px 80px rgba(0, 0, 0, 0.4);
-      --radius: 18px;
-      --radius-sm: 12px;
-      --gap: 16px;
-      --max: 1500px;
-      --font: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      --sans: 'Syne', sans-serif;
-      --mono: 'DM Mono', monospace;
+      --gold:    #e8a020;
+      --amber:   #f5c842;
+      --ember:   #c96a10;
+      --bg:      #0a0a0a;
+      --bg2:     #111111;
+      --bg3:     #161616;
+      --border:  #222222;
+      --border2: #2a2a2a;
+      --text:    #e8e8e8;
+      --muted:   #888888;
+      --muted2:  #555555;
+      --sans:    'Syne', sans-serif;
+      --mono:    'DM Mono', monospace;
+      --good:    #4ade80;
+      --bad:     #f87171;
+      --warn:    #fbbf24;
     }
 
-    * { box-sizing: border-box; }
-
     html, body {
-      margin: 0;
-      min-height: 100%;
+      height: 100%;
+      background: var(--bg);
       color: var(--text);
-      font-family: var(--font);
+      font-family: var(--sans);
+      font-size: 13px;
       -webkit-font-smoothing: antialiased;
     }
 
-    body { min-height: 100vh; }
-    a { color: inherit; }
-
-    /* ── LOGIN PAGE ───────────────────────────────────────────────── */
+    /* ═══════════════════════════════════════════════════════
+       LOGIN
+    ═══════════════════════════════════════════════════════ */
 
     #loginPage {
       display: flex;
@@ -62,54 +55,44 @@
 
     #loginPage::before {
       content: '';
-      position: fixed;
-      inset: 0;
+      position: fixed; inset: 0;
       background:
-        radial-gradient(ellipse 55% 40% at 15% 5%,  rgba(200, 100, 10, 0.22) 0%, transparent 65%),
-        radial-gradient(ellipse 40% 50% at 88% 92%, rgba(232, 160, 32, 0.16) 0%, transparent 60%),
-        radial-gradient(ellipse 30% 30% at 50% 50%, rgba(245, 200, 66, 0.04) 0%, transparent 70%);
-      pointer-events: none;
-      z-index: 0;
+        radial-gradient(ellipse 55% 40% at 15% 5%,  rgba(200,100,10,0.22) 0%, transparent 65%),
+        radial-gradient(ellipse 40% 50% at 88% 92%, rgba(232,160,32,0.16) 0%, transparent 60%);
+      pointer-events: none; z-index: 0;
     }
 
     #loginPage::after {
       content: '';
-      position: fixed;
-      inset: 0;
+      position: fixed; inset: 0;
       background-image:
         linear-gradient(rgba(232,160,32,0.03) 1px, transparent 1px),
         linear-gradient(90deg, rgba(232,160,32,0.03) 1px, transparent 1px);
       background-size: 48px 48px;
-      pointer-events: none;
-      z-index: 0;
+      pointer-events: none; z-index: 0;
     }
 
-    .login-card {
-      position: relative;
-      z-index: 1;
-      width: 100%;
-      max-width: 400px;
+    .lc {
+      position: relative; z-index: 1;
+      width: 100%; max-width: 400px;
       padding: 48px 44px 44px;
-      background: rgba(12, 12, 12, 0.92);
-      border: 1px solid rgba(232, 160, 32, 0.14);
-      border-radius: 4px;
+      background: rgba(12,12,12,0.92);
+      border: 1px solid rgba(232,160,32,0.14);
+      border-radius: 2px;
       backdrop-filter: blur(24px);
     }
 
-    .login-card::before {
+    .lc::before {
       content: '';
       position: absolute;
-      top: 0; left: 12%; right: 12%;
-      height: 1px;
+      top: 0; left: 12%; right: 12%; height: 1px;
       background: linear-gradient(90deg, transparent, var(--gold), transparent);
       opacity: 0.6;
     }
 
-    .login-eyebrow {
-      margin-bottom: 36px;
-    }
+    .lc-eyebrow { margin-bottom: 36px; }
 
-    .login-logo {
+    .lc-brand {
       font-family: var(--mono);
       font-size: 11px;
       letter-spacing: 0.22em;
@@ -117,974 +100,1107 @@
       text-transform: uppercase;
     }
 
-    .login-card h1 {
+    .lc h1 {
       font-family: var(--sans);
-      font-size: 32px;
-      font-weight: 700;
-      letter-spacing: -0.04em;
-      line-height: 1;
+      font-size: 30px; font-weight: 700;
+      letter-spacing: -0.04em; line-height: 1;
       margin-bottom: 10px;
       background: linear-gradient(135deg, #f0ece4 30%, #c07010);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
     }
 
-    .login-divider {
-      width: 32px;
-      height: 2px;
+    .lc-bar {
+      width: 28px; height: 2px;
       background: linear-gradient(90deg, var(--gold), var(--amber));
       margin-bottom: 32px;
-      border-radius: 1px;
     }
 
-    .login-field {
-      margin-bottom: 20px;
-    }
+    .lc-field { margin-bottom: 18px; }
 
-    .login-field label {
+    .lc-field label {
       display: block;
-      font-family: var(--mono);
-      font-size: 10px;
-      letter-spacing: 0.18em;
-      color: #5a5a5a;
-      text-transform: uppercase;
-      margin-bottom: 8px;
+      font-family: var(--mono); font-size: 10px;
+      letter-spacing: 0.16em; color: #5a5a5a;
+      text-transform: uppercase; margin-bottom: 7px;
     }
 
-    .login-field input {
-      width: 100%;
-      padding: 13px 16px;
+    .lc-field input {
+      width: 100%; padding: 11px 14px;
       background: rgba(255,255,255,0.03);
       border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 3px;
+      border-radius: 2px;
       color: #f0ece4;
-      font-family: var(--sans);
-      font-size: 14px;
+      font-family: var(--sans); font-size: 13px;
       outline: none;
-      transition: border-color 0.2s, background 0.2s;
+      transition: border-color 0.15s;
     }
 
-    .login-field input:focus {
-      border-color: rgba(232, 160, 32, 0.5);
-      background: rgba(232, 160, 32, 0.03);
-    }
+    .lc-field input:focus { border-color: rgba(232,160,32,0.45); }
+    .lc-field input::placeholder { color: rgba(255,255,255,0.15); }
 
-    .login-field input::placeholder { color: rgba(255,255,255,0.15); font-size: 13px; }
-
-    .login-btn {
-      width: 100%;
-      margin-top: 28px;
-      padding: 14px;
-      position: relative;
+    .lc-btn {
+      width: 100%; margin-top: 24px; padding: 12px;
       background: linear-gradient(135deg, #c96a10, #e8a020 60%, #f5c842);
-      border: none;
-      border-radius: 3px;
+      border: none; border-radius: 2px;
       color: #0a0600;
-      font-family: var(--sans);
-      font-size: 13px;
-      font-weight: 700;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
+      font-family: var(--sans); font-size: 12px; font-weight: 700;
+      letter-spacing: 0.14em; text-transform: uppercase;
       cursor: pointer;
-      overflow: hidden;
       transition: opacity 0.15s, transform 0.1s;
     }
 
-    .login-btn::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, rgba(255,255,255,0.12), transparent);
-      pointer-events: none;
-    }
+    .lc-btn:hover { opacity: 0.88; }
+    .lc-btn:active { transform: scale(0.995); }
+    .lc-btn:disabled { opacity: 0.35; cursor: not-allowed; }
 
-    .login-btn:hover { opacity: 0.88; }
-    .login-btn:active { transform: scale(0.992); }
-    .login-btn:disabled { opacity: 0.35; cursor: not-allowed; }
-
-    .login-status {
-      margin-top: 20px;
-      font-family: var(--mono);
-      font-size: 11px;
-      letter-spacing: 0.06em;
-      color: #5a5a5a;
-      min-height: 16px;
-      text-align: center;
-      line-height: 1.5;
-    }
-
-    .login-status.error { color: #c05030; }
-    .login-status.good  { color: #90a050; }
-
-    .login-toggle-row {
-      margin-top: 22px;
-      text-align: center;
-    }
-
-    .login-toggle-row span {
-      font-family: var(--mono);
-      font-size: 11px;
-      color: #5a5a5a;
-    }
-
-    .login-toggle-btn {
-      background: none;
-      border: none;
-      padding: 0;
-      margin-left: 6px;
-      font-family: var(--mono);
-      font-size: 11px;
-      color: var(--gold);
-      cursor: pointer;
-      text-decoration: underline;
-      text-underline-offset: 3px;
-      width: auto;
-      margin-top: 0;
-    }
-
-    @keyframes pulse-dot {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.2; }
-    }
-    .loading-dot { animation: pulse-dot 1s ease-in-out infinite; display: inline-block; }
-
-    /* ── DASHBOARD ────────────────────────────────────────────────── */
-
-    #dashPage {
-      background:
-        radial-gradient(circle at top left, rgba(109, 227, 186, 0.18), transparent 28%),
-        radial-gradient(circle at top right, rgba(122, 168, 255, 0.2), transparent 26%),
-        linear-gradient(180deg, var(--bg) 0%, var(--bg2) 100%);
-    }
-
-    .wrap {
-      max-width: var(--max);
-      margin: 0 auto;
-      padding: 20px;
-    }
-
-    .hero {
-      display: grid;
-      grid-template-columns: 1.2fr 0.8fr;
-      gap: var(--gap);
-      margin-bottom: var(--gap);
-    }
-
-    .panel {
-      background: var(--panel);
-      border: 1px solid var(--panel-border);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(14px);
-      overflow: hidden;
-    }
-
-    .hero-main, .hero-side, .card { padding: 18px; }
-
-    .title {
-      margin: 0;
-      font-size: clamp(28px, 5vw, 52px);
-      line-height: 1;
-      letter-spacing: -0.04em;
-    }
-
-    .subtitle {
-      margin: 12px 0 0;
-      color: var(--muted);
-      line-height: 1.6;
-      max-width: 70ch;
-    }
-
-    .badge-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
+    .lc-status {
       margin-top: 18px;
+      font-family: var(--mono); font-size: 11px;
+      letter-spacing: 0.05em; color: #5a5a5a;
+      min-height: 16px; text-align: center; line-height: 1.5;
     }
 
-    .badge {
-      padding: 8px 12px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.08);
-      color: var(--text);
-      font-size: 13px;
+    .lc-status.err  { color: #c05030; }
+    .lc-status.good { color: #7a9a40; }
+
+    .lc-switch {
+      margin-top: 20px; text-align: center;
     }
 
-    .hero-side {
-      display: grid;
-      gap: 12px;
-      align-content: start;
+    .lc-switch span {
+      font-family: var(--mono); font-size: 11px; color: #4a4a4a;
     }
 
-    .status-box {
-      padding: 14px;
-      border-radius: var(--radius-sm);
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.08);
+    .lc-switch button {
+      background: none; border: none; padding: 0; margin-left: 6px;
+      font-family: var(--mono); font-size: 11px;
+      color: var(--gold); cursor: pointer;
+      text-decoration: underline; text-underline-offset: 3px;
+      width: auto;
+    }
+
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.2} }
+    .blink { animation: blink 1s ease-in-out infinite; display: inline-block; }
+
+    /* ═══════════════════════════════════════════════════════
+       DASHBOARD SHELL
+    ═══════════════════════════════════════════════════════ */
+
+    #dashPage { min-height: 100vh; display: flex; flex-direction: column; }
+
+    /* top nav */
+    .topnav {
+      height: 48px;
+      background: var(--bg2);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center;
+      padding: 0 20px;
+      gap: 0;
+      position: sticky; top: 0; z-index: 100;
+      flex-shrink: 0;
+    }
+
+    .nav-brand {
+      font-family: var(--mono);
+      font-size: 12px; font-weight: 500;
+      letter-spacing: 0.12em;
+      color: var(--gold);
+      text-transform: uppercase;
+      padding-right: 20px;
+      border-right: 1px solid var(--border);
+      margin-right: 20px;
+      white-space: nowrap;
+    }
+
+    .nav-crumb {
+      font-family: var(--mono);
+      font-size: 12px; color: var(--muted);
+      display: flex; align-items: center; gap: 8px;
+    }
+
+    .nav-crumb span { color: var(--text); }
+
+    .nav-spacer { flex: 1; }
+
+    .nav-user {
+      font-family: var(--mono); font-size: 11px;
       color: var(--muted);
-      min-height: 58px;
-      white-space: pre-wrap;
+      display: flex; align-items: center; gap: 12px;
     }
 
-    .auth-grid { display: grid; gap: 10px; }
+    .nav-signout {
+      background: none; border: 1px solid var(--border2);
+      border-radius: 2px; color: var(--muted);
+      font-family: var(--mono); font-size: 11px;
+      padding: 5px 10px; cursor: pointer;
+      transition: border-color 0.15s, color 0.15s;
+      width: auto; margin: 0;
+    }
 
-    .grid {
+    .nav-signout:hover { border-color: var(--bad); color: var(--bad); }
+
+    /* layout */
+    .dash-body {
+      display: flex; flex: 1; overflow: hidden;
+    }
+
+    /* sidebar */
+    .sidenav {
+      width: 220px; flex-shrink: 0;
+      background: var(--bg2);
+      border-right: 1px solid var(--border);
+      padding: 16px 0;
+      overflow-y: auto;
+    }
+
+    .sn-section {
+      padding: 0 12px;
+      margin-bottom: 20px;
+    }
+
+    .sn-label {
+      font-family: var(--mono); font-size: 10px;
+      letter-spacing: 0.14em; color: var(--muted2);
+      text-transform: uppercase;
+      padding: 0 8px; margin-bottom: 4px;
+    }
+
+    .sn-item {
+      display: flex; align-items: center; gap: 8px;
+      padding: 6px 8px;
+      border-radius: 2px;
+      color: var(--muted);
+      font-size: 12px; cursor: pointer;
+      transition: background 0.1s, color 0.1s;
+      border: none; background: none;
+      width: 100%; text-align: left;
+      font-family: var(--sans);
+    }
+
+    .sn-item:hover { background: var(--bg3); color: var(--text); }
+    .sn-item.active { background: rgba(232,160,32,0.08); color: var(--gold); border-left: 2px solid var(--gold); padding-left: 6px; }
+
+    .sn-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--muted2); flex-shrink: 0;
+    }
+
+    .sn-item.active .sn-dot { background: var(--gold); }
+
+    /* main content */
+    .main {
+      flex: 1; overflow-y: auto;
+      padding: 24px 28px;
+      background: var(--bg);
+    }
+
+    /* page header */
+    .page-head {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 20px; padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .page-head h1 {
+      font-size: 18px; font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+
+    .page-head .sub {
+      font-size: 12px; color: var(--muted);
+      margin-top: 2px; font-family: var(--mono);
+    }
+
+    /* status strip */
+    .status-strip {
+      padding: 8px 12px;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      font-family: var(--mono); font-size: 11px;
+      color: var(--muted); margin-bottom: 20px;
+      display: flex; align-items: center; gap: 8px;
+    }
+
+    .status-strip .dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--muted2); flex-shrink: 0;
+    }
+
+    .status-strip.ok .dot { background: var(--good); }
+    .status-strip.bad .dot { background: var(--bad); }
+    .status-strip.warn .dot { background: var(--warn); }
+
+    /* stat cards row */
+    .stat-row {
       display: grid;
-      grid-template-columns: 320px minmax(0, 1fr);
-      gap: var(--gap);
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      margin-bottom: 20px;
     }
 
-    .sidebar { position: sticky; top: 16px; align-self: start; }
+    .stat-card {
+      background: var(--bg2);
+      padding: 16px 18px;
+    }
 
-    .content { display: grid; gap: var(--gap); }
+    .stat-card .label {
+      font-family: var(--mono); font-size: 10px;
+      letter-spacing: 0.12em; color: var(--muted);
+      text-transform: uppercase; margin-bottom: 6px;
+    }
 
-    .section { display: grid; gap: 12px; }
+    .stat-card .value {
+      font-family: var(--mono); font-size: 20px;
+      font-weight: 500; color: var(--text);
+      letter-spacing: -0.02em;
+    }
+
+    .stat-card .sub {
+      font-family: var(--mono); font-size: 10px;
+      color: var(--muted2); margin-top: 4px;
+    }
+
+    /* section block */
+    .section {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      margin-bottom: 16px;
+    }
 
     .section-head {
-      display: flex;
-      align-items: end;
-      justify-content: space-between;
-      gap: 12px;
-      flex-wrap: wrap;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
     }
 
-    h2 { margin: 0; font-size: 20px; letter-spacing: -0.02em; }
-
-    .muted { color: var(--muted); line-height: 1.5; }
-
-    label {
-      display: block;
-      font-size: 12px;
+    .section-head h2 {
+      font-size: 12px; font-weight: 600;
+      letter-spacing: 0.04em; text-transform: uppercase;
       color: var(--muted);
-      margin: 12px 0 6px;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
     }
 
-    input, select, button, textarea {
-      width: 100%;
-      border-radius: 12px;
-      border: 1px solid rgba(255,255,255,0.11);
-      background: rgba(255,255,255,0.04);
+    .section-head .badge {
+      font-family: var(--mono); font-size: 10px;
+      padding: 2px 8px;
+      background: rgba(232,160,32,0.1);
+      border: 1px solid rgba(232,160,32,0.2);
+      color: var(--gold);
+    }
+
+    .section-body { padding: 16px; }
+
+    /* controls row */
+    .ctrl-row {
+      display: grid; gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .ctrl-row.cols-3 { grid-template-columns: 1fr 1fr auto; }
+    .ctrl-row.cols-2 { grid-template-columns: 1fr 1fr; }
+
+    .ctrl label {
+      display: block;
+      font-family: var(--mono); font-size: 10px;
+      letter-spacing: 0.12em; color: var(--muted2);
+      text-transform: uppercase; margin-bottom: 6px;
+    }
+
+    .ctrl input, .ctrl select {
+      width: 100%; padding: 8px 10px;
+      background: var(--bg3);
+      border: 1px solid var(--border2);
+      border-radius: 2px;
       color: var(--text);
-      font: inherit;
-      padding: 12px 14px;
+      font-family: var(--mono); font-size: 12px;
       outline: none;
+      transition: border-color 0.15s;
     }
 
-    textarea { min-height: 110px; resize: vertical; }
+    .ctrl input:focus, .ctrl select:focus { border-color: rgba(232,160,32,0.4); }
 
-    button {
-      cursor: pointer;
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      color: #08111f;
-      font-weight: 800;
-      border: 0;
-      margin-top: 12px;
+    .ctrl select option { background: var(--bg3); }
+
+    .btn-primary {
+      padding: 8px 16px;
+      background: linear-gradient(135deg, #c96a10, #e8a020 70%, #f5c842);
+      border: none; border-radius: 2px;
+      color: #0a0600;
+      font-family: var(--sans); font-size: 11px; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      cursor: pointer; white-space: nowrap;
+      transition: opacity 0.15s;
+      width: auto; margin: 0;
     }
 
-    button.secondary {
-      background: rgba(255,255,255,0.06);
-      color: var(--text);
-      border: 1px solid rgba(255,255,255,0.12);
+    .btn-primary:hover { opacity: 0.85; }
+
+    .btn-ghost {
+      padding: 8px 14px;
+      background: var(--bg3);
+      border: 1px solid var(--border2); border-radius: 2px;
+      color: var(--muted);
+      font-family: var(--mono); font-size: 11px;
+      cursor: pointer; white-space: nowrap;
+      transition: border-color 0.15s, color 0.15s;
+      width: auto; margin: 0;
     }
 
-    button.danger {
-      background: rgba(255, 116, 116, 0.15);
-      color: #ffdede;
-      border: 1px solid rgba(255, 116, 116, 0.25);
+    .btn-ghost:hover { border-color: var(--muted); color: var(--text); }
+
+    /* table */
+    .tbl-wrap { overflow-x: auto; }
+
+    table {
+      width: 100%; border-collapse: collapse;
+      min-width: 600px;
     }
 
-    .pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 6px 10px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.06);
-      color: var(--text);
-      font-size: 13px;
-    }
-
-    .split { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
-    .cards-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
-    .cards-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
-
-    .table-wrap {
-      overflow: auto;
-      border-radius: var(--radius-sm);
-      border: 1px solid rgba(255,255,255,0.08);
-      background: rgba(255,255,255,0.03);
-    }
-
-    table { width: 100%; border-collapse: collapse; min-width: 850px; }
-
-    th, td {
-      padding: 10px 10px;
-      text-align: left;
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-      vertical-align: top;
-      font-size: 14px;
+    thead tr {
+      background: var(--bg3);
+      border-bottom: 1px solid var(--border);
     }
 
     th {
-      position: sticky;
-      top: 0;
-      background: rgba(8, 16, 30, 0.95);
-      color: var(--muted);
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
+      padding: 8px 12px; text-align: left;
+      font-family: var(--mono); font-size: 10px;
+      letter-spacing: 0.1em; color: var(--muted2);
+      text-transform: uppercase; font-weight: 500;
+      white-space: nowrap;
     }
 
-    .table-actions { display: flex; gap: 8px; flex-wrap: wrap; }
-    .table-actions button { width: auto; margin: 0; padding: 8px 10px; font-size: 13px; }
+    td {
+      padding: 9px 12px;
+      border-bottom: 1px solid var(--border);
+      font-family: var(--mono); font-size: 11px;
+      color: var(--text); vertical-align: middle;
+    }
 
-    .hidden { display: none !important; }
+    tbody tr:hover td { background: rgba(255,255,255,0.02); }
+    tbody tr:last-child td { border-bottom: none; }
 
-    .tiny { font-size: 12px; color: var(--muted); }
+    td .chip {
+      display: inline-block;
+      padding: 1px 6px;
+      border: 1px solid var(--border2);
+      font-size: 10px; color: var(--muted);
+    }
 
-    .error { color: #ffb1b1; }
-    .good  { color: #b8ffd8; }
-    .warn  { color: #ffe39b; }
+    /* access card */
+    .access-card {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      padding: 12px 14px;
+      font-family: var(--mono); font-size: 11px;
+      line-height: 1.8; color: var(--muted);
+      margin-bottom: 12px;
+    }
 
-    @media (max-width: 1120px) {
-      .hero, .grid, .cards-2, .cards-3, .split { grid-template-columns: 1fr; }
-      .sidebar { position: static; }
+    .access-card .ok   { color: var(--good); }
+    .access-card .deny { color: var(--bad); }
+
+    /* diag */
+    .diag {
+      font-family: var(--mono); font-size: 11px;
+      color: var(--muted); line-height: 2;
+      white-space: pre;
+    }
+
+    /* guild id strip */
+    .guild-strip {
+      display: flex; align-items: center; gap: 16px;
+      padding: 10px 14px;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      margin-bottom: 16px;
+      font-family: var(--mono); font-size: 11px;
+    }
+
+    .guild-strip .item { display: flex; align-items: center; gap: 6px; color: var(--muted); }
+    .guild-strip .item span { color: var(--text); }
+
+    /* util */
+    .hidden  { display: none !important; }
+    .fg-gold { color: var(--gold); }
+    .fg-good { color: var(--good); }
+    .fg-bad  { color: var(--bad); }
+    .fg-warn { color: var(--warn); }
+
+    @media (max-width: 900px) {
+      .sidenav { display: none; }
+      .stat-row { grid-template-columns: 1fr; }
+      .ctrl-row.cols-3 { grid-template-columns: 1fr; }
+      .ctrl-row.cols-2 { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
 
-  <!-- ── LOGIN PAGE ─────────────────────────────────────────────── -->
-  <div id="loginPage">
-    <div class="login-card">
-      <div class="login-eyebrow">
-        <span class="login-logo">Konqi-bot</span>
-      </div>
+<!-- ════════════════════════════════════════════════════
+     LOGIN
+════════════════════════════════════════════════════ -->
+<div id="loginPage">
+  <div class="lc">
+    <div class="lc-eyebrow"><span class="lc-brand">Konqi-bot</span></div>
+    <h1 id="lcHeading">Sign in</h1>
+    <div class="lc-bar"></div>
 
-      <h1 id="loginHeading">Sign in</h1>
-      <div class="login-divider"></div>
+    <div class="lc-field">
+      <label for="lemail">Email</label>
+      <input id="lemail" type="email" autocomplete="email" placeholder="you@example.com" />
+    </div>
 
-      <div class="login-field">
-        <label for="email">Email</label>
-        <input id="email" type="email" autocomplete="email" placeholder="you@example.com" />
-      </div>
+    <div class="lc-field">
+      <label for="lpass">Password</label>
+      <input id="lpass" type="password" autocomplete="current-password" placeholder="••••••••" />
+    </div>
 
-      <div class="login-field">
-        <label for="password">Password</label>
-        <input id="password" type="password" autocomplete="current-password" placeholder="••••••••" />
-      </div>
+    <div class="lc-field hidden" id="lcConfirmWrap">
+      <label for="lconfirm">Confirm password</label>
+      <input id="lconfirm" type="password" autocomplete="new-password" placeholder="••••••••" />
+    </div>
 
-      <div class="login-field hidden" id="confirmField">
-        <label for="confirm">Confirm password</label>
-        <input id="confirm" type="password" autocomplete="new-password" placeholder="••••••••" />
-      </div>
+    <button class="lc-btn" id="lcSubmit">Continue</button>
+    <div class="lc-status" id="lcStatus"></div>
 
-      <button class="login-btn" id="submitBtn">Continue</button>
-
-      <div class="login-status" id="loginStatus"></div>
-
-      <div class="login-toggle-row">
-        <span id="toggleText">Don't have an account?</span>
-        <button class="login-toggle-btn" id="toggleBtn">Register</button>
-      </div>
+    <div class="lc-switch">
+      <span id="lcToggleText">Don't have an account?</span>
+      <button id="lcToggle">Register</button>
     </div>
   </div>
+</div>
 
-  <!-- ── DASHBOARD PAGE ─────────────────────────────────────────── -->
-  <div id="dashPage" class="hidden">
-    <div class="wrap">
-      <section class="panel hero">
-        <div class="hero-main">
-          <h1 class="title">Konqi Dashboard</h1>
-          <p class="subtitle">
-            A single-file dashboard for Cloudflare Pages. It signs in, checks your access record,
-            and then reads or writes bot data through the shared data layer. The Discord bot stays on Railway; the dashboard stays static.
-          </p>
-          <div class="badge-row">
-            <span class="badge">Secure login</span>
-            <span class="badge">Access-controlled</span>
-            <span class="badge">Guild settings</span>
-            <span class="badge">Roles</span>
-            <span class="badge">Members</span>
-            <span class="badge">Cloudflare Pages ready</span>
+<!-- ════════════════════════════════════════════════════
+     DASHBOARD
+════════════════════════════════════════════════════ -->
+<div id="dashPage" class="hidden">
+
+  <nav class="topnav">
+    <div class="nav-brand">Konqi</div>
+    <div class="nav-crumb">Workers &amp; Pages / <span id="navGuildName">—</span></div>
+    <div class="nav-spacer"></div>
+    <div class="nav-user">
+      <span id="navUserEmail" class="fg-gold"></span>
+      <button class="nav-signout" id="signOutBtn">Sign out</button>
+    </div>
+  </nav>
+
+  <div class="dash-body">
+
+    <nav class="sidenav">
+      <div class="sn-section">
+        <div class="sn-label">Overview</div>
+        <button class="sn-item active" data-tab="overview"><div class="sn-dot"></div>Guild overview</button>
+        <button class="sn-item" data-tab="settings"><div class="sn-dot"></div>Settings</button>
+      </div>
+      <div class="sn-section">
+        <div class="sn-label">Data</div>
+        <button class="sn-item" data-tab="members"><div class="sn-dot"></div>Members</button>
+        <button class="sn-item" data-tab="roles"><div class="sn-dot"></div>Roles</button>
+        <button class="sn-item" data-tab="channels"><div class="sn-dot"></div>Channels</button>
+      </div>
+      <div class="sn-section">
+        <div class="sn-label">System</div>
+        <button class="sn-item" data-tab="diag"><div class="sn-dot"></div>Diagnostics</button>
+      </div>
+    </nav>
+
+    <main class="main">
+
+      <!-- status strip -->
+      <div class="status-strip" id="statusStrip">
+        <div class="dot"></div>
+        <span id="statusText">Loading...</span>
+      </div>
+
+      <!-- guild selector -->
+      <div class="section" style="margin-bottom:16px;">
+        <div class="section-head"><h2>Guild</h2></div>
+        <div class="section-body">
+          <div class="ctrl-row cols-3">
+            <div class="ctrl">
+              <label>Active guild</label>
+              <select id="guildSelect"></select>
+            </div>
+            <div class="ctrl">
+              <label>Search members</label>
+              <input id="search" placeholder="name or user ID..." />
+            </div>
+            <div class="ctrl" style="display:flex;align-items:flex-end;">
+              <button class="btn-ghost" id="refreshBtn">↺ Refresh</button>
+            </div>
+          </div>
+
+          <div class="guild-strip" id="guildStrip">
+            <div class="item">Guild ID <span id="guildIdBox">—</span></div>
+            <div class="item">Members <span id="guildMemberCount">—</span></div>
+            <div class="item">Roles <span id="guildRoleCount">—</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── OVERVIEW TAB ── -->
+      <div id="tab-overview">
+        <div class="page-head">
+          <div><h1>Guild Overview</h1><div class="sub">Sync status from the bot</div></div>
+        </div>
+
+        <div class="stat-row">
+          <div class="stat-card">
+            <div class="label">Channels synced</div>
+            <div class="value" id="channelStat">—</div>
+          </div>
+          <div class="stat-card">
+            <div class="label">Roles synced</div>
+            <div class="value" id="roleStat">—</div>
+          </div>
+          <div class="stat-card">
+            <div class="label">Members synced</div>
+            <div class="value" id="memberStat">—</div>
           </div>
         </div>
 
-        <div class="hero-side">
-          <div class="status-box" id="bootStatus">Loading dashboard...</div>
-          <div class="tiny">If your account is not approved, you get denied even if you can sign in.</div>
+        <div class="section">
+          <div class="section-head"><h2>Access</h2></div>
+          <div class="section-body">
+            <div class="access-card" id="accessBox">Checking access...</div>
+          </div>
         </div>
-      </section>
+      </div>
 
-      <section class="grid">
-        <aside class="panel sidebar">
-          <div class="card">
-            <h2>Access</h2>
-            <div class="status-box" id="accessBox">Checking...</div>
-          </div>
+      <!-- ── SETTINGS TAB ── -->
+      <div id="tab-settings" class="hidden">
+        <div class="page-head">
+          <div><h1>Guild Settings</h1><div class="sub" id="settingsAccessLabel">—</div></div>
+          <button class="btn-primary" id="saveSettingsBtn">Save settings</button>
+        </div>
 
-          <div class="card" style="margin-top: 12px;">
-            <h2>Current User</h2>
-            <div class="tiny" id="userBox">No user signed in.</div>
-            <button id="signOutBtn" class="secondary" style="margin-top:12px;">Sign out</button>
-          </div>
-        </aside>
-
-        <main class="content">
-          <section class="panel section" id="appShell">
-            <div class="section-head">
-              <div>
-                <h2>Guild Overview</h2>
-                <div class="muted tiny">Select a guild to view channels, roles, members, and settings.</div>
-              </div>
-            </div>
-
-            <div class="cards-3">
-              <div>
-                <label for="guildSelect">Guild</label>
-                <select id="guildSelect"></select>
-              </div>
-              <div>
-                <label for="search">Search members</label>
-                <input id="search" placeholder="type a name or user id" />
-              </div>
-              <div>
-                <label>&nbsp;</label>
-                <button class="secondary" id="refreshBtn">Refresh</button>
-              </div>
-            </div>
-
-            <div class="split">
-              <div class="panel" style="padding:14px;">
-                <span class="pill">Guild ID</span>
-                <div class="tiny" id="guildIdBox">-</div>
-              </div>
-              <div class="panel" style="padding:14px;">
-                <span class="pill">Members</span>
-                <div class="tiny" id="guildMemberCount">-</div>
-              </div>
-              <div class="panel" style="padding:14px;">
-                <span class="pill">Roles</span>
-                <div class="tiny" id="guildRoleCount">-</div>
-              </div>
-            </div>
-          </section>
-
-          <section class="panel section" id="settingsPanel">
-            <div class="section-head">
-              <div>
-                <h2>Guild Settings</h2>
-                <div class="muted tiny">Logs, verify, and welcome channels are editable if your account is allowed.</div>
-              </div>
-              <div class="tiny" id="settingsAccessLabel"></div>
-            </div>
-
-            <div class="cards-2">
-              <div>
-                <label for="logChannel">Logs channel</label>
+        <div class="section">
+          <div class="section-head"><h2>Channel configuration</h2></div>
+          <div class="section-body">
+            <div class="ctrl-row cols-2" style="margin-bottom:0;">
+              <div class="ctrl">
+                <label>Logs channel</label>
                 <select id="logChannel"></select>
               </div>
-              <div>
-                <label for="verifyChannel">Verify channel</label>
+              <div class="ctrl">
+                <label>Verify channel</label>
                 <select id="verifyChannel"></select>
               </div>
-              <div>
-                <label for="welcomeChannel">Welcome channel</label>
+              <div class="ctrl">
+                <label>Welcome channel</label>
                 <select id="welcomeChannel"></select>
               </div>
-              <div>
-                <label>&nbsp;</label>
-                <button id="saveSettingsBtn">Save settings</button>
+              <div class="ctrl" style="display:flex;align-items:flex-end;">
+                <button class="btn-primary" id="saveAgainBtn">Save settings</button>
               </div>
             </div>
-          </section>
+          </div>
+        </div>
+      </div>
 
-          <section class="panel section" id="statsPanel">
-            <div class="section-head">
-              <div>
-                <h2>Sync Status</h2>
-                <div class="muted tiny">These values come from tables populated by the bot.</div>
-              </div>
-            </div>
-            <div class="cards-3">
-              <div class="panel" style="padding:14px;"><span class="pill">Channels</span><div class="tiny" id="channelStat">-</div></div>
-              <div class="panel" style="padding:14px;"><span class="pill">Roles</span><div class="tiny" id="roleStat">-</div></div>
-              <div class="panel" style="padding:14px;"><span class="pill">Members</span><div class="tiny" id="memberStat">-</div></div>
-            </div>
-          </section>
-
-          <section class="panel section" id="rolesPanel">
-            <div class="section-head">
-              <div>
-                <h2>Roles</h2>
-                <div class="muted tiny">Synced from Discord. Permissions are displayed as Discord permission flags.</div>
-              </div>
-            </div>
-            <div class="table-wrap">
+      <!-- ── MEMBERS TAB ── -->
+      <div id="tab-members" class="hidden">
+        <div class="page-head">
+          <div><h1>Members</h1><div class="sub">Synced from Discord via the bot</div></div>
+          <div class="section-head" style="border:none;padding:0;"><span class="badge" id="memberCountBadge" style="font-family:var(--mono);font-size:10px;padding:3px 10px;background:rgba(232,160,32,0.08);border:1px solid rgba(232,160,32,0.18);color:var(--gold);">0 members</span></div>
+        </div>
+        <div class="section">
+          <div class="section-head"><h2>Member directory</h2></div>
+          <div class="section-body" style="padding:0;">
+            <div class="tbl-wrap">
               <table>
                 <thead>
-                  <tr>
-                    <th>Name</th><th>Role ID</th><th>Position</th><th>Color</th><th>Flags</th><th>Permissions</th>
-                  </tr>
-                </thead>
-                <tbody id="rolesBody"></tbody>
-              </table>
-            </div>
-          </section>
-
-          <section class="panel section" id="channelsPanel">
-            <div class="section-head">
-              <div>
-                <h2>Channels</h2>
-                <div class="muted tiny">Synced channel directory.</div>
-              </div>
-            </div>
-            <div class="table-wrap">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Name</th><th>Channel ID</th><th>Type</th><th>Parent</th>
-                  </tr>
-                </thead>
-                <tbody id="channelsBody"></tbody>
-              </table>
-            </div>
-          </section>
-
-          <section class="panel section" id="membersPanel">
-            <div class="section-head">
-              <div>
-                <h2>Members</h2>
-                <div class="muted tiny">Synced member directory from Discord IDs through the bot.</div>
-              </div>
-            </div>
-            <div class="table-wrap">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Display</th><th>User ID</th><th>Username</th><th>Global</th><th>Joined</th><th>Last Seen</th>
-                  </tr>
+                  <tr><th>Display name</th><th>User ID</th><th>Username</th><th>Global name</th><th>Joined</th><th>Last seen</th></tr>
                 </thead>
                 <tbody id="membersBody"></tbody>
               </table>
             </div>
-          </section>
+          </div>
+        </div>
+      </div>
 
-          <section class="panel section" id="actionsPanel">
-            <div class="section-head">
-              <div>
-                <h2>Actions</h2>
-                <div class="muted tiny">These operate only if your account has the right permissions.</div>
-              </div>
+      <!-- ── ROLES TAB ── -->
+      <div id="tab-roles" class="hidden">
+        <div class="page-head">
+          <div><h1>Roles</h1><div class="sub">Synced from Discord</div></div>
+        </div>
+        <div class="section">
+          <div class="section-head"><h2>Role directory</h2></div>
+          <div class="section-body" style="padding:0;">
+            <div class="tbl-wrap">
+              <table>
+                <thead>
+                  <tr><th>Name</th><th>Role ID</th><th>Position</th><th>Color</th><th>Flags</th><th>Permissions</th></tr>
+                </thead>
+                <tbody id="rolesBody"></tbody>
+              </table>
             </div>
+          </div>
+        </div>
+      </div>
 
-            <div class="cards-2">
-              <div class="panel" style="padding:14px;">
-                <h3 style="margin:0 0 8px;">Admin commands</h3>
-                <div class="tiny">Save the current channel settings.</div>
-                <button id="saveAgainBtn" class="secondary">Save settings again</button>
-              </div>
-              <div class="panel" style="padding:14px;">
-                <h3 style="margin:0 0 8px;">Diagnostics</h3>
-                <div class="tiny" id="diagBox">-</div>
-              </div>
+      <!-- ── CHANNELS TAB ── -->
+      <div id="tab-channels" class="hidden">
+        <div class="page-head">
+          <div><h1>Channels</h1><div class="sub">Synced channel directory</div></div>
+        </div>
+        <div class="section">
+          <div class="section-head"><h2>Channel directory</h2></div>
+          <div class="section-body" style="padding:0;">
+            <div class="tbl-wrap">
+              <table>
+                <thead>
+                  <tr><th>Name</th><th>Channel ID</th><th>Type</th><th>Parent</th></tr>
+                </thead>
+                <tbody id="channelsBody"></tbody>
+              </table>
             </div>
-          </section>
-        </main>
-      </section>
-    </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── DIAGNOSTICS TAB ── -->
+      <div id="tab-diag" class="hidden">
+        <div class="page-head">
+          <div><h1>Diagnostics</h1><div class="sub">Auth and sync state</div></div>
+        </div>
+        <div class="section">
+          <div class="section-head"><h2>System state</h2></div>
+          <div class="section-body">
+            <div class="diag" id="diagBox">—</div>
+          </div>
+        </div>
+      </div>
+
+    </main>
   </div>
+</div>
 
-  <script>
-    const SUPABASE_URL      = 'https://ksmdkubyiimdjdbzkjiq.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtzbWRrdWJ5aWltZGpkYnpramlxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgyODAwMjgsImV4cCI6MjA5Mzg1NjAyOH0.JY_bCDBj0ASw79RngXtn5Uc75Jc2GxwbIITv4mQm4p8';
+<script>
+  const SUPABASE_URL      = 'https://ksmdkubyiimdjdbzkjiq.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtzbWRrdWJ5aWltZGpkYnpramlxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgyODAwMjgsImV4cCI6MjA5Mzg1NjAyOH0.JY_bCDBj0ASw79RngXtn5Uc75Jc2GxwbIITv4mQm4p8';
 
-    const state = {
-      client: null,
-      user: null,
-      access: null,
-      guilds: [],
-      guildId: '',
-      guildSettings: null,
-      channels: [],
-      roles: [],
-      members: [],
-      allMembers: [],
-      search: '',
-      isAdmin: false,
-      isBot: false,
-    };
+  const state = {
+    client: null, user: null, access: null,
+    guilds: [], guildId: '', guildSettings: null,
+    channels: [], roles: [], members: [], allMembers: [],
+    search: '', isAdmin: false, isBot: false,
+  };
 
-    const loginPage    = document.getElementById('loginPage');
-    const dashPage     = document.getElementById('dashPage');
-    const loginHeading = document.getElementById('loginHeading');
-    const confirmField = document.getElementById('confirmField');
-    const submitBtn    = document.getElementById('submitBtn');
-    const loginStatus  = document.getElementById('loginStatus');
-    const toggleText   = document.getElementById('toggleText');
-    const toggleBtn    = document.getElementById('toggleBtn');
+  // ── DOM refs ──────────────────────────────────────────────────────
 
-    const els = {
-      bootStatus:         document.getElementById('bootStatus'),
-      accessBox:          document.getElementById('accessBox'),
-      userBox:            document.getElementById('userBox'),
-      signOutBtn:         document.getElementById('signOutBtn'),
-      appShell:           document.getElementById('appShell'),
-      settingsPanel:      document.getElementById('settingsPanel'),
-      statsPanel:         document.getElementById('statsPanel'),
-      rolesPanel:         document.getElementById('rolesPanel'),
-      channelsPanel:      document.getElementById('channelsPanel'),
-      membersPanel:       document.getElementById('membersPanel'),
-      actionsPanel:       document.getElementById('actionsPanel'),
-      guildSelect:        document.getElementById('guildSelect'),
-      search:             document.getElementById('search'),
-      refreshBtn:         document.getElementById('refreshBtn'),
-      saveSettingsBtn:    document.getElementById('saveSettingsBtn'),
-      saveAgainBtn:       document.getElementById('saveAgainBtn'),
-      logChannel:         document.getElementById('logChannel'),
-      verifyChannel:      document.getElementById('verifyChannel'),
-      welcomeChannel:     document.getElementById('welcomeChannel'),
-      settingsAccessLabel:document.getElementById('settingsAccessLabel'),
-      guildIdBox:         document.getElementById('guildIdBox'),
-      guildMemberCount:   document.getElementById('guildMemberCount'),
-      guildRoleCount:     document.getElementById('guildRoleCount'),
-      channelStat:        document.getElementById('channelStat'),
-      roleStat:           document.getElementById('roleStat'),
-      memberStat:         document.getElementById('memberStat'),
-      rolesBody:          document.getElementById('rolesBody'),
-      channelsBody:       document.getElementById('channelsBody'),
-      membersBody:        document.getElementById('membersBody'),
-      diagBox:            document.getElementById('diagBox'),
-    };
+  const loginPage    = document.getElementById('loginPage');
+  const dashPage     = document.getElementById('dashPage');
+  const lcHeading    = document.getElementById('lcHeading');
+  const lcConfirmWrap= document.getElementById('lcConfirmWrap');
+  const lcSubmit     = document.getElementById('lcSubmit');
+  const lcStatus     = document.getElementById('lcStatus');
+  const lcToggleText = document.getElementById('lcToggleText');
+  const lcToggle     = document.getElementById('lcToggle');
 
-    // ── LOGIN UI ────────────────────────────────────────────────────
+  const els = {
+    statusStrip:        document.getElementById('statusStrip'),
+    statusText:         document.getElementById('statusText'),
+    accessBox:          document.getElementById('accessBox'),
+    navUserEmail:       document.getElementById('navUserEmail'),
+    navGuildName:       document.getElementById('navGuildName'),
+    signOutBtn:         document.getElementById('signOutBtn'),
+    guildSelect:        document.getElementById('guildSelect'),
+    search:             document.getElementById('search'),
+    refreshBtn:         document.getElementById('refreshBtn'),
+    saveSettingsBtn:    document.getElementById('saveSettingsBtn'),
+    saveAgainBtn:       document.getElementById('saveAgainBtn'),
+    logChannel:         document.getElementById('logChannel'),
+    verifyChannel:      document.getElementById('verifyChannel'),
+    welcomeChannel:     document.getElementById('welcomeChannel'),
+    settingsAccessLabel:document.getElementById('settingsAccessLabel'),
+    guildIdBox:         document.getElementById('guildIdBox'),
+    guildMemberCount:   document.getElementById('guildMemberCount'),
+    guildRoleCount:     document.getElementById('guildRoleCount'),
+    channelStat:        document.getElementById('channelStat'),
+    roleStat:           document.getElementById('roleStat'),
+    memberStat:         document.getElementById('memberStat'),
+    memberCountBadge:   document.getElementById('memberCountBadge'),
+    rolesBody:          document.getElementById('rolesBody'),
+    channelsBody:       document.getElementById('channelsBody'),
+    membersBody:        document.getElementById('membersBody'),
+    diagBox:            document.getElementById('diagBox'),
+  };
 
-    let loginMode = 'login';
+  // ── Tab switching ────────────────────────────────────────────────
 
-    function setLoginStatus(msg, tone = '') {
-      loginStatus.textContent = msg;
-      loginStatus.className = 'login-status ' + tone;
+  const tabs = ['overview','settings','members','roles','channels','diag'];
+
+  function switchTab(name) {
+    tabs.forEach(t => {
+      document.getElementById('tab-' + t).classList.toggle('hidden', t !== name);
+    });
+    document.querySelectorAll('.sn-item').forEach(el => {
+      el.classList.toggle('active', el.dataset.tab === name);
+    });
+  }
+
+  document.querySelectorAll('.sn-item').forEach(el => {
+    el.addEventListener('click', () => switchTab(el.dataset.tab));
+  });
+
+  // ── Status strip ─────────────────────────────────────────────────
+
+  function setStatus(msg, tone = '') {
+    els.statusText.textContent = msg;
+    els.statusStrip.className = 'status-strip' + (tone ? ' ' + tone : '');
+  }
+
+  // ── Login ────────────────────────────────────────────────────────
+
+  let lcMode = 'login';
+
+  function setLcStatus(msg, tone = '') {
+    lcStatus.textContent = msg;
+    lcStatus.className = 'lc-status' + (tone ? ' ' + tone : '');
+  }
+
+  lcToggle.addEventListener('click', () => {
+    lcMode = lcMode === 'login' ? 'register' : 'login';
+    if (lcMode === 'register') {
+      lcHeading.textContent = 'Register';
+      lcSubmit.textContent = 'Create account';
+      lcConfirmWrap.classList.remove('hidden');
+      lcToggleText.textContent = 'Already have an account?';
+      lcToggle.textContent = 'Sign in';
+    } else {
+      lcHeading.textContent = 'Sign in';
+      lcSubmit.textContent = 'Continue';
+      lcConfirmWrap.classList.add('hidden');
+      lcToggleText.textContent = "Don't have an account?";
+      lcToggle.textContent = 'Register';
+    }
+    setLcStatus('');
+  });
+
+  async function handleLogin() {
+    const email    = document.getElementById('lemail').value.trim();
+    const password = document.getElementById('lpass').value;
+    if (!email || !password) { setLcStatus('Enter your email and password.', 'err'); return; }
+
+    lcSubmit.disabled = true;
+    lcStatus.innerHTML = '<span class="blink">—</span>';
+    lcStatus.className = 'lc-status';
+
+    try {
+      if (lcMode === 'register') {
+        const confirm = document.getElementById('lconfirm').value;
+        if (password !== confirm) throw new Error('Passwords do not match.');
+        if (password.length < 6) throw new Error('Password must be at least 6 characters.');
+        const { error } = await state.client.auth.signUp({ email, password });
+        if (error) throw error;
+        setLcStatus('Account created. Awaiting access approval.', 'good');
+        lcSubmit.disabled = false;
+        return;
+      }
+
+      const { data, error } = await state.client.auth.signInWithPassword({ email, password });
+      if (error) throw error;
+      state.user = data.user;
+      await loadAccess();
+      await loadGuilds();
+      await loadGuildData();
+      showDash();
+
+    } catch (err) {
+      setLcStatus(err.message, 'err');
+      lcSubmit.disabled = false;
+    }
+  }
+
+  lcSubmit.addEventListener('click', handleLogin);
+  ['lemail','lpass','lconfirm'].forEach(id => {
+    document.getElementById(id).addEventListener('keydown', e => { if (e.key === 'Enter') handleLogin(); });
+  });
+
+  function showDash() {
+    loginPage.classList.add('hidden');
+    dashPage.classList.remove('hidden');
+  }
+
+  function showLogin() {
+    dashPage.classList.add('hidden');
+    loginPage.classList.remove('hidden');
+  }
+
+  // ── Helpers ──────────────────────────────────────────────────────
+
+  function esc(value) {
+    return String(value ?? '')
+      .replaceAll('&','&amp;').replaceAll('<','&lt;')
+      .replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#39;');
+  }
+
+  function channelTypeName(type) {
+    const m = {0:'text',2:'voice',4:'category',5:'announcement',10:'ann. thread',11:'pub. thread',12:'priv. thread',13:'stage',15:'forum',16:'media'};
+    return m[type] || String(type);
+  }
+
+  function roleFlags(role) {
+    const f = [];
+    if (role.hoist) f.push('hoist');
+    if (role.mentionable) f.push('mentionable');
+    if (role.managed) f.push('managed');
+    return f.length ? f.join(', ') : '—';
+  }
+
+  function normalizeChannels(c) {
+    return [...c].sort((a,b) => String(a.channel_name).localeCompare(String(b.channel_name)));
+  }
+
+  function normalizeRoles(r) {
+    return [...r].sort((a,b) => Number(b.position||0) - Number(a.position||0));
+  }
+
+  function normalizeMembers(members) {
+    const q = state.search.trim().toLowerCase();
+    const f = q ? members.filter(m =>
+      [m.user_id,m.username,m.global_name,m.display_name].some(v => String(v||'').toLowerCase().includes(q))
+    ) : members;
+    return [...f].sort((a,b) => String(a.display_name||a.username||'').localeCompare(String(b.display_name||b.username||'')));
+  }
+
+  function currentGuild() {
+    return state.guilds.find(g => g.guild_id === state.guildId) || null;
+  }
+
+  // ── Data loading ─────────────────────────────────────────────────
+
+  async function loadAccess() {
+    const { data, error } = await state.client
+      .from('allowed_users')
+      .select('supabase_user_id, discord_id, email, can_access, is_admin, is_bot')
+      .eq('supabase_user_id', state.user.id)
+      .maybeSingle();
+
+    if (error) throw error;
+    if (!data || !data.can_access) {
+      await state.client.auth.signOut();
+      state.access = null;
+      els.accessBox.innerHTML = '<span class="deny">● Access denied</span> — your account is not approved.';
+      setStatus('Access denied.', 'bad');
+      throw new Error('Access denied.');
     }
 
-    toggleBtn.addEventListener('click', () => {
-      loginMode = loginMode === 'login' ? 'register' : 'login';
-      if (loginMode === 'register') {
-        loginHeading.textContent = 'Register';
-        submitBtn.textContent = 'Create account';
-        confirmField.classList.remove('hidden');
-        toggleText.textContent = 'Already have an account?';
-        toggleBtn.textContent = 'Sign in';
-      } else {
-        loginHeading.textContent = 'Sign in';
-        submitBtn.textContent = 'Continue';
-        confirmField.classList.add('hidden');
-        toggleText.textContent = "Don't have an account?";
-        toggleBtn.textContent = 'Register';
-      }
-      setLoginStatus('');
-    });
+    state.access = data;
+    state.isAdmin = Boolean(data.is_admin);
+    state.isBot   = Boolean(data.is_bot);
 
-    submitBtn.addEventListener('click', handleSubmit);
-    [document.getElementById('email'), document.getElementById('password'), document.getElementById('confirm')].forEach(el =>
-      el.addEventListener('keydown', e => { if (e.key === 'Enter') handleSubmit(); })
-    );
+    els.accessBox.innerHTML =
+      '<span class="ok">● Access granted</span><br/>' +
+      'Email: ' + esc(data.email || state.user.email || '—') + '<br/>' +
+      'Admin: ' + (data.is_admin ? '<span class="ok">yes</span>' : 'no') + '<br/>' +
+      'Bot: '   + (data.is_bot   ? '<span class="ok">yes</span>' : 'no');
 
-    async function handleSubmit() {
-      const email    = document.getElementById('email').value.trim();
-      const password = document.getElementById('password').value;
-      if (!email || !password) { setLoginStatus('Enter your email and password.', 'error'); return; }
+    els.settingsAccessLabel.textContent = data.is_admin || data.is_bot ? 'You can edit settings.' : 'Read-only.';
+    els.navUserEmail.textContent = state.user.email || '—';
+    return data;
+  }
 
-      submitBtn.disabled = true;
-      loginStatus.innerHTML = '<span class="loading-dot">—</span>';
-      loginStatus.className = 'login-status';
+  async function loadGuilds() {
+    const { data, error } = await state.client.from('guilds').select('*').order('guild_name', { ascending: true });
+    if (error) throw error;
+    state.guilds = data || [];
+    if (!state.guildId && state.guilds.length) state.guildId = state.guilds[0].guild_id;
+    els.guildSelect.innerHTML = state.guilds.map(g =>
+      '<option value="' + esc(g.guild_id) + '">' + esc(g.guild_name || g.guild_id) + '</option>'
+    ).join('');
+    if (state.guildId) els.guildSelect.value = state.guildId;
+    const g = currentGuild();
+    els.navGuildName.textContent = g ? (g.guild_name || g.guild_id) : '—';
+  }
 
+  async function loadGuildData() {
+    const guildId = state.guildId;
+    if (!guildId) {
+      state.guildSettings = null; state.channels = []; state.roles = []; state.members = []; state.allMembers = [];
+      renderEverything(); return;
+    }
+
+    const [sr, cr, rr, mr] = await Promise.all([
+      state.client.from('guild_settings').select('*').eq('guild_id', guildId).maybeSingle(),
+      state.client.from('guild_channels').select('*').eq('guild_id', guildId).order('channel_name', { ascending: true }),
+      state.client.from('guild_roles').select('*').eq('guild_id', guildId).order('position', { ascending: false }),
+      state.client.from('guild_members').select('*').eq('guild_id', guildId).order('display_name', { ascending: true, nullsFirst: false }),
+    ]);
+
+    if (sr.error) throw sr.error;
+    if (cr.error) throw cr.error;
+    if (rr.error) throw rr.error;
+    if (mr.error) throw mr.error;
+
+    state.guildSettings = sr.data || null;
+    state.channels      = cr.data || [];
+    state.roles         = rr.data || [];
+    state.members       = mr.data || [];
+    state.allMembers    = state.members;
+    renderEverything();
+  }
+
+  function renderEverything() {
+    const guild    = currentGuild();
+    const channels = normalizeChannels(state.channels);
+    const roles    = normalizeRoles(state.roles);
+    const members  = normalizeMembers(state.members);
+
+    els.guildIdBox.textContent      = guild ? guild.guild_id : '—';
+    els.guildMemberCount.textContent= guild ? String(guild.member_count ?? members.length ?? '—') : '—';
+    els.guildRoleCount.textContent  = String(roles.length);
+    els.channelStat.textContent     = String(channels.length);
+    els.roleStat.textContent        = String(roles.length);
+    els.memberStat.textContent      = String(state.members.length);
+    els.memberCountBadge.textContent= state.members.length + ' members';
+
+    els.navGuildName.textContent    = guild ? (guild.guild_name || guild.guild_id) : '—';
+
+    els.diagBox.textContent =
+      'auth     ' + (state.user   ? 'signed-in' : 'signed-out') + '\n' +
+      'access   ' + (state.access ? 'allowed'   : 'none')        + '\n' +
+      'admin    ' + (state.isAdmin ? 'yes' : 'no')                + '\n' +
+      'bot      ' + (state.isBot  ? 'yes' : 'no')                 + '\n' +
+      'guild    ' + (state.guildId || '—')                        + '\n' +
+      'channels ' + state.channels.length                         + '\n' +
+      'roles    ' + state.roles.length                            + '\n' +
+      'members  ' + state.members.length;
+
+    // channel selects
+    const opts = ['<option value="">— not set —</option>']
+      .concat(channels.map(ch =>
+        '<option value="' + esc(ch.channel_id) + '">' + esc(ch.channel_name) + ' [' + esc(channelTypeName(ch.channel_type)) + ']</option>'
+      )).join('');
+    els.logChannel.innerHTML = opts;
+    els.verifyChannel.innerHTML = opts;
+    els.welcomeChannel.innerHTML = opts;
+
+    if (state.guildSettings) {
+      els.logChannel.value     = state.guildSettings.log_channel_id     || '';
+      els.verifyChannel.value  = state.guildSettings.verify_channel_id  || '';
+      els.welcomeChannel.value = state.guildSettings.welcome_channel_id || '';
+    }
+
+    // roles table
+    els.rolesBody.innerHTML = roles.map(r => {
+      const perms = Array.isArray(r.permissions) ? r.permissions.join(', ') : String(r.permissions_bitfield || '—');
+      return `<tr>
+        <td>${esc(r.role_name)}</td>
+        <td>${esc(r.role_id)}</td>
+        <td>${esc(r.position)}</td>
+        <td>${r.color ? `<span style="display:inline-block;width:10px;height:10px;background:${esc(r.color)};margin-right:5px;vertical-align:middle;"></span>${esc(r.color)}` : '—'}</td>
+        <td>${esc(roleFlags(r))}</td>
+        <td>${esc(perms)}</td>
+      </tr>`;
+    }).join('');
+
+    // channels table
+    els.channelsBody.innerHTML = channels.map(ch => `<tr>
+      <td>${esc(ch.channel_name)}</td>
+      <td>${esc(ch.channel_id)}</td>
+      <td><span class="chip">${esc(channelTypeName(ch.channel_type))}</span></td>
+      <td>${esc(ch.parent_id || '—')}</td>
+    </tr>`).join('');
+
+    // members table
+    els.membersBody.innerHTML = members.map(m => `<tr>
+      <td>${esc(m.display_name || m.username || '—')}</td>
+      <td>${esc(m.user_id)}</td>
+      <td>${esc(m.username || '—')}</td>
+      <td>${esc(m.global_name || '—')}</td>
+      <td>${esc(m.joined_at || '—')}</td>
+      <td>${esc(m.last_seen_at || '—')}</td>
+    </tr>`).join('');
+  }
+
+  async function saveSettings() {
+    if (!state.isAdmin && !state.isBot) throw new Error('No permission to edit settings.');
+    const payload = {
+      guild_id:          state.guildId,
+      log_channel_id:    els.logChannel.value    || null,
+      verify_channel_id: els.verifyChannel.value || null,
+      welcome_channel_id:els.welcomeChannel.value|| null,
+      updated_at:        new Date().toISOString(),
+    };
+    const { data, error } = await state.client
+      .from('guild_settings').upsert(payload, { onConflict: 'guild_id' }).select('*').single();
+    if (error) throw error;
+    state.guildSettings = data;
+    renderEverything();
+    setStatus('Settings saved.', 'ok');
+  }
+
+  async function signOut() {
+    if (state.client) await state.client.auth.signOut();
+    Object.assign(state, { user:null, access:null, guilds:[], guildId:'', guildSettings:null, channels:[], roles:[], members:[], allMembers:[], isAdmin:false, isBot:false });
+    showLogin();
+  }
+
+  // ── Events ───────────────────────────────────────────────────────
+
+  els.signOutBtn.addEventListener('click',     () => signOut().catch(err => setStatus(err.message, 'bad')));
+  els.saveSettingsBtn.addEventListener('click',() => saveSettings().catch(err => setStatus(err.message, 'bad')));
+  els.saveAgainBtn.addEventListener('click',   () => saveSettings().catch(err => setStatus(err.message, 'bad')));
+
+  els.guildSelect.addEventListener('change', async () => {
+    state.guildId = els.guildSelect.value;
+    await loadGuildData().catch(err => setStatus(err.message, 'bad'));
+  });
+
+  els.search.addEventListener('input', () => {
+    state.search = els.search.value;
+    renderEverything();
+  });
+
+  els.refreshBtn.addEventListener('click', async () => {
+    setStatus('Refreshing...');
+    try {
+      await loadGuilds();
+      await loadGuildData();
+      setStatus('Refreshed.', 'ok');
+    } catch (err) { setStatus(err.message, 'bad'); }
+  });
+
+  // ── Boot ─────────────────────────────────────────────────────────
+
+  async function boot() {
+    state.client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const { data } = await state.client.auth.getSession();
+
+    if (data.session) {
+      state.user = data.session.user;
       try {
-        if (loginMode === 'register') {
-          const confirm = document.getElementById('confirm').value;
-          if (password !== confirm) throw new Error('Passwords do not match.');
-          if (password.length < 6) throw new Error('Password must be at least 6 characters.');
-          const { error } = await state.client.auth.signUp({ email, password });
-          if (error) throw error;
-          setLoginStatus('Account created. Wait for access approval before signing in.', 'good');
-          submitBtn.disabled = false;
-          return;
-        }
-
-        const { data, error } = await state.client.auth.signInWithPassword({ email, password });
-        if (error) throw error;
-        state.user = data.user;
-        setLoginStatus('Authenticated.', 'good');
         await loadAccess();
         await loadGuilds();
         await loadGuildData();
+        setStatus('Session restored.', 'ok');
         showDash();
-
       } catch (err) {
-        setLoginStatus(err.message, 'error');
-        submitBtn.disabled = false;
+        if (!String(err.message).toLowerCase().includes('access denied')) setStatus(err.message, 'bad');
+        showLogin();
       }
+      return;
     }
 
-    function showDash() {
-      loginPage.classList.add('hidden');
-      dashPage.classList.remove('hidden');
-    }
-
-    function showLogin() {
-      dashPage.classList.add('hidden');
-      loginPage.classList.remove('hidden');
-    }
-
-    // ── DASHBOARD HELPERS ───────────────────────────────────────────
-
-    function setStatus(message, tone = '') {
-      els.bootStatus.innerHTML = tone ? '<span class="' + tone + '">' + escapeHtml(message) + '</span>' : escapeHtml(message);
-    }
-
-    function escapeHtml(value) {
-      return String(value ?? '')
-        .replaceAll('&', '&amp;')
-        .replaceAll('<', '&lt;')
-        .replaceAll('>', '&gt;')
-        .replaceAll('"', '&quot;')
-        .replaceAll("'", '&#39;');
-    }
-
-    function channelTypeName(type) {
-      const map = { 0:'text', 2:'voice', 4:'category', 5:'announcement', 10:'announcement thread', 11:'public thread', 12:'private thread', 13:'stage', 15:'forum', 16:'media' };
-      return map[type] || String(type);
-    }
-
-    function roleFlags(role) {
-      const flags = [];
-      if (role.hoist) flags.push('hoist');
-      if (role.mentionable) flags.push('mentionable');
-      if (role.managed) flags.push('managed');
-      return flags.length ? flags.join(', ') : 'none';
-    }
-
-    function normalizeChannels(channels) {
-      return [...channels].sort((a, b) => String(a.channel_name).localeCompare(String(b.channel_name)));
-    }
-
-    function normalizeRoles(roles) {
-      return [...roles].sort((a, b) => Number(b.position || 0) - Number(a.position || 0));
-    }
-
-    function normalizeMembers(members) {
-      const q = state.search.trim().toLowerCase();
-      const filtered = q ? members.filter(m =>
-        [m.user_id, m.username, m.global_name, m.display_name].some(v => String(v || '').toLowerCase().includes(q))
-      ) : members;
-      return [...filtered].sort((a, b) => String(a.display_name || a.username || '').localeCompare(String(b.display_name || b.username || '')));
-    }
-
-    function currentGuild() {
-      return state.guilds.find(g => g.guild_id === state.guildId) || null;
-    }
-
-    async function loadAccess() {
-      const { data, error } = await state.client
-        .from('allowed_users')
-        .select('supabase_user_id, discord_id, email, can_access, is_admin, is_bot')
-        .eq('supabase_user_id', state.user.id)
-        .maybeSingle();
-
-      if (error) throw error;
-      if (!data || !data.can_access) {
-        await state.client.auth.signOut();
-        state.access = null;
-        els.accessBox.innerHTML = '<span class="error">Access denied.</span> Your account is not approved.';
-        setStatus('Signed in but denied by access rules.', 'error');
-        throw new Error('Access denied.');
-      }
-
-      state.access = data;
-      state.isAdmin = Boolean(data.is_admin);
-      state.isBot = Boolean(data.is_bot);
-      els.accessBox.innerHTML =
-        '<span class="good">Access granted.</span><br />' +
-        'Email: ' + escapeHtml(data.email || state.user.email || '-') + '<br />' +
-        'Admin: ' + (data.is_admin ? 'yes' : 'no') + '<br />' +
-        'Bot: ' + (data.is_bot ? 'yes' : 'no');
-      els.settingsAccessLabel.textContent = data.is_admin || data.is_bot ? 'You can edit settings.' : 'Read-only.';
-      els.userBox.innerHTML =
-        '<div><strong>' + escapeHtml(state.user.email || '-') + '</strong></div>' +
-        '<div class="tiny">User ID: ' + escapeHtml(state.user.id) + '</div>';
-      return data;
-    }
-
-    async function loadGuilds() {
-      const { data, error } = await state.client.from('guilds').select('*').order('guild_name', { ascending: true });
-      if (error) throw error;
-      state.guilds = data || [];
-      if (!state.guildId && state.guilds.length) state.guildId = state.guilds[0].guild_id;
-      els.guildSelect.innerHTML = state.guilds.map(g =>
-        '<option value="' + escapeHtml(g.guild_id) + '">' + escapeHtml(g.guild_name || g.guild_id) + '</option>'
-      ).join('');
-      if (state.guildId) els.guildSelect.value = state.guildId;
-    }
-
-    async function loadGuildData() {
-      const guildId = state.guildId;
-      if (!guildId) { state.guildSettings = null; state.channels = []; state.roles = []; state.members = []; state.allMembers = []; renderEverything(); return; }
-
-      const [settingsRes, channelsRes, rolesRes, membersRes] = await Promise.all([
-        state.client.from('guild_settings').select('*').eq('guild_id', guildId).maybeSingle(),
-        state.client.from('guild_channels').select('*').eq('guild_id', guildId).order('channel_name', { ascending: true }),
-        state.client.from('guild_roles').select('*').eq('guild_id', guildId).order('position', { ascending: false }),
-        state.client.from('guild_members').select('*').eq('guild_id', guildId).order('display_name', { ascending: true, nullsFirst: false }),
-      ]);
-
-      if (settingsRes.error) throw settingsRes.error;
-      if (channelsRes.error) throw channelsRes.error;
-      if (rolesRes.error) throw rolesRes.error;
-      if (membersRes.error) throw membersRes.error;
-
-      state.guildSettings = settingsRes.data || null;
-      state.channels = channelsRes.data || [];
-      state.roles = rolesRes.data || [];
-      state.members = membersRes.data || [];
-      state.allMembers = state.members;
-      renderEverything();
-    }
-
-    function renderEverything() {
-      const guild = currentGuild();
-      const channels = normalizeChannels(state.channels);
-      const roles = normalizeRoles(state.roles);
-      const members = normalizeMembers(state.members);
-
-      els.guildIdBox.textContent = guild ? guild.guild_id : '-';
-      els.guildMemberCount.textContent = guild ? String(guild.member_count ?? members.length ?? '-') : '-';
-      els.guildRoleCount.textContent = String(roles.length);
-      els.channelStat.textContent = String(channels.length) + ' channel(s) synced';
-      els.roleStat.textContent = String(roles.length) + ' role(s) synced';
-      els.memberStat.textContent = String(state.members.length) + ' member(s) synced';
-      els.diagBox.textContent =
-        'Auth: ' + (state.user ? 'signed in' : 'signed out') + '\n' +
-        'Access: ' + (state.access ? 'allowed' : 'none') + '\n' +
-        'Admin: ' + (state.isAdmin ? 'yes' : 'no') + '\n' +
-        'Bot: ' + (state.isBot ? 'yes' : 'no');
-
-      const options = ['<option value="">Not set</option>']
-        .concat(channels.map(ch => '<option value="' + escapeHtml(ch.channel_id) + '">' + escapeHtml(ch.channel_name) + ' (' + escapeHtml(channelTypeName(ch.channel_type)) + ')</option>'))
-        .join('');
-      els.logChannel.innerHTML = options;
-      els.verifyChannel.innerHTML = options;
-      els.welcomeChannel.innerHTML = options;
-
-      els.rolesBody.innerHTML = roles.map(role => {
-        const perms = Array.isArray(role.permissions) ? role.permissions.join(', ') : String(role.permissions_bitfield || '');
-        return `<tr><td>${escapeHtml(role.role_name)}</td><td>${escapeHtml(role.role_id)}</td><td>${escapeHtml(role.position)}</td><td>${escapeHtml(role.color)}</td><td>${escapeHtml(roleFlags(role))}</td><td>${escapeHtml(perms || 'none')}</td></tr>`;
-      }).join('');
-
-      els.channelsBody.innerHTML = channels.map(ch =>
-        `<tr><td>${escapeHtml(ch.channel_name)}</td><td>${escapeHtml(ch.channel_id)}</td><td>${escapeHtml(channelTypeName(ch.channel_type))}</td><td>${escapeHtml(ch.parent_id || '-')}</td></tr>`
-      ).join('');
-
-      els.membersBody.innerHTML = members.map(m =>
-        `<tr><td>${escapeHtml(m.display_name || m.username || '-')}</td><td>${escapeHtml(m.user_id)}</td><td>${escapeHtml(m.username || '-')}</td><td>${escapeHtml(m.global_name || '-')}</td><td>${escapeHtml(m.joined_at || '-')}</td><td>${escapeHtml(m.last_seen_at || '-')}</td></tr>`
-      ).join('');
-
-      if (state.guildSettings) {
-        els.logChannel.value = state.guildSettings.log_channel_id || '';
-        els.verifyChannel.value = state.guildSettings.verify_channel_id || '';
-        els.welcomeChannel.value = state.guildSettings.welcome_channel_id || '';
-      }
-    }
-
-    async function saveSettings() {
-      if (!state.isAdmin && !state.isBot) throw new Error('You do not have permission to edit settings.');
-      const payload = {
-        guild_id: state.guildId,
-        log_channel_id: els.logChannel.value || null,
-        verify_channel_id: els.verifyChannel.value || null,
-        welcome_channel_id: els.welcomeChannel.value || null,
-        updated_at: new Date().toISOString(),
-      };
-      const { data, error } = await state.client.from('guild_settings').upsert(payload, { onConflict: 'guild_id' }).select('*').single();
-      if (error) throw error;
-      state.guildSettings = data;
-      renderEverything();
-      setStatus('Settings saved.', 'good');
-    }
-
-    async function signOut() {
-      if (state.client) await state.client.auth.signOut();
-      state.user = null; state.access = null; state.guilds = []; state.guildId = '';
-      state.guildSettings = null; state.channels = []; state.roles = []; state.members = []; state.allMembers = [];
-      els.userBox.textContent = 'No user signed in.';
-      els.accessBox.textContent = 'Waiting for sign in...';
-      showLogin();
-    }
-
-    // ── DASHBOARD EVENTS ────────────────────────────────────────────
-
-    els.signOutBtn.addEventListener('click', () => signOut().catch(err => setStatus(err.message, 'error')));
-
-    els.guildSelect.addEventListener('change', async () => {
-      state.guildId = els.guildSelect.value;
-      await loadGuildData().catch(err => setStatus(err.message, 'error'));
+    state.client.auth.onAuthStateChange(async (_event, session) => {
+      if (!session) return;
+      state.user = session.user;
+      try {
+        await loadAccess();
+        await loadGuilds();
+        await loadGuildData();
+        setStatus('Loaded.', 'ok');
+        showDash();
+      } catch (err) { setStatus(err.message, 'bad'); }
     });
+  }
 
-    els.search.addEventListener('input', () => {
-      state.search = els.search.value;
-      renderEverything();
-    });
-
-    els.refreshBtn.addEventListener('click', async () => {
-      setStatus('Refreshing data...');
-      await loadGuilds().catch(err => setStatus(err.message, 'error'));
-      await loadGuildData().catch(err => setStatus(err.message, 'error'));
-      setStatus('Dashboard refreshed.', 'good');
-    });
-
-    els.saveSettingsBtn.addEventListener('click', () => saveSettings().catch(err => setStatus(err.message, 'error')));
-    els.saveAgainBtn.addEventListener('click', () => saveSettings().catch(err => setStatus(err.message, 'error')));
-
-    // ── BOOTSTRAP ───────────────────────────────────────────────────
-
-    async function boot() {
-      state.client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-      const { data } = await state.client.auth.getSession();
-
-      if (data.session) {
-        state.user = data.session.user;
-        try {
-          await loadAccess();
-          await loadGuilds();
-          await loadGuildData();
-          setStatus('Session restored.', 'good');
-          showDash();
-        } catch (err) {
-          if (!String(err.message || '').toLowerCase().includes('access denied')) {
-            setStatus(err.message, 'error');
-          }
-          showLogin();
-        }
-      }
-
-      state.client.auth.onAuthStateChange(async (_event, session) => {
-        if (!session) return;
-        state.user = session.user;
-        try {
-          await loadAccess();
-          await loadGuilds();
-          await loadGuildData();
-          setStatus('Loaded.', 'good');
-          showDash();
-        } catch (err) {
-          setStatus(err.message, 'error');
-        }
-      });
-    }
-
-    boot().catch(err => console.error(err));
-  </script>
+  boot().catch(err => console.error(err));
+</script>
 </body>
 </html>
