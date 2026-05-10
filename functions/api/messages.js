@@ -92,17 +92,25 @@ async function discordRequest(env, path, init = {}) {
   return data;
 }
 
+// FIX: flatten author into top-level string + bool + avatar URL
 function formatMessage(m) {
+  const authorId = m.author?.id || null;
+  const avatarHash = m.author?.avatar || null;
+  const avatarUrl = authorId && avatarHash
+    ? `https://cdn.discordapp.com/avatars/${authorId}/${avatarHash}.png?size=64`
+    : null;
+
   return {
     id: m.id,
     message_id: m.id,
     content: m.content ?? '',
     created_at: m.timestamp || m.created_at || null,
-    author: {
-      username: m.author?.username || m.author?.global_name || 'unknown',
-      tag: m.author?.global_name || m.author?.username || 'unknown',
-      bot: Boolean(m.author?.bot),
-    },
+    // FIX: plain string, not an object
+    author: m.author?.global_name || m.author?.username || 'unknown',
+    // FIX: top-level bool
+    bot: Boolean(m.author?.bot),
+    // FIX: resolved CDN URL (null if no avatar)
+    avatar: avatarUrl,
   };
 }
 
