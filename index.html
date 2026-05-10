@@ -458,15 +458,24 @@
 
     .msg:hover { background: rgba(255,255,255,0.02); }
 
+    /* FIX: avatar can now be an <img> or a fallback initials div */
     .msg-avatar {
       width: 28px; height: 28px; border-radius: 50%;
       background: var(--border2);
       display: flex; align-items: center; justify-content: center;
       font-family: var(--mono); font-size: 10px; color: var(--muted);
       flex-shrink: 0; text-transform: uppercase;
+      overflow: hidden;
     }
 
     .msg-avatar.bot { background: rgba(232,160,32,0.15); color: var(--gold); }
+
+    .msg-avatar img {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      object-fit: cover;
+      display: block;
+    }
 
     .msg-body { flex: 1; min-width: 0; }
 
@@ -886,7 +895,7 @@
     els.rtLabel.textContent = live ? 'live' : 'offline';
   }
 
-  // ── API call (goes through Cloudflare worker / your API) ─────────
+  // ── API call ──────────────────────────────────────────────────────
   async function apiCall(method, path, body) {
     const { data } = await state.client.auth.getSession();
     const token = data?.session?.access_token;
@@ -1002,7 +1011,7 @@
   function textChannels() { return state.channels.filter(c => c.channel_type === 0 || c.channel_type === 5); }
   function defaultVerifyMessage() { return 'React with ✅ to verify yourself and unlock access.'; }
 
-  // ── Data loading ─────────────────────────────────────────────────
+  // ── Data loading ──────────────────────────────────────────────────
   async function loadAccess() {
     const { data, error } = await state.client
       .from('allowed_users')
@@ -1079,7 +1088,6 @@
 
   // ── Realtime subscription ────────────────────────────────────────
   function subscribeToChannel(channelId) {
-    // Remove existing subscription
     if (state.rtChannel) {
       state.client.removeChannel(state.rtChannel);
       state.rtChannel = null;
@@ -1101,13 +1109,15 @@
           filter: 'channel_id=eq.' + channelId,
         },
         (payload) => {
-          // New message arrived — append it live
           const row = payload.new;
+          // FIX: use message_id || id, and map author fields correctly
           appendLiveMessage({
-            id: row.message_id,
-            content: row.content,
-            author: row.author_username,
-            bot: row.author_bot,
+            id:        row.message_id || row.id,
+            content:   row.content,
+            // author_username is a plain string from the DB row — no unpacking needed
+            author:    row.author_username || row.author || 'unknown',
+            bot:       Boolean(row.author_bot ?? row.bot),
+            avatar:    row.author_avatar_url || null,
             timestamp: row.created_at,
           });
         }
@@ -1121,8 +1131,10 @@
           filter: 'channel_id=eq.' + channelId,
         },
         (payload) => {
-          // Message deleted — remove it from the list
-          const el = document.querySelector('.msg[data-id="' + payload.old.message_id + '"]');
+          // FIX: try both message_id and id from the old row
+          const deletedId = payload.old.message_id || payload.old.id;
+          if (!deletedId) return;
+          const el = document.querySelector('.msg[data-id="' + deletedId + '"]');
           if (el) el.remove();
         }
       )
@@ -1135,8 +1147,10 @@
           filter: 'channel_id=eq.' + channelId,
         },
         (payload) => {
-          // Message edited — update content inline
-          const el = document.querySelector('.msg[data-id="' + payload.new.message_id + '"] .msg-content');
+          // FIX: try both message_id and id
+          const updatedId = payload.new.message_id || payload.new.id;
+          if (!updatedId) return;
+          const el = document.querySelector('.msg[data-id="' + updatedId + '"] .msg-content');
           if (el) el.textContent = payload.new.content;
         }
       )
@@ -1146,15 +1160,24 @@
   }
 
   // ── Message rendering ────────────────────────────────────────────
+
+  // FIX: author is now always a plain string, bot is a top-level bool,
+  // avatar is a CDN URL or null. Build the avatar element accordingly.
   function msgHtml(m, isNew = false) {
-    const initials = String(m.author || '?').slice(0, 2).toUpperCase();
-    const isBot = Boolean(m.bot);
-    const time = m.timestamp ? new Date(m.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
+    const authorName = String(m.author || 'unknown');
+    const isBot      = Boolean(m.bot);
+    const initials   = authorName.slice(0, 2).toUpperCase();
+    const time       = m.timestamp ? new Date(m.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
+
+    const avatarInner = m.avatar
+      ? `<img src="${esc(m.avatar)}" alt="${esc(initials)}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" /><span style="display:none;width:100%;height:100%;align-items:center;justify-content:center;">${esc(initials)}</span>`
+      : esc(initials);
+
     return `<div class="msg${isNew ? ' new' : ''}" data-id="${esc(m.id)}">
-      <div class="msg-avatar${isBot ? ' bot' : ''}">${esc(initials)}</div>
+      <div class="msg-avatar${isBot ? ' bot' : ''}">${avatarInner}</div>
       <div class="msg-body">
         <div class="msg-header">
-          <span class="msg-author${isBot ? ' bot' : ''}">${esc(m.author)}${isBot ? '<span class="msg-bot-tag">BOT</span>' : ''}</span>
+          <span class="msg-author${isBot ? ' bot' : ''}">${esc(authorName)}${isBot ? '<span class="msg-bot-tag"> BOT</span>' : ''}</span>
           <span class="msg-time">${esc(time)}</span>
         </div>
         <div class="msg-content">${esc(m.content)}</div>
@@ -1177,9 +1200,7 @@
   }
 
   function appendLiveMessage(m) {
-    // Avoid duplicates
     if (document.querySelector('.msg[data-id="' + m.id + '"]')) return;
-    // Remove placeholder if present
     const placeholder = els.msgList.querySelector('div:not(.msg)');
     if (placeholder) placeholder.remove();
 
@@ -1189,7 +1210,6 @@
     els.msgList.appendChild(node);
     els.msgList.scrollTop = els.msgList.scrollHeight;
 
-    // Keep max 10 messages in the list
     const all = els.msgList.querySelectorAll('.msg');
     if (all.length > 10) all[0].remove();
   }
@@ -1202,7 +1222,6 @@
       const msgs = await apiCall('GET', '/api/messages?channelId=' + encodeURIComponent(channelId));
       renderMessages(Array.isArray(msgs) ? msgs : (msgs.messages || []));
       setStatus('Messages loaded — live updates on.', 'ok');
-      // Subscribe to realtime for this channel
       subscribeToChannel(channelId);
     } catch (err) {
       setStatus(err.message, 'bad');
@@ -1226,7 +1245,6 @@
         els.msgInput.value = '';
         setStatus('Message sent.', 'ok');
       }
-      // Realtime will handle the UI update — but reload as fallback if not subscribed
       if (!state.rtChannel) await loadMessages();
     } catch (err) {
       setStatus(err.message, 'bad');
@@ -1259,7 +1277,7 @@
     els.editingBar.classList.add('hidden');
   }
 
-  // ── Render everything ────────────────────────────────────────────
+  // ── Render everything ─────────────────────────────────────────────
   function renderEverything() {
     const guild    = currentGuild();
     const channels = normalizeChannels(state.channels);
@@ -1299,7 +1317,6 @@
         '<option value="' + esc(ch.channel_id) + '"># ' + esc(ch.channel_name) + '</option>'
       )).join('');
 
-    // Restore selected channel and resubscribe if we had one
     if (state.activeChannelId) {
       els.msgChannelSelect.value = state.activeChannelId;
     }
@@ -1348,7 +1365,7 @@
     }
   }
 
-  // ── Settings ─────────────────────────────────────────────────────
+  // ── Settings ──────────────────────────────────────────────────────
   async function saveSettings() {
     if (!state.isAdmin && !state.isBot) throw new Error('No permission to edit settings.');
     const verifyChannelChanged = (state.guildSettings?.verify_channel_id || '') !== (els.verifyChannel.value || '');
@@ -1434,7 +1451,7 @@
     showLogin();
   }
 
-  // ── Events ───────────────────────────────────────────────────────
+  // ── Events ────────────────────────────────────────────────────────
   els.signOutBtn.addEventListener('click',      () => signOut().catch(err => setStatus(err.message, 'bad')));
   els.saveSettingsBtn.addEventListener('click', () => saveSettings().catch(err => setStatus(err.message, 'bad')));
   els.saveAgainBtn.addEventListener('click',    () => saveSettings().catch(err => setStatus(err.message, 'bad')));
@@ -1446,7 +1463,6 @@
   els.cancelEditBtn.addEventListener('click',   () => cancelEdit());
   els.msgInput.addEventListener('keydown', e => { if (e.key === 'Enter') sendMessage(); });
 
-  // Message actions (edit / delete) via event delegation
   els.msgList.addEventListener('click', e => {
     const btn = e.target.closest('button[data-action]');
     if (!btn) return;
@@ -1457,7 +1473,6 @@
     if (action === 'delete') deleteMsg(id);
   });
 
-  // When channel changes, subscribe to new channel
   els.msgChannelSelect.addEventListener('change', () => {
     const channelId = els.msgChannelSelect.value;
     state.activeChannelId = channelId;
@@ -1470,7 +1485,6 @@
 
   els.guildSelect.addEventListener('change', async () => {
     state.guildId = els.guildSelect.value;
-    // Unsubscribe from old channel
     if (state.rtChannel) { state.client.removeChannel(state.rtChannel); state.rtChannel = null; setRtStatus(false); }
     state.activeChannelId = null;
     await loadGuildData().catch(err => setStatus(err.message, 'bad'));
@@ -1487,7 +1501,7 @@
     catch (err) { setStatus(err.message, 'bad'); }
   });
 
-  // ── Boot ─────────────────────────────────────────────────────────
+  // ── Boot ──────────────────────────────────────────────────────────
   async function boot() {
     state.client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     const { data } = await state.client.auth.getSession();
