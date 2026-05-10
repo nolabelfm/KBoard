@@ -467,14 +467,31 @@
     .msg-channel-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
 
     .msg-channel-category {
-      padding: 12px 8px 4px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 14px 4px 4px;
       font-family: var(--sans);
       font-size: 10px;
       font-weight: 700;
       letter-spacing: 0.08em;
       text-transform: uppercase;
       color: #80848e;
+      cursor: pointer;
+      border-radius: 3px;
+      user-select: none;
+      transition: color 0.1s;
     }
+
+    .msg-channel-category:hover { color: #b5bac1; }
+
+    .msg-channel-category .cat-arrow {
+      font-size: 9px;
+      transition: transform 0.15s;
+      display: inline-block;
+    }
+
+    .msg-channel-category.collapsed .cat-arrow { transform: rotate(-90deg); }
 
     .msg-channel-item {
       display: flex;
@@ -1519,16 +1536,56 @@
   function renderChannelSidebar() {
     const guild = currentGuild();
     els.msgSidebarGuildName.textContent = guild?.guild_name || 'Text Channels';
-    const channels = textChannels();
-    if (!channels.length) {
+
+    // Separate categories and text/announcement channels
+    const categories = state.channels
+      .filter(c => c.channel_type === 4)
+      .sort((a, b) => (a.position ?? 0) - (b.position ?? 0));
+
+    const textChs = state.channels
+      .filter(c => c.channel_type === 0 || c.channel_type === 5)
+      .sort((a, b) => (a.position ?? 0) - (b.position ?? 0));
+
+    if (!textChs.length) {
       els.msgChannelList.innerHTML = '<div style="padding:12px 8px;font-family:var(--mono);font-size:11px;color:#4e5058;">No text channels</div>';
       return;
     }
-    els.msgChannelList.innerHTML = channels.map(ch =>
-      `<button class="msg-channel-item${state.activeChannelId === ch.channel_id ? ' active' : ''}" data-channel-id="${esc(ch.channel_id)}" data-channel-name="${esc(ch.channel_name)}">
-        <span class="ch-hash">#</span>${esc(ch.channel_name)}
-      </button>`
-    ).join('');
+
+    let html = '';
+
+    // Build map: category_id -> channels
+    const byCategory = {};
+    const uncategorized = [];
+    textChs.forEach(ch => {
+      const pid = ch.parent_id || null;
+      if (pid && categories.find(c => c.channel_id === pid)) {
+        if (!byCategory[pid]) byCategory[pid] = [];
+        byCategory[pid].push(ch);
+      } else {
+        uncategorized.push(ch);
+      }
+    });
+
+    // Uncategorized first
+    if (uncategorized.length) {
+      uncategorized.forEach(ch => {
+        html += `<button class="msg-channel-item${state.activeChannelId === ch.channel_id ? ' active' : ''}" data-channel-id="${esc(ch.channel_id)}" data-channel-name="${esc(ch.channel_name)}"><span class="ch-hash">#</span>${esc(ch.channel_name)}</button>`;
+      });
+    }
+
+    // Then categories with their children
+    categories.forEach(cat => {
+      const children = byCategory[cat.channel_id] || [];
+      if (!children.length) return; // skip empty categories
+      html += `<div class="msg-channel-category">
+        <span class="cat-arrow">▾</span> ${esc(cat.channel_name)}
+      </div>`;
+      children.forEach(ch => {
+        html += `<button class="msg-channel-item${state.activeChannelId === ch.channel_id ? ' active' : ''}" data-channel-id="${esc(ch.channel_id)}" data-channel-name="${esc(ch.channel_name)}"><span class="ch-hash">#</span>${esc(ch.channel_name)}</button>`;
+      });
+    });
+
+    els.msgChannelList.innerHTML = html;
   }
 
   // ── Render everything ─────────────────────────────────────────────
@@ -1720,8 +1777,20 @@
     if (action === 'delete') deleteMsg(id);
   });
 
-  // Channel sidebar click
+  // Channel sidebar click — handles both category toggles and channel clicks
   els.msgChannelList.addEventListener('click', async e => {
+    // Category collapse toggle
+    const cat = e.target.closest('.msg-channel-category');
+    if (cat) {
+      const isCollapsed = cat.classList.toggle('collapsed');
+      let next = cat.nextElementSibling;
+      while (next && next.classList.contains('msg-channel-item')) {
+        next.style.display = isCollapsed ? 'none' : '';
+        next = next.nextElementSibling;
+      }
+      return;
+    }
+
     const btn = e.target.closest('.msg-channel-item');
     if (!btn) return;
     const channelId   = btn.dataset.channelId;
