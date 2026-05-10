@@ -163,9 +163,7 @@
     .lc-status.err  { color: #c05030; }
     .lc-status.good { color: #7a9a40; }
 
-    .lc-switch {
-      margin-top: 20px; text-align: center;
-    }
+    .lc-switch { margin-top: 20px; text-align: center; }
 
     .lc-switch span {
       font-family: var(--mono); font-size: 11px; color: #4a4a4a;
@@ -188,14 +186,12 @@
 
     #dashPage { min-height: 100vh; display: flex; flex-direction: column; }
 
-    /* top nav */
     .topnav {
       height: 48px;
       background: var(--bg2);
       border-bottom: 1px solid var(--border);
       display: flex; align-items: center;
       padding: 0 20px;
-      gap: 0;
       position: sticky; top: 0; z-index: 100;
       flex-shrink: 0;
     }
@@ -219,7 +215,6 @@
     }
 
     .nav-crumb span { color: var(--text); }
-
     .nav-spacer { flex: 1; }
 
     .nav-user {
@@ -227,6 +222,26 @@
       color: var(--muted);
       display: flex; align-items: center; gap: 12px;
     }
+
+    /* realtime indicator */
+    .rt-badge {
+      display: flex; align-items: center; gap: 5px;
+      font-family: var(--mono); font-size: 10px;
+      color: var(--muted2);
+      padding: 3px 8px;
+      border: 1px solid var(--border2);
+      border-radius: 2px;
+    }
+    .rt-badge .rt-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--muted2);
+      flex-shrink: 0;
+    }
+    .rt-badge.live .rt-dot {
+      background: var(--good);
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
 
     .nav-signout {
       background: none; border: 1px solid var(--border2);
@@ -239,12 +254,8 @@
 
     .nav-signout:hover { border-color: var(--bad); color: var(--bad); }
 
-    /* layout */
-    .dash-body {
-      display: flex; flex: 1; overflow: hidden;
-    }
+    .dash-body { display: flex; flex: 1; overflow: hidden; }
 
-    /* sidebar */
     .sidenav {
       width: 220px; flex-shrink: 0;
       background: var(--bg2);
@@ -253,10 +264,7 @@
       overflow-y: auto;
     }
 
-    .sn-section {
-      padding: 0 12px;
-      margin-bottom: 20px;
-    }
+    .sn-section { padding: 0 12px; margin-bottom: 20px; }
 
     .sn-label {
       font-family: var(--mono); font-size: 10px;
@@ -280,38 +288,20 @@
     .sn-item:hover { background: var(--bg3); color: var(--text); }
     .sn-item.active { background: rgba(232,160,32,0.08); color: var(--gold); border-left: 2px solid var(--gold); padding-left: 6px; }
 
-    .sn-dot {
-      width: 6px; height: 6px; border-radius: 50%;
-      background: var(--muted2); flex-shrink: 0;
-    }
-
+    .sn-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--muted2); flex-shrink: 0; }
     .sn-item.active .sn-dot { background: var(--gold); }
 
-    /* main content */
-    .main {
-      flex: 1; overflow-y: auto;
-      padding: 24px 28px;
-      background: var(--bg);
-    }
+    .main { flex: 1; overflow-y: auto; padding: 24px 28px; background: var(--bg); }
 
-    /* page header */
     .page-head {
       display: flex; align-items: center; justify-content: space-between;
       margin-bottom: 20px; padding-bottom: 16px;
       border-bottom: 1px solid var(--border);
     }
 
-    .page-head h1 {
-      font-size: 18px; font-weight: 600;
-      letter-spacing: -0.02em;
-    }
+    .page-head h1 { font-size: 18px; font-weight: 600; letter-spacing: -0.02em; }
+    .page-head .sub { font-size: 12px; color: var(--muted); margin-top: 2px; font-family: var(--mono); }
 
-    .page-head .sub {
-      font-size: 12px; color: var(--muted);
-      margin-top: 2px; font-family: var(--mono);
-    }
-
-    /* status strip */
     .status-strip {
       padding: 8px 12px;
       background: var(--bg3);
@@ -322,16 +312,11 @@
       display: flex; align-items: center; gap: 8px;
     }
 
-    .status-strip .dot {
-      width: 6px; height: 6px; border-radius: 50%;
-      background: var(--muted2); flex-shrink: 0;
-    }
-
-    .status-strip.ok .dot { background: var(--good); }
+    .status-strip .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--muted2); flex-shrink: 0; }
+    .status-strip.ok .dot  { background: var(--good); }
     .status-strip.bad .dot { background: var(--bad); }
-    .status-strip.warn .dot { background: var(--warn); }
+    .status-strip.warn .dot{ background: var(--warn); }
 
-    /* stat cards row */
     .stat-row {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -341,34 +326,12 @@
       margin-bottom: 20px;
     }
 
-    .stat-card {
-      background: var(--bg2);
-      padding: 16px 18px;
-    }
+    .stat-card { background: var(--bg2); padding: 16px 18px; }
+    .stat-card .label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; color: var(--muted); text-transform: uppercase; margin-bottom: 6px; }
+    .stat-card .value { font-family: var(--mono); font-size: 20px; font-weight: 500; color: var(--text); letter-spacing: -0.02em; }
+    .stat-card .sub   { font-family: var(--mono); font-size: 10px; color: var(--muted2); margin-top: 4px; }
 
-    .stat-card .label {
-      font-family: var(--mono); font-size: 10px;
-      letter-spacing: 0.12em; color: var(--muted);
-      text-transform: uppercase; margin-bottom: 6px;
-    }
-
-    .stat-card .value {
-      font-family: var(--mono); font-size: 20px;
-      font-weight: 500; color: var(--text);
-      letter-spacing: -0.02em;
-    }
-
-    .stat-card .sub {
-      font-family: var(--mono); font-size: 10px;
-      color: var(--muted2); margin-top: 4px;
-    }
-
-    /* section block */
-    .section {
-      background: var(--bg2);
-      border: 1px solid var(--border);
-      margin-bottom: 16px;
-    }
+    .section { background: var(--bg2); border: 1px solid var(--border); margin-bottom: 16px; }
 
     .section-head {
       padding: 12px 16px;
@@ -376,11 +339,7 @@
       display: flex; align-items: center; justify-content: space-between;
     }
 
-    .section-head h2 {
-      font-size: 12px; font-weight: 600;
-      letter-spacing: 0.04em; text-transform: uppercase;
-      color: var(--muted);
-    }
+    .section-head h2 { font-size: 12px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
 
     .section-head .badge {
       font-family: var(--mono); font-size: 10px;
@@ -392,12 +351,7 @@
 
     .section-body { padding: 16px; }
 
-    /* controls row */
-    .ctrl-row {
-      display: grid; gap: 12px;
-      margin-bottom: 16px;
-    }
-
+    .ctrl-row { display: grid; gap: 12px; margin-bottom: 16px; }
     .ctrl-row.cols-3 { grid-template-columns: 1fr 1fr auto; }
     .ctrl-row.cols-2 { grid-template-columns: 1fr 1fr; }
 
@@ -420,9 +374,7 @@
     }
 
     .ctrl textarea { min-height: 96px; resize: vertical; line-height: 1.6; }
-
     .ctrl input:focus, .ctrl select:focus, .ctrl textarea:focus { border-color: rgba(232,160,32,0.4); }
-
     .ctrl select option { background: var(--bg3); }
 
     .btn-primary {
@@ -452,76 +404,126 @@
 
     .btn-ghost:hover { border-color: var(--muted); color: var(--text); }
 
-    /* table */
     .tbl-wrap { overflow-x: auto; }
 
-    table {
-      width: 100%; border-collapse: collapse;
-      min-width: 600px;
-    }
-
-    thead tr {
-      background: var(--bg3);
-      border-bottom: 1px solid var(--border);
-    }
-
-    th {
-      padding: 8px 12px; text-align: left;
-      font-family: var(--mono); font-size: 10px;
-      letter-spacing: 0.1em; color: var(--muted2);
-      text-transform: uppercase; font-weight: 500;
-      white-space: nowrap;
-    }
-
-    td {
-      padding: 9px 12px;
-      border-bottom: 1px solid var(--border);
-      font-family: var(--mono); font-size: 11px;
-      color: var(--text); vertical-align: middle;
-    }
-
+    table { width: 100%; border-collapse: collapse; min-width: 600px; }
+    thead tr { background: var(--bg3); border-bottom: 1px solid var(--border); }
+    th { padding: 8px 12px; text-align: left; font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; color: var(--muted2); text-transform: uppercase; font-weight: 500; white-space: nowrap; }
+    td { padding: 9px 12px; border-bottom: 1px solid var(--border); font-family: var(--mono); font-size: 11px; color: var(--text); vertical-align: middle; }
     tbody tr:hover td { background: rgba(255,255,255,0.02); }
     tbody tr:last-child td { border-bottom: none; }
+    td .chip { display: inline-block; padding: 1px 6px; border: 1px solid var(--border2); font-size: 10px; color: var(--muted); }
 
-    td .chip {
-      display: inline-block;
-      padding: 1px 6px;
-      border: 1px solid var(--border2);
-      font-size: 10px; color: var(--muted);
-    }
-
-    /* access card */
-    .access-card {
-      background: var(--bg3);
-      border: 1px solid var(--border);
-      padding: 12px 14px;
-      font-family: var(--mono); font-size: 11px;
-      line-height: 1.8; color: var(--muted);
-      margin-bottom: 12px;
-    }
-
+    .access-card { background: var(--bg3); border: 1px solid var(--border); padding: 12px 14px; font-family: var(--mono); font-size: 11px; line-height: 1.8; color: var(--muted); margin-bottom: 12px; }
     .access-card .ok   { color: var(--good); }
     .access-card .deny { color: var(--bad); }
 
-    /* diag */
-    .diag {
-      font-family: var(--mono); font-size: 11px;
-      color: var(--muted); line-height: 2;
-      white-space: pre;
-    }
+    .diag { font-family: var(--mono); font-size: 11px; color: var(--muted); line-height: 2; white-space: pre; }
 
-    /* guild id strip */
-    .guild-strip {
-      display: flex; align-items: center; gap: 16px;
-      padding: 10px 14px;
-      background: var(--bg3);
-      border: 1px solid var(--border);
-      margin-bottom: 16px;
-      font-family: var(--mono); font-size: 11px;
-    }
-
+    .guild-strip { display: flex; align-items: center; gap: 16px; padding: 10px 14px; background: var(--bg3); border: 1px solid var(--border); margin-bottom: 16px; font-family: var(--mono); font-size: 11px; }
     .guild-strip .item { display: flex; align-items: center; gap: 6px; color: var(--muted); }
     .guild-strip .item span { color: var(--text); }
+
+    /* ═══════════════════════════════════════════════════════
+       MESSAGES PANEL
+    ═══════════════════════════════════════════════════════ */
+
+    .msg-panel { display: flex; flex-direction: column; height: 520px; }
+
+    .msg-channel-bar {
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .msg-channel-bar select {
+      flex: 1; padding: 7px 10px;
+      background: var(--bg3); border: 1px solid var(--border2);
+      border-radius: 2px; color: var(--text);
+      font-family: var(--mono); font-size: 12px; outline: none;
+    }
+
+    .msg-list {
+      flex: 1; overflow-y: auto;
+      display: flex; flex-direction: column;
+      padding: 8px 0;
+    }
+
+    .msg {
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 7px 16px;
+      transition: background 0.1s;
+    }
+
+    .msg:hover { background: rgba(255,255,255,0.02); }
+
+    .msg-avatar {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: var(--border2);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--mono); font-size: 10px; color: var(--muted);
+      flex-shrink: 0; text-transform: uppercase;
+    }
+
+    .msg-avatar.bot { background: rgba(232,160,32,0.15); color: var(--gold); }
+
+    .msg-body { flex: 1; min-width: 0; }
+
+    .msg-header { display: flex; align-items: baseline; gap: 8px; margin-bottom: 2px; }
+
+    .msg-author { font-family: var(--mono); font-size: 11px; font-weight: 500; color: var(--text); }
+    .msg-author.bot { color: var(--gold); }
+
+    .msg-bot-tag { font-size: 9px; opacity: 0.6; margin-left: 2px; }
+
+    .msg-time { font-family: var(--mono); font-size: 10px; color: var(--muted2); }
+
+    .msg-content { font-family: var(--mono); font-size: 12px; color: var(--muted); word-break: break-word; line-height: 1.5; }
+
+    .msg-actions { display: flex; gap: 4px; flex-shrink: 0; opacity: 0; transition: opacity 0.15s; }
+    .msg:hover .msg-actions { opacity: 1; }
+
+    .btn-act {
+      padding: 3px 8px; font-family: var(--mono); font-size: 10px;
+      border-radius: 2px; cursor: pointer; width: auto; margin: 0;
+      border: 1px solid var(--border2);
+      background: var(--bg3); color: var(--muted);
+      transition: all 0.12s;
+    }
+    .btn-act:hover { color: var(--text); border-color: var(--muted); }
+    .btn-act.del:hover { color: var(--bad); border-color: var(--bad); }
+    .btn-act.edit:hover { color: var(--gold); border-color: var(--gold); }
+
+    .msg-editing-bar {
+      margin: 0 16px 8px;
+      padding: 7px 10px;
+      background: rgba(232,160,32,0.06);
+      border-left: 2px solid var(--gold);
+      font-family: var(--mono); font-size: 11px; color: var(--gold);
+      display: flex; align-items: center; justify-content: space-between;
+      flex-shrink: 0;
+    }
+
+    .msg-compose {
+      display: flex; gap: 8px;
+      padding: 12px 16px;
+      border-top: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .msg-compose input {
+      flex: 1; padding: 8px 12px;
+      background: var(--bg3); border: 1px solid var(--border2);
+      border-radius: 2px; color: var(--text);
+      font-family: var(--mono); font-size: 12px; outline: none;
+    }
+
+    .msg-compose input:focus { border-color: rgba(232,160,32,0.4); }
+
+    /* new message flash */
+    @keyframes flashIn { from { background: rgba(232,160,32,0.08); } to { background: transparent; } }
+    .msg.new { animation: flashIn 1.2s ease-out forwards; }
 
     /* util */
     .hidden  { display: none !important; }
@@ -584,6 +586,7 @@
     <div class="nav-crumb">Workers &amp; Pages / <span id="navGuildName">—</span></div>
     <div class="nav-spacer"></div>
     <div class="nav-user">
+      <div class="rt-badge" id="rtBadge"><div class="rt-dot"></div><span id="rtLabel">offline</span></div>
       <span id="navUserEmail" class="fg-gold"></span>
       <button class="nav-signout" id="signOutBtn">Sign out</button>
     </div>
@@ -612,7 +615,6 @@
 
     <main class="main">
 
-      <!-- status strip -->
       <div class="status-strip" id="statusStrip">
         <div class="dot"></div>
         <span id="statusText">Loading...</span>
@@ -635,7 +637,6 @@
               <button class="btn-ghost" id="refreshBtn">↺ Refresh</button>
             </div>
           </div>
-
           <div class="guild-strip" id="guildStrip">
             <div class="item">Guild ID <span id="guildIdBox">—</span></div>
             <div class="item">Members <span id="guildMemberCount">—</span></div>
@@ -649,27 +650,14 @@
         <div class="page-head">
           <div><h1>Guild Overview</h1><div class="sub">Sync status from the bot</div></div>
         </div>
-
         <div class="stat-row">
-          <div class="stat-card">
-            <div class="label">Channels synced</div>
-            <div class="value" id="channelStat">—</div>
-          </div>
-          <div class="stat-card">
-            <div class="label">Roles synced</div>
-            <div class="value" id="roleStat">—</div>
-          </div>
-          <div class="stat-card">
-            <div class="label">Members synced</div>
-            <div class="value" id="memberStat">—</div>
-          </div>
+          <div class="stat-card"><div class="label">Channels synced</div><div class="value" id="channelStat">—</div></div>
+          <div class="stat-card"><div class="label">Roles synced</div><div class="value" id="roleStat">—</div></div>
+          <div class="stat-card"><div class="label">Members synced</div><div class="value" id="memberStat">—</div></div>
         </div>
-
         <div class="section">
           <div class="section-head"><h2>Access</h2></div>
-          <div class="section-body">
-            <div class="access-card" id="accessBox">Checking access...</div>
-          </div>
+          <div class="section-body"><div class="access-card" id="accessBox">Checking access...</div></div>
         </div>
       </div>
 
@@ -679,30 +667,17 @@
           <div><h1>Guild Settings</h1><div class="sub" id="settingsAccessLabel">—</div></div>
           <button class="btn-primary" id="saveSettingsBtn">Save settings</button>
         </div>
-
         <div class="section">
           <div class="section-head"><h2>Channel configuration</h2></div>
           <div class="section-body">
             <div class="ctrl-row cols-2" style="margin-bottom:0;">
-              <div class="ctrl">
-                <label>Logs channel</label>
-                <select id="logChannel"></select>
-              </div>
-              <div class="ctrl">
-                <label>Verify channel</label>
-                <select id="verifyChannel"></select>
-              </div>
-              <div class="ctrl">
-                <label>Welcome channel</label>
-                <select id="welcomeChannel"></select>
-              </div>
-              <div class="ctrl" style="display:flex;align-items:flex-end;">
-                <button class="btn-primary" id="saveAgainBtn">Save settings</button>
-              </div>
+              <div class="ctrl"><label>Logs channel</label><select id="logChannel"></select></div>
+              <div class="ctrl"><label>Verify channel</label><select id="verifyChannel"></select></div>
+              <div class="ctrl"><label>Welcome channel</label><select id="welcomeChannel"></select></div>
+              <div class="ctrl" style="display:flex;align-items:flex-end;"><button class="btn-primary" id="saveAgainBtn">Save settings</button></div>
             </div>
           </div>
         </div>
-
         <div class="section">
           <div class="section-head">
             <h2>Verification message</h2>
@@ -710,14 +685,8 @@
           </div>
           <div class="section-body">
             <div class="ctrl-row cols-2" style="margin-bottom:12px;">
-              <div class="ctrl">
-                <label>Message ID</label>
-                <input id="verifyMessageId" readonly placeholder="Not posted yet" />
-              </div>
-              <div class="ctrl">
-                <label>Posted in channel</label>
-                <input id="verifyMessageChannel" readonly placeholder="Select verify channel" />
-              </div>
+              <div class="ctrl"><label>Message ID</label><input id="verifyMessageId" readonly placeholder="Not posted yet" /></div>
+              <div class="ctrl"><label>Posted in channel</label><input id="verifyMessageChannel" readonly placeholder="Select verify channel" /></div>
             </div>
             <div class="ctrl" style="margin-bottom:12px;">
               <label>Verification text</label>
@@ -735,16 +704,14 @@
       <div id="tab-members" class="hidden">
         <div class="page-head">
           <div><h1>Members</h1><div class="sub">Synced from Discord via the bot</div></div>
-          <div class="section-head" style="border:none;padding:0;"><span class="badge" id="memberCountBadge" style="font-family:var(--mono);font-size:10px;padding:3px 10px;background:rgba(232,160,32,0.08);border:1px solid rgba(232,160,32,0.18);color:var(--gold);">0 members</span></div>
+          <span id="memberCountBadge" style="font-family:var(--mono);font-size:10px;padding:3px 10px;background:rgba(232,160,32,0.08);border:1px solid rgba(232,160,32,0.18);color:var(--gold);">0 members</span>
         </div>
         <div class="section">
           <div class="section-head"><h2>Member directory</h2></div>
           <div class="section-body" style="padding:0;">
             <div class="tbl-wrap">
               <table>
-                <thead>
-                  <tr><th>Display name</th><th>User ID</th><th>Username</th><th>Global name</th><th>Joined</th><th>Last seen</th></tr>
-                </thead>
+                <thead><tr><th>Display name</th><th>User ID</th><th>Username</th><th>Global name</th><th>Joined</th><th>Last seen</th></tr></thead>
                 <tbody id="membersBody"></tbody>
               </table>
             </div>
@@ -754,17 +721,13 @@
 
       <!-- ── ROLES TAB ── -->
       <div id="tab-roles" class="hidden">
-        <div class="page-head">
-          <div><h1>Roles</h1><div class="sub">Synced from Discord</div></div>
-        </div>
+        <div class="page-head"><div><h1>Roles</h1><div class="sub">Synced from Discord</div></div></div>
         <div class="section">
           <div class="section-head"><h2>Role directory</h2></div>
           <div class="section-body" style="padding:0;">
             <div class="tbl-wrap">
               <table>
-                <thead>
-                  <tr><th>Name</th><th>Role ID</th><th>Position</th><th>Color</th><th>Flags</th><th>Permissions</th></tr>
-                </thead>
+                <thead><tr><th>Name</th><th>Role ID</th><th>Position</th><th>Color</th><th>Flags</th><th>Permissions</th></tr></thead>
                 <tbody id="rolesBody"></tbody>
               </table>
             </div>
@@ -774,17 +737,13 @@
 
       <!-- ── CHANNELS TAB ── -->
       <div id="tab-channels" class="hidden">
-        <div class="page-head">
-          <div><h1>Channels</h1><div class="sub">Synced channel directory</div></div>
-        </div>
+        <div class="page-head"><div><h1>Channels</h1><div class="sub">Synced channel directory</div></div></div>
         <div class="section">
           <div class="section-head"><h2>Channel directory</h2></div>
           <div class="section-body" style="padding:0;">
             <div class="tbl-wrap">
               <table>
-                <thead>
-                  <tr><th>Name</th><th>Channel ID</th><th>Type</th><th>Parent</th></tr>
-                </thead>
+                <thead><tr><th>Name</th><th>Channel ID</th><th>Type</th><th>Parent</th></tr></thead>
                 <tbody id="channelsBody"></tbody>
               </table>
             </div>
@@ -795,46 +754,24 @@
       <!-- ── MESSAGES TAB ── -->
       <div id="tab-messages" class="hidden">
         <div class="page-head">
-          <div><h1>Messages</h1><div class="sub">Send, delete, or edit messages as the bot</div></div>
+          <div><h1>Messages</h1><div class="sub">Send, delete, or edit messages as the bot — updates live</div></div>
           <button class="btn-ghost" id="refreshMsgsBtn">↺ Refresh</button>
         </div>
-        <div class="section">
-          <div class="section-head"><h2>Message composer</h2></div>
-          <div class="section-body">
-            <div class="ctrl-row cols-3">
-              <div class="ctrl">
-                <label>Channel</label>
-                <select id="msgChannelSelect"></select>
-              </div>
-              <div class="ctrl">
-                <label>Message</label>
-                <input id="msgInput" placeholder="Send a message as the bot..." />
-              </div>
-              <div class="ctrl" style="display:flex;align-items:flex-end;">
-                <button class="btn-primary" id="loadMsgsBtn">Load messages</button>
-              </div>
+        <div class="section" style="overflow:hidden;">
+          <div class="msg-panel">
+            <div class="msg-channel-bar">
+              <select id="msgChannelSelect"></select>
+              <button class="btn-ghost" id="loadMsgsBtn" style="flex-shrink:0;">Load</button>
             </div>
-            <div id="editingBar" class="status-strip hidden" style="margin-bottom:16px;">
-              <div class="dot"></div>
+            <div id="editingBar" class="msg-editing-bar hidden">
               <span id="editingLabel">Editing message...</span>
-              <div class="nav-spacer"></div>
               <button class="btn-ghost" id="cancelEditBtn" style="font-size:10px;padding:3px 8px;">Cancel</button>
             </div>
-            <div class="tbl-wrap">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Author</th>
-                    <th>Message ID</th>
-                    <th>Content</th>
-                    <th>Created</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody id="msgBody"></tbody>
-              </table>
+            <div class="msg-list" id="msgList">
+              <div style="padding:24px;text-align:center;font-family:var(--mono);font-size:11px;color:var(--muted2);">Select a channel and load messages</div>
             </div>
-            <div style="display:flex;justify-content:flex-end;margin-top:16px;">
+            <div class="msg-compose">
+              <input id="msgInput" placeholder="Send a message as the bot..." />
               <button class="btn-primary" id="sendMsgBtn">Send</button>
             </div>
           </div>
@@ -843,14 +780,10 @@
 
       <!-- ── DIAGNOSTICS TAB ── -->
       <div id="tab-diag" class="hidden">
-        <div class="page-head">
-          <div><h1>Diagnostics</h1><div class="sub">Auth and sync state</div></div>
-        </div>
+        <div class="page-head"><div><h1>Diagnostics</h1><div class="sub">Auth and sync state</div></div></div>
         <div class="section">
           <div class="section-head"><h2>System state</h2></div>
-          <div class="section-body">
-            <div class="diag" id="diagBox">—</div>
-          </div>
+          <div class="section-body"><div class="diag" id="diagBox">—</div></div>
         </div>
       </div>
 
@@ -869,10 +802,11 @@
     search: '', isAdmin: false, isBot: false,
     editingMsgId: null,
     currentMessages: [],
+    rtChannel: null,
+    activeChannelId: null,
   };
 
   // ── DOM refs ──────────────────────────────────────────────────────
-
   const loginPage    = document.getElementById('loginPage');
   const dashPage     = document.getElementById('dashPage');
   const lcHeading    = document.getElementById('lcHeading');
@@ -883,60 +817,57 @@
   const lcToggle     = document.getElementById('lcToggle');
 
   const els = {
-    statusStrip:        document.getElementById('statusStrip'),
-    statusText:         document.getElementById('statusText'),
-    accessBox:          document.getElementById('accessBox'),
-    navUserEmail:       document.getElementById('navUserEmail'),
-    navGuildName:       document.getElementById('navGuildName'),
-    signOutBtn:         document.getElementById('signOutBtn'),
-    guildSelect:        document.getElementById('guildSelect'),
-    search:             document.getElementById('search'),
-    refreshBtn:         document.getElementById('refreshBtn'),
-    saveSettingsBtn:    document.getElementById('saveSettingsBtn'),
-    saveAgainBtn:       document.getElementById('saveAgainBtn'),
-    logChannel:         document.getElementById('logChannel'),
-    verifyChannel:      document.getElementById('verifyChannel'),
-    welcomeChannel:     document.getElementById('welcomeChannel'),
-    verifyMessageId:    document.getElementById('verifyMessageId'),
+    statusStrip:         document.getElementById('statusStrip'),
+    statusText:          document.getElementById('statusText'),
+    accessBox:           document.getElementById('accessBox'),
+    navUserEmail:        document.getElementById('navUserEmail'),
+    navGuildName:        document.getElementById('navGuildName'),
+    signOutBtn:          document.getElementById('signOutBtn'),
+    guildSelect:         document.getElementById('guildSelect'),
+    search:              document.getElementById('search'),
+    refreshBtn:          document.getElementById('refreshBtn'),
+    saveSettingsBtn:     document.getElementById('saveSettingsBtn'),
+    saveAgainBtn:        document.getElementById('saveAgainBtn'),
+    logChannel:          document.getElementById('logChannel'),
+    verifyChannel:       document.getElementById('verifyChannel'),
+    welcomeChannel:      document.getElementById('welcomeChannel'),
+    verifyMessageId:     document.getElementById('verifyMessageId'),
     verifyMessageChannel:document.getElementById('verifyMessageChannel'),
     verifyMessageContent:document.getElementById('verifyMessageContent'),
     verifyMessageState:  document.getElementById('verifyMessageState'),
     loadVerifyMsgBtn:    document.getElementById('loadVerifyMsgBtn'),
     publishVerifyMsgBtn: document.getElementById('publishVerifyMsgBtn'),
-    settingsAccessLabel:document.getElementById('settingsAccessLabel'),
-    guildIdBox:         document.getElementById('guildIdBox'),
-    guildMemberCount:   document.getElementById('guildMemberCount'),
-    guildRoleCount:     document.getElementById('guildRoleCount'),
-    channelStat:        document.getElementById('channelStat'),
-    roleStat:           document.getElementById('roleStat'),
-    memberStat:         document.getElementById('memberStat'),
-    memberCountBadge:   document.getElementById('memberCountBadge'),
-    rolesBody:          document.getElementById('rolesBody'),
-    channelsBody:       document.getElementById('channelsBody'),
-    membersBody:        document.getElementById('membersBody'),
-    diagBox:            document.getElementById('diagBox'),
-    msgChannelSelect:   document.getElementById('msgChannelSelect'),
-    loadMsgsBtn:        document.getElementById('loadMsgsBtn'),
-    refreshMsgsBtn:     document.getElementById('refreshMsgsBtn'),
-    msgBody:            document.getElementById('msgBody'),
-    msgInput:           document.getElementById('msgInput'),
-    sendMsgBtn:         document.getElementById('sendMsgBtn'),
-    editingBar:         document.getElementById('editingBar'),
-    editingLabel:       document.getElementById('editingLabel'),
-    cancelEditBtn:      document.getElementById('cancelEditBtn'),
+    settingsAccessLabel: document.getElementById('settingsAccessLabel'),
+    guildIdBox:          document.getElementById('guildIdBox'),
+    guildMemberCount:    document.getElementById('guildMemberCount'),
+    guildRoleCount:      document.getElementById('guildRoleCount'),
+    channelStat:         document.getElementById('channelStat'),
+    roleStat:            document.getElementById('roleStat'),
+    memberStat:          document.getElementById('memberStat'),
+    memberCountBadge:    document.getElementById('memberCountBadge'),
+    rolesBody:           document.getElementById('rolesBody'),
+    channelsBody:        document.getElementById('channelsBody'),
+    membersBody:         document.getElementById('membersBody'),
+    diagBox:             document.getElementById('diagBox'),
+    msgChannelSelect:    document.getElementById('msgChannelSelect'),
+    loadMsgsBtn:         document.getElementById('loadMsgsBtn'),
+    refreshMsgsBtn:      document.getElementById('refreshMsgsBtn'),
+    msgList:             document.getElementById('msgList'),
+    msgInput:            document.getElementById('msgInput'),
+    sendMsgBtn:          document.getElementById('sendMsgBtn'),
+    editingBar:          document.getElementById('editingBar'),
+    editingLabel:        document.getElementById('editingLabel'),
+    cancelEditBtn:       document.getElementById('cancelEditBtn'),
+    rtBadge:             document.getElementById('rtBadge'),
+    rtLabel:             document.getElementById('rtLabel'),
   };
 
   // ── Tab switching ────────────────────────────────────────────────
-
   const tabs = ['overview','settings','members','roles','channels','messages','diag'];
 
   function switchTab(name) {
-    tabs.forEach(t => {
-      document.getElementById('tab-' + t).classList.toggle('hidden', t !== name);
-    });
-    document.querySelectorAll('.sn-item').forEach(el => {
-      el.classList.toggle('active', el.dataset.tab === name);
-    });
+    tabs.forEach(t => document.getElementById('tab-' + t).classList.toggle('hidden', t !== name));
+    document.querySelectorAll('.sn-item').forEach(el => el.classList.toggle('active', el.dataset.tab === name));
   }
 
   document.querySelectorAll('.sn-item').forEach(el => {
@@ -944,12 +875,18 @@
   });
 
   // ── Status strip ─────────────────────────────────────────────────
-
   function setStatus(msg, tone = '') {
     els.statusText.textContent = msg;
     els.statusStrip.className = 'status-strip' + (tone ? ' ' + tone : '');
   }
 
+  // ── Realtime badge ───────────────────────────────────────────────
+  function setRtStatus(live) {
+    els.rtBadge.classList.toggle('live', live);
+    els.rtLabel.textContent = live ? 'live' : 'offline';
+  }
+
+  // ── API call (goes through Cloudflare worker / your API) ─────────
   async function apiCall(method, path, body) {
     const { data } = await state.client.auth.getSession();
     const token = data?.session?.access_token;
@@ -964,21 +901,14 @@
     };
     if (body) opts.body = JSON.stringify(body);
     return fetch(path, opts).then(async res => {
-      let data = {};
-      let raw = '';
-      try {
-        raw = await res.text();
-        data = raw ? JSON.parse(raw) : {};
-      } catch {
-        data = raw || {};
-      }
-      if (!res.ok) throw new Error(data.error || 'API error');
-      return data;
+      let parsed = {};
+      try { const t = await res.text(); parsed = t ? JSON.parse(t) : {}; } catch {}
+      if (!res.ok) throw new Error(parsed.error || 'API error');
+      return parsed;
     });
   }
 
   // ── Login ────────────────────────────────────────────────────────
-
   let lcMode = 'login';
 
   function setLcStatus(msg, tone = '') {
@@ -989,17 +919,13 @@
   lcToggle.addEventListener('click', () => {
     lcMode = lcMode === 'login' ? 'register' : 'login';
     if (lcMode === 'register') {
-      lcHeading.textContent = 'Register';
-      lcSubmit.textContent = 'Create account';
+      lcHeading.textContent = 'Register'; lcSubmit.textContent = 'Create account';
       lcConfirmWrap.classList.remove('hidden');
-      lcToggleText.textContent = 'Already have an account?';
-      lcToggle.textContent = 'Sign in';
+      lcToggleText.textContent = 'Already have an account?'; lcToggle.textContent = 'Sign in';
     } else {
-      lcHeading.textContent = 'Sign in';
-      lcSubmit.textContent = 'Continue';
+      lcHeading.textContent = 'Sign in'; lcSubmit.textContent = 'Continue';
       lcConfirmWrap.classList.add('hidden');
-      lcToggleText.textContent = "Don't have an account?";
-      lcToggle.textContent = 'Register';
+      lcToggleText.textContent = "Don't have an account?"; lcToggle.textContent = 'Register';
     }
     setLcStatus('');
   });
@@ -1032,7 +958,6 @@
       await loadGuilds();
       await loadGuildData();
       showDash();
-
     } catch (err) {
       setLcStatus(err.message, 'err');
       lcSubmit.disabled = false;
@@ -1044,27 +969,16 @@
     document.getElementById(id).addEventListener('keydown', e => { if (e.key === 'Enter') handleLogin(); });
   });
 
-  function showDash() {
-    loginPage.classList.add('hidden');
-    dashPage.classList.remove('hidden');
-  }
-
-  function showLogin() {
-    dashPage.classList.add('hidden');
-    loginPage.classList.remove('hidden');
-  }
+  function showDash() { loginPage.classList.add('hidden'); dashPage.classList.remove('hidden'); }
+  function showLogin() { dashPage.classList.add('hidden'); loginPage.classList.remove('hidden'); }
 
   // ── Helpers ──────────────────────────────────────────────────────
-
   function esc(value) {
-    return String(value ?? '')
-      .replaceAll('&','&amp;').replaceAll('<','&lt;')
-      .replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#39;');
+    return String(value ?? '').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#39;');
   }
 
   function channelTypeName(type) {
-    const m = {0:'text',2:'voice',4:'category',5:'announcement',10:'ann. thread',11:'pub. thread',12:'priv. thread',13:'stage',15:'forum',16:'media'};
-    return m[type] || String(type);
+    return {0:'text',2:'voice',4:'category',5:'announcement',10:'ann. thread',11:'pub. thread',12:'priv. thread',13:'stage',15:'forum',16:'media'}[type] || String(type);
   }
 
   function roleFlags(role) {
@@ -1075,36 +989,20 @@
     return f.length ? f.join(', ') : '—';
   }
 
-  function normalizeChannels(c) {
-    return [...c].sort((a,b) => String(a.channel_name).localeCompare(String(b.channel_name)));
-  }
-
-  function normalizeRoles(r) {
-    return [...r].sort((a,b) => Number(b.position||0) - Number(a.position||0));
-  }
+  function normalizeChannels(c) { return [...c].sort((a,b) => String(a.channel_name).localeCompare(String(b.channel_name))); }
+  function normalizeRoles(r) { return [...r].sort((a,b) => Number(b.position||0) - Number(a.position||0)); }
 
   function normalizeMembers(members) {
     const q = state.search.trim().toLowerCase();
-    const f = q ? members.filter(m =>
-      [m.user_id,m.username,m.global_name,m.display_name].some(v => String(v||'').toLowerCase().includes(q))
-    ) : members;
+    const f = q ? members.filter(m => [m.user_id,m.username,m.global_name,m.display_name].some(v => String(v||'').toLowerCase().includes(q))) : members;
     return [...f].sort((a,b) => String(a.display_name||a.username||'').localeCompare(String(b.display_name||b.username||'')));
   }
 
-  function currentGuild() {
-    return state.guilds.find(g => g.guild_id === state.guildId) || null;
-  }
-
-  function textChannels() {
-    return state.channels.filter(c => c.channel_type === 0 || c.channel_type === 5);
-  }
-
-  function defaultVerifyMessage() {
-    return 'React with ✅ to verify yourself and unlock access.';
-  }
+  function currentGuild() { return state.guilds.find(g => g.guild_id === state.guildId) || null; }
+  function textChannels() { return state.channels.filter(c => c.channel_type === 0 || c.channel_type === 5); }
+  function defaultVerifyMessage() { return 'React with ✅ to verify yourself and unlock access.'; }
 
   // ── Data loading ─────────────────────────────────────────────────
-
   async function loadAccess() {
     const { data, error } = await state.client
       .from('allowed_users')
@@ -1152,7 +1050,8 @@
   async function loadGuildData() {
     const guildId = state.guildId;
     if (!guildId) {
-      state.guildSettings = null; state.channels = []; state.roles = []; state.members = []; state.allMembers = []; state.currentMessages = []; state.editingMsgId = null;
+      state.guildSettings = null; state.channels = []; state.roles = []; state.members = []; state.allMembers = [];
+      state.currentMessages = []; state.editingMsgId = null;
       renderEverything(); return;
     }
 
@@ -1178,44 +1077,133 @@
     renderEverything();
   }
 
+  // ── Realtime subscription ────────────────────────────────────────
+  function subscribeToChannel(channelId) {
+    // Remove existing subscription
+    if (state.rtChannel) {
+      state.client.removeChannel(state.rtChannel);
+      state.rtChannel = null;
+      setRtStatus(false);
+    }
+
+    if (!channelId) return;
+
+    state.activeChannelId = channelId;
+
+    state.rtChannel = state.client
+      .channel('recent_messages:' + channelId)
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'recent_messages',
+          filter: 'channel_id=eq.' + channelId,
+        },
+        (payload) => {
+          // New message arrived — append it live
+          const row = payload.new;
+          appendLiveMessage({
+            id: row.message_id,
+            content: row.content,
+            author: row.author_username,
+            bot: row.author_bot,
+            timestamp: row.created_at,
+          });
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'DELETE',
+          schema: 'public',
+          table: 'recent_messages',
+          filter: 'channel_id=eq.' + channelId,
+        },
+        (payload) => {
+          // Message deleted — remove it from the list
+          const el = document.querySelector('.msg[data-id="' + payload.old.message_id + '"]');
+          if (el) el.remove();
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'recent_messages',
+          filter: 'channel_id=eq.' + channelId,
+        },
+        (payload) => {
+          // Message edited — update content inline
+          const el = document.querySelector('.msg[data-id="' + payload.new.message_id + '"] .msg-content');
+          if (el) el.textContent = payload.new.content;
+        }
+      )
+      .subscribe((status) => {
+        setRtStatus(status === 'SUBSCRIBED');
+      });
+  }
+
+  // ── Message rendering ────────────────────────────────────────────
+  function msgHtml(m, isNew = false) {
+    const initials = String(m.author || '?').slice(0, 2).toUpperCase();
+    const isBot = Boolean(m.bot);
+    const time = m.timestamp ? new Date(m.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
+    return `<div class="msg${isNew ? ' new' : ''}" data-id="${esc(m.id)}">
+      <div class="msg-avatar${isBot ? ' bot' : ''}">${esc(initials)}</div>
+      <div class="msg-body">
+        <div class="msg-header">
+          <span class="msg-author${isBot ? ' bot' : ''}">${esc(m.author)}${isBot ? '<span class="msg-bot-tag">BOT</span>' : ''}</span>
+          <span class="msg-time">${esc(time)}</span>
+        </div>
+        <div class="msg-content">${esc(m.content)}</div>
+      </div>
+      <div class="msg-actions">
+        ${isBot ? `<button class="btn-act edit" data-action="edit" data-id="${esc(m.id)}" data-content="${esc(m.content)}">edit</button>` : ''}
+        <button class="btn-act del" data-action="delete" data-id="${esc(m.id)}">del</button>
+      </div>
+    </div>`;
+  }
+
   function renderMessages(msgs) {
     state.currentMessages = Array.isArray(msgs) ? msgs : [];
     if (!state.currentMessages.length) {
-      els.msgBody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--muted2);padding:24px;">No messages</td></tr>';
+      els.msgList.innerHTML = '<div style="padding:24px;text-align:center;font-family:var(--mono);font-size:11px;color:var(--muted2);">No messages</div>';
       return;
     }
+    els.msgList.innerHTML = [...state.currentMessages].reverse().map(m => msgHtml(m)).join('');
+    els.msgList.scrollTop = els.msgList.scrollHeight;
+  }
 
-    els.msgBody.innerHTML = state.currentMessages.map(m => {
-      const messageId = m.id || m.message_id || '';
-      const created = m.created_at || m.timestamp || m.createdAt || '—';
-      const content = m.content || '—';
-      const author = m.author?.username || m.author?.tag || m.author || '—';
-      return `<tr>
-        <td>${esc(author)}</td>
-        <td>${esc(messageId || '—')}</td>
-        <td>${esc(content)}</td>
-        <td>${esc(created)}</td>
-        <td>
-          <div style="display:flex;gap:6px;flex-wrap:wrap;">
-            <button class="btn-ghost" data-action="edit" data-id="${encodeURIComponent(messageId)}" data-content="${encodeURIComponent(content)}">edit</button>
-            <button class="btn-ghost" data-action="delete" data-id="${encodeURIComponent(messageId)}">del</button>
-          </div>
-        </td>
-      </tr>`;
-    }).join('');
+  function appendLiveMessage(m) {
+    // Avoid duplicates
+    if (document.querySelector('.msg[data-id="' + m.id + '"]')) return;
+    // Remove placeholder if present
+    const placeholder = els.msgList.querySelector('div:not(.msg)');
+    if (placeholder) placeholder.remove();
+
+    const div = document.createElement('div');
+    div.innerHTML = msgHtml(m, true);
+    const node = div.firstElementChild;
+    els.msgList.appendChild(node);
+    els.msgList.scrollTop = els.msgList.scrollHeight;
+
+    // Keep max 10 messages in the list
+    const all = els.msgList.querySelectorAll('.msg');
+    if (all.length > 10) all[0].remove();
   }
 
   async function loadMessages() {
     const channelId = els.msgChannelSelect.value;
-    if (!channelId) {
-      setStatus('Select a channel first.', 'warn');
-      return;
-    }
+    if (!channelId) { setStatus('Select a channel first.', 'warn'); return; }
     setStatus('Loading messages...');
     try {
       const msgs = await apiCall('GET', '/api/messages?channelId=' + encodeURIComponent(channelId));
       renderMessages(Array.isArray(msgs) ? msgs : (msgs.messages || []));
-      setStatus('Messages loaded.', 'ok');
+      setStatus('Messages loaded — live updates on.', 'ok');
+      // Subscribe to realtime for this channel
+      subscribeToChannel(channelId);
     } catch (err) {
       setStatus(err.message, 'bad');
     }
@@ -1232,14 +1220,14 @@
         await apiCall('PATCH', '/api/messages', { channelId, messageId: state.editingMsgId, content });
         cancelEdit();
         els.msgInput.value = '';
-        await loadMessages();
         setStatus('Message edited.', 'ok');
       } else {
         await apiCall('POST', '/api/messages', { channelId, content });
         els.msgInput.value = '';
-        await loadMessages();
         setStatus('Message sent.', 'ok');
       }
+      // Realtime will handle the UI update — but reload as fallback if not subscribed
+      if (!state.rtChannel) await loadMessages();
     } catch (err) {
       setStatus(err.message, 'bad');
     }
@@ -1250,8 +1238,8 @@
     if (!channelId || !messageId) return;
     try {
       await apiCall('DELETE', '/api/messages', { channelId, messageId });
-      await loadMessages();
       setStatus('Message deleted.', 'ok');
+      if (!state.rtChannel) await loadMessages();
     } catch (err) {
       setStatus(err.message, 'bad');
     }
@@ -1260,6 +1248,7 @@
   function startEdit(messageId, content) {
     state.editingMsgId = messageId;
     els.msgInput.value = content || '';
+    els.msgInput.focus();
     els.editingLabel.textContent = 'Editing message — press Send to save';
     els.editingBar.classList.remove('hidden');
   }
@@ -1270,21 +1259,21 @@
     els.editingBar.classList.add('hidden');
   }
 
+  // ── Render everything ────────────────────────────────────────────
   function renderEverything() {
     const guild    = currentGuild();
     const channels = normalizeChannels(state.channels);
     const roles    = normalizeRoles(state.roles);
     const members  = normalizeMembers(state.members);
 
-    els.guildIdBox.textContent      = guild ? guild.guild_id : '—';
-    els.guildMemberCount.textContent= guild ? String(guild.member_count ?? members.length ?? '—') : '—';
-    els.guildRoleCount.textContent  = String(roles.length);
-    els.channelStat.textContent     = String(channels.length);
-    els.roleStat.textContent        = String(roles.length);
-    els.memberStat.textContent      = String(state.members.length);
-    els.memberCountBadge.textContent= state.members.length + ' members';
-
-    els.navGuildName.textContent    = guild ? (guild.guild_name || guild.guild_id) : '—';
+    els.guildIdBox.textContent       = guild ? guild.guild_id : '—';
+    els.guildMemberCount.textContent = guild ? String(guild.member_count ?? members.length ?? '—') : '—';
+    els.guildRoleCount.textContent   = String(roles.length);
+    els.channelStat.textContent      = String(channels.length);
+    els.roleStat.textContent         = String(roles.length);
+    els.memberStat.textContent       = String(state.members.length);
+    els.memberCountBadge.textContent = state.members.length + ' members';
+    els.navGuildName.textContent     = guild ? (guild.guild_name || guild.guild_id) : '—';
 
     els.diagBox.textContent =
       'auth     ' + (state.user   ? 'signed-in' : 'signed-out') + '\n' +
@@ -1294,9 +1283,9 @@
       'guild    ' + (state.guildId || '—')                        + '\n' +
       'channels ' + state.channels.length                         + '\n' +
       'roles    ' + state.roles.length                            + '\n' +
-      'members  ' + state.members.length;
+      'members  ' + state.members.length                          + '\n' +
+      'realtime ' + (state.rtChannel ? 'subscribed' : 'off');
 
-    // channel selects
     const opts = ['<option value="">— not set —</option>']
       .concat(channels.map(ch =>
         '<option value="' + esc(ch.channel_id) + '">' + esc(ch.channel_name) + ' [' + esc(channelTypeName(ch.channel_type)) + ']</option>'
@@ -1310,6 +1299,11 @@
         '<option value="' + esc(ch.channel_id) + '"># ' + esc(ch.channel_name) + '</option>'
       )).join('');
 
+    // Restore selected channel and resubscribe if we had one
+    if (state.activeChannelId) {
+      els.msgChannelSelect.value = state.activeChannelId;
+    }
+
     if (state.guildSettings) {
       els.logChannel.value     = state.guildSettings.log_channel_id     || '';
       els.verifyChannel.value  = state.guildSettings.verify_channel_id  || '';
@@ -1320,14 +1314,15 @@
     const verifyMessageId = state.guildSettings?.verify_message_id || '';
     const verifyChannelId = state.guildSettings?.verify_channel_id || '';
     els.verifyMessageId.value = verifyMessageId || '— not posted yet —';
-    els.verifyMessageChannel.value = verifyChannelId ? ('# ' + (channels.find(ch => ch.channel_id === verifyChannelId)?.channel_name || verifyChannelId)) : 'Select verify channel';
+    els.verifyMessageChannel.value = verifyChannelId
+      ? ('# ' + (channels.find(ch => ch.channel_id === verifyChannelId)?.channel_name || verifyChannelId))
+      : 'Select verify channel';
     els.verifyMessageState.textContent = verifyMessageId ? 'Posted' : 'Not posted';
     els.publishVerifyMsgBtn.textContent = verifyMessageId ? 'Update message' : 'Publish message';
     if (document.activeElement !== els.verifyMessageContent || !els.verifyMessageContent.value) {
       els.verifyMessageContent.value = verifyContent;
     }
 
-    // roles table
     els.rolesBody.innerHTML = roles.map(r => {
       const perms = Array.isArray(r.permissions) ? r.permissions.join(', ') : String(r.permissions_bitfield || '—');
       return `<tr>
@@ -1340,40 +1335,31 @@
       </tr>`;
     }).join('');
 
-    // channels table
-    els.channelsBody.innerHTML = channels.map(ch => `<tr>
-      <td>${esc(ch.channel_name)}</td>
-      <td>${esc(ch.channel_id)}</td>
-      <td><span class="chip">${esc(channelTypeName(ch.channel_type))}</span></td>
-      <td>${esc(ch.parent_id || '—')}</td>
-    </tr>`).join('');
+    els.channelsBody.innerHTML = channels.map(ch =>
+      `<tr><td>${esc(ch.channel_name)}</td><td>${esc(ch.channel_id)}</td><td><span class="chip">${esc(channelTypeName(ch.channel_type))}</span></td><td>${esc(ch.parent_id || '—')}</td></tr>`
+    ).join('');
 
-    // members table
-    els.membersBody.innerHTML = members.map(m => `<tr>
-      <td>${esc(m.display_name || m.username || '—')}</td>
-      <td>${esc(m.user_id)}</td>
-      <td>${esc(m.username || '—')}</td>
-      <td>${esc(m.global_name || '—')}</td>
-      <td>${esc(m.joined_at || '—')}</td>
-      <td>${esc(m.last_seen_at || '—')}</td>
-    </tr>`).join('');
+    els.membersBody.innerHTML = members.map(m =>
+      `<tr><td>${esc(m.display_name || m.username || '—')}</td><td>${esc(m.user_id)}</td><td>${esc(m.username || '—')}</td><td>${esc(m.global_name || '—')}</td><td>${esc(m.joined_at || '—')}</td><td>${esc(m.last_seen_at || '—')}</td></tr>`
+    ).join('');
 
     if (!state.currentMessages.length) {
-      els.msgBody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--muted2);padding:24px;">Select a channel and load messages</td></tr>';
+      els.msgList.innerHTML = '<div style="padding:24px;text-align:center;font-family:var(--mono);font-size:11px;color:var(--muted2);">Select a channel and load messages</div>';
     }
   }
 
+  // ── Settings ─────────────────────────────────────────────────────
   async function saveSettings() {
     if (!state.isAdmin && !state.isBot) throw new Error('No permission to edit settings.');
     const verifyChannelChanged = (state.guildSettings?.verify_channel_id || '') !== (els.verifyChannel.value || '');
     const payload = {
-      guild_id:          state.guildId,
-      log_channel_id:    els.logChannel.value    || null,
-      verify_channel_id: els.verifyChannel.value || null,
-      verify_message_id: verifyChannelChanged ? null : (state.guildSettings?.verify_message_id || null),
-      verify_message_content: (els.verifyMessageContent.value || state.guildSettings?.verify_message_content || defaultVerifyMessage()).trim(),
-      welcome_channel_id:els.welcomeChannel.value|| null,
-      updated_at:        new Date().toISOString(),
+      guild_id:               state.guildId,
+      log_channel_id:         els.logChannel.value    || null,
+      verify_channel_id:      els.verifyChannel.value || null,
+      verify_message_id:      verifyChannelChanged ? null : (state.guildSettings?.verify_message_id || null),
+      verify_message_content: (els.verifyMessageContent.value || defaultVerifyMessage()).trim(),
+      welcome_channel_id:     els.welcomeChannel.value || null,
+      updated_at:             new Date().toISOString(),
     };
     const { data, error } = await state.client
       .from('guild_settings').upsert(payload, { onConflict: 'guild_id' }).select('*').single();
@@ -1386,7 +1372,6 @@
   async function loadVerifyMessage() {
     const channelId = els.verifyChannel.value;
     if (!channelId) return setStatus('Select the verify channel first.', 'warn');
-
     const messageId = state.guildSettings?.verify_message_id || '';
     if (messageId) {
       try {
@@ -1396,11 +1381,9 @@
         setStatus('Verification message loaded.', 'ok');
         return;
       } catch (err) {
-        setStatus(err.message, 'bad');
-        return;
+        setStatus(err.message, 'bad'); return;
       }
     }
-
     els.verifyMessageContent.value = defaultVerifyMessage();
     els.verifyMessageState.textContent = 'Not posted';
     setStatus('No verification message saved yet.', 'warn');
@@ -1410,7 +1393,6 @@
     if (!state.isAdmin && !state.isBot) throw new Error('No permission to edit settings.');
     const channelId = els.verifyChannel.value;
     if (!channelId) throw new Error('Select the verify channel first.');
-
     const content = (els.verifyMessageContent.value || defaultVerifyMessage()).trim();
     const existingId = state.guildSettings?.verify_message_id || '';
 
@@ -1420,25 +1402,20 @@
         ? await apiCall('PATCH', '/api/messages', { channelId, messageId: existingId, content })
         : await apiCall('POST', '/api/messages', { channelId, content, reactionEmoji: '✅' });
     } catch (err) {
-      const staleMessage = existingId && /Discord 404|Unknown Message|Unknown Channel/i.test(String(err.message || ''));
-      if (!staleMessage) throw err;
+      const stale = existingId && /Discord 404|Unknown Message|Unknown Channel/i.test(String(err.message || ''));
+      if (!stale) throw err;
       result = await apiCall('POST', '/api/messages', { channelId, content, reactionEmoji: '✅' });
     }
 
     const payload = {
-      guild_id: state.guildId,
-      verify_channel_id: channelId,
-      verify_message_id: result.id || result.message_id || existingId || null,
+      guild_id:               state.guildId,
+      verify_channel_id:      channelId,
+      verify_message_id:      result.id || result.message_id || existingId || null,
       verify_message_content: content,
-      updated_at: new Date().toISOString(),
+      updated_at:             new Date().toISOString(),
     };
-
     const { data, error } = await state.client
-      .from('guild_settings')
-      .upsert(payload, { onConflict: 'guild_id' })
-      .select('*')
-      .single();
-
+      .from('guild_settings').upsert(payload, { onConflict: 'guild_id' }).select('*').single();
     if (error) throw error;
     state.guildSettings = data;
     renderEverything();
@@ -1446,38 +1423,56 @@
   }
 
   async function signOut() {
+    if (state.rtChannel) { state.client.removeChannel(state.rtChannel); state.rtChannel = null; }
     if (state.client) await state.client.auth.signOut();
-    Object.assign(state, { user:null, access:null, guilds:[], guildId:'', guildSettings:null, channels:[], roles:[], members:[], allMembers:[], isAdmin:false, isBot:false, editingMsgId:null, currentMessages:[] });
-    els.msgBody.innerHTML = '';
-    els.msgInput.value = '';
-    els.editingBar.classList.add('hidden');
+    Object.assign(state, {
+      user: null, access: null, guilds: [], guildId: '', guildSettings: null,
+      channels: [], roles: [], members: [], allMembers: [], isAdmin: false, isBot: false,
+      editingMsgId: null, currentMessages: [], rtChannel: null, activeChannelId: null,
+    });
+    setRtStatus(false);
     showLogin();
   }
 
   // ── Events ───────────────────────────────────────────────────────
-
-  els.signOutBtn.addEventListener('click',     () => signOut().catch(err => setStatus(err.message, 'bad')));
-  els.saveSettingsBtn.addEventListener('click',() => saveSettings().catch(err => setStatus(err.message, 'bad')));
-  els.saveAgainBtn.addEventListener('click',   () => saveSettings().catch(err => setStatus(err.message, 'bad')));
-  els.loadVerifyMsgBtn.addEventListener('click', () => loadVerifyMessage().catch(err => setStatus(err.message, 'bad')));
+  els.signOutBtn.addEventListener('click',      () => signOut().catch(err => setStatus(err.message, 'bad')));
+  els.saveSettingsBtn.addEventListener('click', () => saveSettings().catch(err => setStatus(err.message, 'bad')));
+  els.saveAgainBtn.addEventListener('click',    () => saveSettings().catch(err => setStatus(err.message, 'bad')));
+  els.loadVerifyMsgBtn.addEventListener('click',() => loadVerifyMessage().catch(err => setStatus(err.message, 'bad')));
   els.publishVerifyMsgBtn.addEventListener('click', () => publishVerifyMessage().catch(err => setStatus(err.message, 'bad')));
-  els.loadMsgsBtn.addEventListener('click',    () => loadMessages());
-  els.refreshMsgsBtn.addEventListener('click', () => loadMessages());
-  els.sendMsgBtn.addEventListener('click',     () => sendMessage());
-  els.cancelEditBtn.addEventListener('click',  () => cancelEdit());
+  els.loadMsgsBtn.addEventListener('click',     () => loadMessages());
+  els.refreshMsgsBtn.addEventListener('click',  () => loadMessages());
+  els.sendMsgBtn.addEventListener('click',      () => sendMessage());
+  els.cancelEditBtn.addEventListener('click',   () => cancelEdit());
   els.msgInput.addEventListener('keydown', e => { if (e.key === 'Enter') sendMessage(); });
-  els.msgBody.addEventListener('click', e => {
+
+  // Message actions (edit / delete) via event delegation
+  els.msgList.addEventListener('click', e => {
     const btn = e.target.closest('button[data-action]');
     if (!btn) return;
-    const action = btn.dataset.action;
-    const id = decodeURIComponent(btn.dataset.id || '');
-    const content = decodeURIComponent(btn.dataset.content || '');
-    if (action === 'edit') startEdit(id, content);
+    const action  = btn.dataset.action;
+    const id      = btn.dataset.id || '';
+    const content = btn.dataset.content || '';
+    if (action === 'edit')   startEdit(id, content);
     if (action === 'delete') deleteMsg(id);
+  });
+
+  // When channel changes, subscribe to new channel
+  els.msgChannelSelect.addEventListener('change', () => {
+    const channelId = els.msgChannelSelect.value;
+    state.activeChannelId = channelId;
+    if (channelId) subscribeToChannel(channelId);
+    else {
+      if (state.rtChannel) { state.client.removeChannel(state.rtChannel); state.rtChannel = null; }
+      setRtStatus(false);
+    }
   });
 
   els.guildSelect.addEventListener('change', async () => {
     state.guildId = els.guildSelect.value;
+    // Unsubscribe from old channel
+    if (state.rtChannel) { state.client.removeChannel(state.rtChannel); state.rtChannel = null; setRtStatus(false); }
+    state.activeChannelId = null;
     await loadGuildData().catch(err => setStatus(err.message, 'bad'));
   });
 
@@ -1488,15 +1483,11 @@
 
   els.refreshBtn.addEventListener('click', async () => {
     setStatus('Refreshing...');
-    try {
-      await loadGuilds();
-      await loadGuildData();
-      setStatus('Refreshed.', 'ok');
-    } catch (err) { setStatus(err.message, 'bad'); }
+    try { await loadGuilds(); await loadGuildData(); setStatus('Refreshed.', 'ok'); }
+    catch (err) { setStatus(err.message, 'bad'); }
   });
 
   // ── Boot ─────────────────────────────────────────────────────────
-
   async function boot() {
     state.client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     const { data } = await state.client.auth.getSession();
