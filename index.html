@@ -223,7 +223,6 @@
       display: flex; align-items: center; gap: 12px;
     }
 
-    /* realtime indicator */
     .rt-badge {
       display: flex; align-items: center; gap: 5px;
       font-family: var(--mono); font-size: 10px;
@@ -425,87 +424,153 @@
     .guild-strip .item span { color: var(--text); }
 
     /* ═══════════════════════════════════════════════════════
-       MESSAGES PANEL
+       MESSAGES PANEL — Discord style
     ═══════════════════════════════════════════════════════ */
 
-    .msg-panel { display: flex; flex-direction: column; height: 520px; }
+    .msg-panel {
+      display: flex;
+      flex-direction: row;
+      height: 560px;
+    }
 
-    .msg-channel-bar {
-      padding: 10px 16px;
-      border-bottom: 1px solid var(--border);
-      display: flex; align-items: center; gap: 10px;
+    /* LEFT: channel sidebar */
+    .msg-channel-sidebar {
+      width: 210px;
       flex-shrink: 0;
-    }
-
-    .msg-channel-bar select {
-      flex: 1; padding: 7px 10px;
-      background: var(--bg3); border: 1px solid var(--border2);
-      border-radius: 2px; color: var(--text);
-      font-family: var(--mono); font-size: 12px; outline: none;
-    }
-
-    .msg-list {
-      flex: 1; overflow-y: auto;
-      display: flex; flex-direction: column;
-      padding: 8px 0;
-    }
-
-    .msg {
-      display: flex; align-items: flex-start; gap: 10px;
-      padding: 7px 16px;
-      transition: background 0.1s;
-    }
-
-    .msg:hover { background: rgba(255,255,255,0.02); }
-
-    /* FIX: avatar can now be an <img> or a fallback initials div */
-    .msg-avatar {
-      width: 28px; height: 28px; border-radius: 50%;
-      background: var(--border2);
-      display: flex; align-items: center; justify-content: center;
-      font-family: var(--mono); font-size: 10px; color: var(--muted);
-      flex-shrink: 0; text-transform: uppercase;
+      background: #2b2d31;
+      border-right: 1px solid rgba(0,0,0,0.3);
+      display: flex;
+      flex-direction: column;
       overflow: hidden;
     }
 
-    .msg-avatar.bot { background: rgba(232,160,32,0.15); color: var(--gold); }
-
-    .msg-avatar img {
-      width: 28px; height: 28px;
-      border-radius: 50%;
-      object-fit: cover;
-      display: block;
+    .msg-channel-sidebar-header {
+      padding: 12px 16px 10px;
+      font-family: var(--sans);
+      font-size: 13px;
+      font-weight: 700;
+      color: #f2f3f5;
+      border-bottom: 1px solid rgba(0,0,0,0.2);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      flex-shrink: 0;
     }
 
-    .msg-body { flex: 1; min-width: 0; }
-
-    .msg-header { display: flex; align-items: baseline; gap: 8px; margin-bottom: 2px; }
-
-    .msg-author { font-family: var(--mono); font-size: 11px; font-weight: 500; color: var(--text); }
-    .msg-author.bot { color: var(--gold); }
-
-    .msg-bot-tag { font-size: 9px; opacity: 0.6; margin-left: 2px; }
-
-    .msg-time { font-family: var(--mono); font-size: 10px; color: var(--muted2); }
-
-    .msg-content { font-family: var(--mono); font-size: 12px; color: var(--muted); word-break: break-word; line-height: 1.5; }
-
-    .msg-actions { display: flex; gap: 4px; flex-shrink: 0; opacity: 0; transition: opacity 0.15s; }
-    .msg:hover .msg-actions { opacity: 1; }
-
-    .btn-act {
-      padding: 3px 8px; font-family: var(--mono); font-size: 10px;
-      border-radius: 2px; cursor: pointer; width: auto; margin: 0;
-      border: 1px solid var(--border2);
-      background: var(--bg3); color: var(--muted);
-      transition: all 0.12s;
+    .msg-channel-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px 6px;
     }
-    .btn-act:hover { color: var(--text); border-color: var(--muted); }
-    .btn-act.del:hover { color: var(--bad); border-color: var(--bad); }
-    .btn-act.edit:hover { color: var(--gold); border-color: var(--gold); }
+
+    .msg-channel-list::-webkit-scrollbar { width: 4px; }
+    .msg-channel-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
+
+    .msg-channel-category {
+      padding: 12px 8px 4px;
+      font-family: var(--sans);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #80848e;
+    }
+
+    .msg-channel-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: var(--sans);
+      font-size: 13px;
+      color: #949ba4;
+      transition: background 0.1s, color 0.1s;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      width: 100%;
+      border: none;
+      background: none;
+      text-align: left;
+    }
+
+    .msg-channel-item:hover {
+      background: rgba(255,255,255,0.06);
+      color: #dbdee1;
+    }
+
+    .msg-channel-item.active {
+      background: rgba(255,255,255,0.1);
+      color: #f2f3f5;
+    }
+
+    .msg-channel-item .ch-hash {
+      font-size: 18px;
+      opacity: 0.45;
+      flex-shrink: 0;
+      line-height: 1;
+      margin-top: -1px;
+    }
+
+    .msg-channel-item.active .ch-hash { opacity: 0.75; }
+
+    /* RIGHT: message area */
+    .msg-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      background: #313338;
+    }
+
+    .msg-main-header {
+      padding: 0 16px;
+      height: 48px;
+      border-bottom: 1px solid rgba(0,0,0,0.25);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .msg-main-header .ch-hash-lg {
+      font-size: 22px;
+      color: #80848e;
+      line-height: 1;
+    }
+
+    .msg-main-header .ch-name {
+      font-family: var(--sans);
+      font-size: 15px;
+      font-weight: 700;
+      color: #f2f3f5;
+    }
+
+    .msg-main-header .hdr-divider {
+      width: 1px; height: 18px;
+      background: rgba(255,255,255,0.1);
+      margin: 0 4px;
+    }
+
+    .msg-main-header .hdr-btn {
+      padding: 4px 10px;
+      background: rgba(255,255,255,0.05);
+      border: none;
+      border-radius: 3px;
+      color: #949ba4;
+      font-family: var(--mono);
+      font-size: 10px;
+      cursor: pointer;
+      width: auto;
+      transition: background 0.1s, color 0.1s;
+    }
+    .msg-main-header .hdr-btn:hover { background: rgba(255,255,255,0.1); color: #dbdee1; }
+    .msg-main-header .spacer { flex: 1; }
 
     .msg-editing-bar {
-      margin: 0 16px 8px;
+      margin: 0 16px 0;
       padding: 7px 10px;
       background: rgba(232,160,32,0.06);
       border-left: 2px solid var(--gold);
@@ -514,25 +579,193 @@
       flex-shrink: 0;
     }
 
+    .msg-list {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      padding: 8px 0 4px;
+    }
+
+    .msg-list::-webkit-scrollbar { width: 6px; }
+    .msg-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.07); border-radius: 3px; }
+
+    .msg {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 2px 16px;
+      transition: background 0.08s;
+      position: relative;
+    }
+
+    .msg:hover { background: rgba(0,0,0,0.1); }
+
+    .msg-avatar {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: #36393f;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--mono); font-size: 12px; color: #949ba4;
+      flex-shrink: 0; text-transform: uppercase;
+      overflow: hidden;
+      margin-top: 2px;
+    }
+
+    .msg-avatar.bot { background: rgba(88,101,242,0.3); color: #7289da; }
+
+    .msg-avatar img {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* group messages — hide avatar/name for consecutive messages */
+    .msg.grouped { padding-top: 1px; }
+    .msg.grouped .msg-avatar { visibility: hidden; }
+    .msg.grouped .msg-header { display: none; }
+
+    .msg-body { flex: 1; min-width: 0; }
+
+    .msg-header {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      margin-bottom: 3px;
+    }
+
+    .msg-author {
+      font-family: var(--sans);
+      font-size: 14px;
+      font-weight: 600;
+      color: #f2f3f5;
+      line-height: 1;
+    }
+
+    .msg-author.bot { color: #7289da; }
+
+    .msg-bot-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 1px 4px;
+      background: #5865f2;
+      border-radius: 3px;
+      font-family: var(--sans);
+      font-size: 9px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      vertical-align: middle;
+      margin-left: 2px;
+    }
+
+    .msg-time {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: #80848e;
+    }
+
+    .msg-content {
+      font-family: var(--sans);
+      font-size: 14px;
+      color: #dcddde;
+      word-break: break-word;
+      line-height: 1.4;
+    }
+
+    .msg-actions {
+      position: absolute;
+      right: 12px;
+      top: 0;
+      display: flex;
+      gap: 3px;
+      opacity: 0;
+      transition: opacity 0.1s;
+      background: #2b2d31;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 4px;
+      padding: 3px 4px;
+    }
+
+    .msg:hover .msg-actions { opacity: 1; }
+
+    .btn-act {
+      padding: 3px 8px;
+      font-family: var(--mono); font-size: 10px;
+      border-radius: 3px; cursor: pointer;
+      width: auto; margin: 0;
+      border: none;
+      background: transparent;
+      color: #80848e;
+      transition: background 0.1s, color 0.1s;
+    }
+    .btn-act:hover { background: rgba(255,255,255,0.08); color: #dcddde; }
+    .btn-act.del:hover { background: rgba(248,113,113,0.15); color: var(--bad); }
+    .btn-act.edit:hover { background: rgba(232,160,32,0.12); color: var(--gold); }
+
+    /* compose area */
     .msg-compose {
-      display: flex; gap: 8px;
-      padding: 12px 16px;
-      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 0;
+      margin: 0 16px 16px;
+      background: #383a40;
+      border-radius: 8px;
+      overflow: hidden;
       flex-shrink: 0;
     }
 
     .msg-compose input {
-      flex: 1; padding: 8px 12px;
-      background: var(--bg3); border: 1px solid var(--border2);
-      border-radius: 2px; color: var(--text);
-      font-family: var(--mono); font-size: 12px; outline: none;
+      flex: 1;
+      padding: 11px 16px;
+      background: transparent;
+      border: none;
+      color: #dcddde;
+      font-family: var(--sans);
+      font-size: 14px;
+      outline: none;
     }
 
-    .msg-compose input:focus { border-color: rgba(232,160,32,0.4); }
+    .msg-compose input::placeholder { color: #6d6f78; }
+
+    .msg-compose-send {
+      padding: 8px 14px;
+      background: transparent;
+      border: none;
+      border-left: 1px solid rgba(255,255,255,0.06);
+      color: #80848e;
+      font-family: var(--mono);
+      font-size: 11px;
+      cursor: pointer;
+      transition: color 0.1s, background 0.1s;
+      white-space: nowrap;
+      width: auto;
+      height: 100%;
+    }
+
+    .msg-compose-send:hover { color: var(--gold); background: rgba(232,160,32,0.06); }
 
     /* new message flash */
-    @keyframes flashIn { from { background: rgba(232,160,32,0.08); } to { background: transparent; } }
-    .msg.new { animation: flashIn 1.2s ease-out forwards; }
+    @keyframes flashIn { from { background: rgba(232,160,32,0.06); } to { background: transparent; } }
+    .msg.new { animation: flashIn 1.4s ease-out forwards; }
+
+    /* empty state */
+    .msg-empty {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #4e5058;
+      font-family: var(--sans);
+      font-size: 13px;
+      gap: 8px;
+      padding: 24px;
+      text-align: center;
+    }
+
+    .msg-empty .empty-icon { font-size: 32px; opacity: 0.4; }
 
     /* util */
     .hidden  { display: none !important; }
@@ -546,6 +779,7 @@
       .stat-row { grid-template-columns: 1fr; }
       .ctrl-row.cols-3 { grid-template-columns: 1fr; }
       .ctrl-row.cols-2 { grid-template-columns: 1fr; }
+      .msg-channel-sidebar { width: 160px; }
     }
   </style>
 </head>
@@ -764,25 +998,46 @@
       <div id="tab-messages" class="hidden">
         <div class="page-head">
           <div><h1>Messages</h1><div class="sub">Send, delete, or edit messages as the bot — updates live</div></div>
-          <button class="btn-ghost" id="refreshMsgsBtn">↺ Refresh</button>
         </div>
         <div class="section" style="overflow:hidden;">
           <div class="msg-panel">
-            <div class="msg-channel-bar">
-              <select id="msgChannelSelect"></select>
-              <button class="btn-ghost" id="loadMsgsBtn" style="flex-shrink:0;">Load</button>
+
+            <!-- LEFT: channel list -->
+            <div class="msg-channel-sidebar">
+              <div class="msg-channel-sidebar-header" id="msgSidebarGuildName">Text Channels</div>
+              <div class="msg-channel-list" id="msgChannelList">
+                <div style="padding:16px 8px;font-family:var(--mono);font-size:11px;color:#4e5058;">Loading channels...</div>
+              </div>
             </div>
-            <div id="editingBar" class="msg-editing-bar hidden">
-              <span id="editingLabel">Editing message...</span>
-              <button class="btn-ghost" id="cancelEditBtn" style="font-size:10px;padding:3px 8px;">Cancel</button>
+
+            <!-- RIGHT: message area -->
+            <div class="msg-main">
+              <div class="msg-main-header">
+                <span class="ch-hash-lg">#</span>
+                <span class="ch-name" id="msgActiveChannelName">select a channel</span>
+                <div class="spacer"></div>
+                <button class="hdr-btn" id="loadMsgsBtn">↺ load</button>
+                <button class="hdr-btn" id="refreshMsgsBtn">refresh</button>
+              </div>
+
+              <div id="editingBar" class="msg-editing-bar hidden">
+                <span id="editingLabel">Editing message...</span>
+                <button class="btn-ghost" id="cancelEditBtn" style="font-size:10px;padding:3px 8px;">Cancel</button>
+              </div>
+
+              <div class="msg-list" id="msgList">
+                <div class="msg-empty">
+                  <div class="empty-icon">#</div>
+                  <div>Select a channel to view messages</div>
+                </div>
+              </div>
+
+              <div class="msg-compose">
+                <input id="msgInput" placeholder="Send a message as the bot..." />
+                <button class="msg-compose-send" id="sendMsgBtn">Send</button>
+              </div>
             </div>
-            <div class="msg-list" id="msgList">
-              <div style="padding:24px;text-align:center;font-family:var(--mono);font-size:11px;color:var(--muted2);">Select a channel and load messages</div>
-            </div>
-            <div class="msg-compose">
-              <input id="msgInput" placeholder="Send a message as the bot..." />
-              <button class="btn-primary" id="sendMsgBtn">Send</button>
-            </div>
+
           </div>
         </div>
       </div>
@@ -858,7 +1113,6 @@
     channelsBody:        document.getElementById('channelsBody'),
     membersBody:         document.getElementById('membersBody'),
     diagBox:             document.getElementById('diagBox'),
-    msgChannelSelect:    document.getElementById('msgChannelSelect'),
     loadMsgsBtn:         document.getElementById('loadMsgsBtn'),
     refreshMsgsBtn:      document.getElementById('refreshMsgsBtn'),
     msgList:             document.getElementById('msgList'),
@@ -869,6 +1123,9 @@
     cancelEditBtn:       document.getElementById('cancelEditBtn'),
     rtBadge:             document.getElementById('rtBadge'),
     rtLabel:             document.getElementById('rtLabel'),
+    msgChannelList:      document.getElementById('msgChannelList'),
+    msgSidebarGuildName: document.getElementById('msgSidebarGuildName'),
+    msgActiveChannelName:document.getElementById('msgActiveChannelName'),
   };
 
   // ── Tab switching ────────────────────────────────────────────────
@@ -1102,13 +1359,7 @@
       .channel('recent_messages:' + channelId)
       .on(
         'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'recent_messages',
-          // no server-side filter — REPLICA IDENTITY FULL required for filters to work
-          // we filter client-side instead
-        },
+        { event: 'INSERT', schema: 'public', table: 'recent_messages' },
         (payload) => {
           const row = payload.new;
           if (String(row.channel_id) !== String(channelId)) return;
@@ -1124,11 +1375,7 @@
       )
       .on(
         'postgres_changes',
-        {
-          event: 'DELETE',
-          schema: 'public',
-          table: 'recent_messages',
-        },
+        { event: 'DELETE', schema: 'public', table: 'recent_messages' },
         (payload) => {
           if (String(payload.old.channel_id) !== String(channelId)) return;
           const deletedId = payload.old.message_id || payload.old.id;
@@ -1139,11 +1386,7 @@
       )
       .on(
         'postgres_changes',
-        {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'recent_messages',
-        },
+        { event: 'UPDATE', schema: 'public', table: 'recent_messages' },
         (payload) => {
           if (String(payload.new.channel_id) !== String(channelId)) return;
           const updatedId = payload.new.message_id || payload.new.id;
@@ -1158,9 +1401,6 @@
   }
 
   // ── Message rendering ────────────────────────────────────────────
-
-  // FIX: author is now always a plain string, bot is a top-level bool,
-  // avatar is a CDN URL or null. Build the avatar element accordingly.
   function msgHtml(m, isNew = false) {
     const authorName = String(m.author || 'unknown');
     const isBot      = Boolean(m.bot);
@@ -1175,7 +1415,7 @@
       <div class="msg-avatar${isBot ? ' bot' : ''}">${avatarInner}</div>
       <div class="msg-body">
         <div class="msg-header">
-          <span class="msg-author${isBot ? ' bot' : ''}">${esc(authorName)}${isBot ? '<span class="msg-bot-tag"> BOT</span>' : ''}</span>
+          <span class="msg-author${isBot ? ' bot' : ''}">${esc(authorName)}${isBot ? '<span class="msg-bot-badge">APP</span>' : ''}</span>
           <span class="msg-time">${esc(time)}</span>
         </div>
         <div class="msg-content">${esc(m.content)}</div>
@@ -1190,7 +1430,7 @@
   function renderMessages(msgs) {
     state.currentMessages = Array.isArray(msgs) ? msgs : [];
     if (!state.currentMessages.length) {
-      els.msgList.innerHTML = '<div style="padding:24px;text-align:center;font-family:var(--mono);font-size:11px;color:var(--muted2);">No messages</div>';
+      els.msgList.innerHTML = '<div class="msg-empty"><div class="empty-icon">#</div><div>No messages in this channel</div></div>';
       return;
     }
     els.msgList.innerHTML = [...state.currentMessages].reverse().map(m => msgHtml(m)).join('');
@@ -1199,7 +1439,7 @@
 
   function appendLiveMessage(m) {
     if (document.querySelector('.msg[data-id="' + m.id + '"]')) return;
-    const placeholder = els.msgList.querySelector('div:not(.msg)');
+    const placeholder = els.msgList.querySelector('.msg-empty');
     if (placeholder) placeholder.remove();
 
     const div = document.createElement('div');
@@ -1213,7 +1453,7 @@
   }
 
   async function loadMessages() {
-    const channelId = els.msgChannelSelect.value;
+    const channelId = state.activeChannelId;
     if (!channelId) { setStatus('Select a channel first.', 'warn'); return; }
     setStatus('Loading messages...');
     try {
@@ -1227,7 +1467,7 @@
   }
 
   async function sendMessage() {
-    const channelId = els.msgChannelSelect.value;
+    const channelId = state.activeChannelId;
     const content = els.msgInput.value.trim();
     if (!channelId) return setStatus('Select a channel first.', 'warn');
     if (!content) return;
@@ -1250,7 +1490,7 @@
   }
 
   async function deleteMsg(messageId) {
-    const channelId = els.msgChannelSelect.value;
+    const channelId = state.activeChannelId;
     if (!channelId || !messageId) return;
     try {
       await apiCall('DELETE', '/api/messages', { channelId, messageId });
@@ -1273,6 +1513,22 @@
     state.editingMsgId = null;
     els.msgInput.value = '';
     els.editingBar.classList.add('hidden');
+  }
+
+  // ── Render channel sidebar ────────────────────────────────────────
+  function renderChannelSidebar() {
+    const guild = currentGuild();
+    els.msgSidebarGuildName.textContent = guild?.guild_name || 'Text Channels';
+    const channels = textChannels();
+    if (!channels.length) {
+      els.msgChannelList.innerHTML = '<div style="padding:12px 8px;font-family:var(--mono);font-size:11px;color:#4e5058;">No text channels</div>';
+      return;
+    }
+    els.msgChannelList.innerHTML = channels.map(ch =>
+      `<button class="msg-channel-item${state.activeChannelId === ch.channel_id ? ' active' : ''}" data-channel-id="${esc(ch.channel_id)}" data-channel-name="${esc(ch.channel_name)}">
+        <span class="ch-hash">#</span>${esc(ch.channel_name)}
+      </button>`
+    ).join('');
   }
 
   // ── Render everything ─────────────────────────────────────────────
@@ -1309,15 +1565,6 @@
     els.logChannel.innerHTML = opts;
     els.verifyChannel.innerHTML = opts;
     els.welcomeChannel.innerHTML = opts;
-
-    els.msgChannelSelect.innerHTML = ['<option value="">— select channel —</option>']
-      .concat(textChannels().map(ch =>
-        '<option value="' + esc(ch.channel_id) + '"># ' + esc(ch.channel_name) + '</option>'
-      )).join('');
-
-    if (state.activeChannelId) {
-      els.msgChannelSelect.value = state.activeChannelId;
-    }
 
     if (state.guildSettings) {
       els.logChannel.value     = state.guildSettings.log_channel_id     || '';
@@ -1358,8 +1605,10 @@
       `<tr><td>${esc(m.display_name || m.username || '—')}</td><td>${esc(m.user_id)}</td><td>${esc(m.username || '—')}</td><td>${esc(m.global_name || '—')}</td><td>${esc(m.joined_at || '—')}</td><td>${esc(m.last_seen_at || '—')}</td></tr>`
     ).join('');
 
+    renderChannelSidebar();
+
     if (!state.currentMessages.length) {
-      els.msgList.innerHTML = '<div style="padding:24px;text-align:center;font-family:var(--mono);font-size:11px;color:var(--muted2);">Select a channel and load messages</div>';
+      els.msgList.innerHTML = '<div class="msg-empty"><div class="empty-icon">#</div><div>Select a channel to view messages</div></div>';
     }
   }
 
@@ -1416,8 +1665,7 @@
       result = existingId
         ? await apiCall('PATCH', '/api/messages', { channelId, messageId: existingId, content })
         : await apiCall('POST', '/api/messages', { channelId, content, reactionEmoji: '✅' });
-    } catch (err) {
-      const stale = existingId && /Discord 404|Unknown Message|Unknown Channel/i.test(String(err.message || ''));
+    } catch (err)      const stale = existingId && /Discord 404|Unknown Message|Unknown Channel/i.test(String(err.message || ''));
       if (!stale) throw err;
       result = await apiCall('POST', '/api/messages', { channelId, content, reactionEmoji: '✅' });
     }
@@ -1471,13 +1719,25 @@
     if (action === 'delete') deleteMsg(id);
   });
 
-  els.msgChannelSelect.addEventListener('change', () => {
-    const channelId = els.msgChannelSelect.value;
+  // Channel sidebar click
+  els.msgChannelList.addEventListener('click', async e => {
+    const btn = e.target.closest('.msg-channel-item');
+    if (!btn) return;
+    const channelId   = btn.dataset.channelId;
+    const channelName = btn.dataset.channelName;
     state.activeChannelId = channelId;
-    if (channelId) subscribeToChannel(channelId);
-    else {
-      if (state.rtChannel) { state.client.removeChannel(state.rtChannel); state.rtChannel = null; }
-      setRtStatus(false);
+    els.msgActiveChannelName.textContent = channelName;
+    document.querySelectorAll('.msg-channel-item').forEach(b =>
+      b.classList.toggle('active', b.dataset.channelId === channelId)
+    );
+    subscribeToChannel(channelId);
+    setStatus('Loading messages...');
+    try {
+      const msgs = await apiCall('GET', '/api/messages?channelId=' + encodeURIComponent(channelId));
+      renderMessages(Array.isArray(msgs) ? msgs : (msgs.messages || []));
+      setStatus('Messages loaded — live updates on.', 'ok');
+    } catch (err) {
+      setStatus(err.message, 'bad');
     }
   });
 
@@ -1485,6 +1745,7 @@
     state.guildId = els.guildSelect.value;
     if (state.rtChannel) { state.client.removeChannel(state.rtChannel); state.rtChannel = null; setRtStatus(false); }
     state.activeChannelId = null;
+    els.msgActiveChannelName.textContent = 'select a channel';
     await loadGuildData().catch(err => setStatus(err.message, 'bad'));
   });
 
