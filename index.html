@@ -1106,15 +1106,15 @@
           event: 'INSERT',
           schema: 'public',
           table: 'recent_messages',
-          filter: 'channel_id=eq.' + channelId,
+          // no server-side filter — REPLICA IDENTITY FULL required for filters to work
+          // we filter client-side instead
         },
         (payload) => {
           const row = payload.new;
-          // FIX: use message_id || id, and map author fields correctly
+          if (String(row.channel_id) !== String(channelId)) return;
           appendLiveMessage({
             id:        row.message_id || row.id,
             content:   row.content,
-            // author_username is a plain string from the DB row — no unpacking needed
             author:    row.author_username || row.author || 'unknown',
             bot:       Boolean(row.author_bot ?? row.bot),
             avatar:    row.author_avatar_url || null,
@@ -1128,10 +1128,9 @@
           event: 'DELETE',
           schema: 'public',
           table: 'recent_messages',
-          filter: 'channel_id=eq.' + channelId,
         },
         (payload) => {
-          // FIX: try both message_id and id from the old row
+          if (String(payload.old.channel_id) !== String(channelId)) return;
           const deletedId = payload.old.message_id || payload.old.id;
           if (!deletedId) return;
           const el = document.querySelector('.msg[data-id="' + deletedId + '"]');
@@ -1144,10 +1143,9 @@
           event: 'UPDATE',
           schema: 'public',
           table: 'recent_messages',
-          filter: 'channel_id=eq.' + channelId,
         },
         (payload) => {
-          // FIX: try both message_id and id
+          if (String(payload.new.channel_id) !== String(channelId)) return;
           const updatedId = payload.new.message_id || payload.new.id;
           if (!updatedId) return;
           const el = document.querySelector('.msg[data-id="' + updatedId + '"] .msg-content');
