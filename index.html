@@ -1665,7 +1665,8 @@
       result = existingId
         ? await apiCall('PATCH', '/api/messages', { channelId, messageId: existingId, content })
         : await apiCall('POST', '/api/messages', { channelId, content, reactionEmoji: '✅' });
-    } catch (err)      const stale = existingId && /Discord 404|Unknown Message|Unknown Channel/i.test(String(err.message || ''));
+    } catch (err) {
+      const stale = existingId && /Discord 404|Unknown Message|Unknown Channel/i.test(String(err.message || ''));
       if (!stale) throw err;
       result = await apiCall('POST', '/api/messages', { channelId, content, reactionEmoji: '✅' });
     }
