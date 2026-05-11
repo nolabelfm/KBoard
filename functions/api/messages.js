@@ -92,25 +92,56 @@ async function discordRequest(env, path, init = {}) {
   return data;
 }
 
-// FIX: flatten author into top-level string + bool + avatar URL
+const IMAGE_EXTENSIONS = /\.(png|jpe?g|gif|webp|svg|avif)(\?.*)?$/i;
+const IMAGE_CONTENT_TYPES = ['image/png', 'image/jpeg', 'image/gif', 'image/webp', 'image/svg+xml', 'image/avif'];
+
 function formatMessage(m) {
-  const authorId = m.author?.id || null;
+  const authorId   = m.author?.id || null;
   const avatarHash = m.author?.avatar || null;
-  const avatarUrl = authorId && avatarHash
+  const avatarUrl  = authorId && avatarHash
     ? `https://cdn.discordapp.com/avatars/${authorId}/${avatarHash}.png?size=64`
     : null;
 
+  // --- Attachments: only image/gif types ---
+  const imageAttachments = (m.attachments || [])
+    .filter(a => {
+      if (IMAGE_CONTENT_TYPES.includes(a.content_type)) return true;
+      if (IMAGE_EXTENSIONS.test(a.filename || '')) return true;
+      return false;
+    })
+    .map(a => ({
+      url:       a.url,
+      proxy_url: a.proxy_url || a.url,
+      filename:  a.filename || '',
+      width:     a.width  || null,
+      height:    a.height || null,
+    }));
+
+  // --- Embeds: pull image / thumbnail URLs from rich embeds ---
+  // Covers: tenor GIFs, imgur, plain image links, etc.
+  const embedImages = (m.embeds || [])
+    .flatMap(e => {
+      const imgs = [];
+      if (e.image?.url)     imgs.push({ url: e.image.url,     proxy_url: e.image.proxy_url     || e.image.url });
+      if (e.thumbnail?.url) imgs.push({ url: e.thumbnail.url, proxy_url: e.thumbnail.proxy_url || e.thumbnail.url });
+      if (e.video?.url && e.thumbnail?.url) {
+        // video embed (e.g. tenor) — thumbnail is the preview frame
+        // already added thumbnail above, skip duplicate
+      }
+      return imgs;
+    });
+
   return {
-    id: m.id,
+    id:         m.id,
     message_id: m.id,
-    content: m.content ?? '',
+    content:    m.content ?? '',
     created_at: m.timestamp || m.created_at || null,
-    // FIX: plain string, not an object
-    author: m.author?.global_name || m.author?.username || 'unknown',
-    // FIX: top-level bool
-    bot: Boolean(m.author?.bot),
-    // FIX: resolved CDN URL (null if no avatar)
-    avatar: avatarUrl,
+    author:     m.author?.global_name || m.author?.username || 'unknown',
+    author_id:  authorId,
+    bot:        Boolean(m.author?.bot),
+    avatar:     avatarUrl,
+    // NEW: images from attachments and embeds
+    images:     [...imageAttachments, ...embedImages],
   };
 }
 
@@ -139,7 +170,7 @@ async function handleRequest(request, env) {
     let user;
     let accessRow;
     try {
-      user = await supabaseAuthUser(env, accessToken);
+      user      = await supabaseAuthUser(env, accessToken);
       accessRow = await supabaseAllowedUser(env, accessToken, user.id);
     } catch (err) {
       return json(401, { error: err.message || 'Unauthorized' });
