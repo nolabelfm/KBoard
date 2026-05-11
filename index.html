@@ -433,7 +433,6 @@
       height: 560px;
     }
 
-    /* LEFT: channel sidebar */
     .msg-channel-sidebar {
       width: 210px;
       flex-shrink: 0;
@@ -533,7 +532,6 @@
 
     .msg-channel-item.active .ch-hash { opacity: 0.75; }
 
-    /* RIGHT: message area */
     .msg-main {
       flex: 1;
       display: flex;
@@ -626,8 +624,10 @@
       flex-shrink: 0; text-transform: uppercase;
       overflow: hidden;
       margin-top: 2px;
+      cursor: pointer;
     }
 
+    .msg-avatar:hover { opacity: 0.85; }
     .msg-avatar.bot { background: rgba(88,101,242,0.3); color: #7289da; }
 
     .msg-avatar img {
@@ -637,7 +637,6 @@
       display: block;
     }
 
-    /* group messages — hide avatar/name for consecutive messages */
     .msg.grouped { padding-top: 1px; }
     .msg.grouped .msg-avatar { visibility: hidden; }
     .msg.grouped .msg-header { display: none; }
@@ -657,8 +656,10 @@
       font-weight: 600;
       color: #f2f3f5;
       line-height: 1;
+      cursor: pointer;
     }
 
+    .msg-author:hover { text-decoration: underline; text-underline-offset: 2px; }
     .msg-author.bot { color: #7289da; }
 
     .msg-bot-badge {
@@ -677,10 +678,12 @@
       margin-left: 2px;
     }
 
+    /* ── Timestamp ── */
     .msg-time {
       font-family: var(--mono);
       font-size: 10px;
       color: #80848e;
+      cursor: default;
     }
 
     .msg-content {
@@ -691,6 +694,57 @@
       line-height: 1.4;
     }
 
+    /* ── Inline images / GIFs ── */
+    .msg-images {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 6px;
+    }
+
+    .msg-img {
+      max-width: 360px;
+      max-height: 280px;
+      border-radius: 4px;
+      object-fit: contain;
+      background: #1e1f22;
+      cursor: zoom-in;
+      display: block;
+    }
+
+    /* Lightbox */
+    #imgLightbox {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.85);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #imgLightbox.open { display: flex; }
+
+    #imgLightbox img {
+      max-width: 90vw;
+      max-height: 90vh;
+      border-radius: 6px;
+      object-fit: contain;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.6);
+    }
+
+    #imgLightbox .lb-close {
+      position: absolute;
+      top: 20px; right: 24px;
+      font-size: 28px; color: #fff;
+      cursor: pointer; line-height: 1;
+      background: none; border: none;
+      opacity: 0.7;
+      width: auto;
+    }
+
+    #imgLightbox .lb-close:hover { opacity: 1; }
+
+    /* ── Message actions ── */
     .msg-actions {
       position: absolute;
       right: 12px;
@@ -763,11 +817,9 @@
 
     .msg-compose-send:hover { color: var(--gold); background: rgba(232,160,32,0.06); }
 
-    /* new message flash */
     @keyframes flashIn { from { background: rgba(232,160,32,0.06); } to { background: transparent; } }
     .msg.new { animation: flashIn 1.4s ease-out forwards; }
 
-    /* empty state */
     .msg-empty {
       flex: 1;
       display: flex;
@@ -783,6 +835,125 @@
     }
 
     .msg-empty .empty-icon { font-size: 32px; opacity: 0.4; }
+
+    /* ═══════════════════════════════════════════════════════
+       PROFILE CARD POPUP
+    ═══════════════════════════════════════════════════════ */
+
+    #profileCard {
+      position: fixed;
+      z-index: 1500;
+      width: 300px;
+      background: #232428;
+      border-radius: 8px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+      overflow: hidden;
+      display: none;
+      flex-direction: column;
+    }
+
+    #profileCard.open { display: flex; }
+
+    .pc-banner {
+      height: 60px;
+      background: linear-gradient(135deg, #4e3b1f, #2b1e0f);
+      flex-shrink: 0;
+    }
+
+    .pc-avatar-wrap {
+      position: relative;
+      padding: 0 16px;
+      margin-top: -28px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+    }
+
+    .pc-avatar {
+      width: 72px; height: 72px;
+      border-radius: 50%;
+      border: 5px solid #232428;
+      background: #36393f;
+      object-fit: cover;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--mono); font-size: 22px; color: #949ba4;
+      text-transform: uppercase;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .pc-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+
+    .pc-body { padding: 0 16px 16px; }
+
+    .pc-name {
+      font-family: var(--sans);
+      font-size: 18px; font-weight: 700;
+      color: #f2f3f5;
+      line-height: 1.1;
+      margin-bottom: 2px;
+    }
+
+    .pc-username {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: #80848e;
+      margin-bottom: 12px;
+    }
+
+    .pc-divider {
+      height: 1px;
+      background: rgba(255,255,255,0.07);
+      margin: 10px 0;
+    }
+
+    .pc-section-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #80848e;
+      margin-bottom: 6px;
+    }
+
+    .pc-bio {
+      font-family: var(--sans);
+      font-size: 13px;
+      color: #b9bbbe;
+      line-height: 1.5;
+      margin-bottom: 10px;
+    }
+
+    .pc-roles {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+
+    .pc-role {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 8px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 4px;
+      font-family: var(--sans);
+      font-size: 11px;
+      color: #b9bbbe;
+    }
+
+    .pc-role-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .pc-no-roles {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: #4e5058;
+    }
 
     /* util */
     .hidden  { display: none !important; }
@@ -1019,7 +1190,6 @@
         <div class="section" style="overflow:hidden;">
           <div class="msg-panel">
 
-            <!-- LEFT: channel list -->
             <div class="msg-channel-sidebar">
               <div class="msg-channel-sidebar-header" id="msgSidebarGuildName">Text Channels</div>
               <div class="msg-channel-list" id="msgChannelList">
@@ -1027,7 +1197,6 @@
               </div>
             </div>
 
-            <!-- RIGHT: message area -->
             <div class="msg-main">
               <div class="msg-main-header">
                 <span class="ch-hash-lg">#</span>
@@ -1070,6 +1239,34 @@
 
     </main>
   </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════
+     PROFILE CARD
+════════════════════════════════════════════════════ -->
+<div id="profileCard">
+  <div class="pc-banner" id="pcBanner"></div>
+  <div class="pc-avatar-wrap">
+    <div class="pc-avatar" id="pcAvatar"></div>
+  </div>
+  <div class="pc-body">
+    <div class="pc-name" id="pcName">—</div>
+    <div class="pc-username" id="pcUsername">—</div>
+    <div id="pcBioWrap">
+      <div class="pc-divider"></div>
+      <div class="pc-section-label">About me</div>
+      <div class="pc-bio" id="pcBio">—</div>
+    </div>
+    <div class="pc-divider"></div>
+    <div class="pc-section-label">Roles</div>
+    <div class="pc-roles" id="pcRoles"></div>
+  </div>
+</div>
+
+<!-- Image lightbox -->
+<div id="imgLightbox">
+  <button class="lb-close" id="lbClose">✕</button>
+  <img id="lbImg" src="" alt="" />
 </div>
 
 <script>
@@ -1163,7 +1360,6 @@
     els.statusStrip.className = 'status-strip' + (tone ? ' ' + tone : '');
   }
 
-  // ── Realtime badge ───────────────────────────────────────────────
   function setRtStatus(live) {
     els.rtBadge.classList.toggle('live', live);
     els.rtLabel.textContent = live ? 'live' : 'offline';
@@ -1258,6 +1454,22 @@
   // ── Helpers ──────────────────────────────────────────────────────
   function esc(value) {
     return String(value ?? '').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#39;');
+  }
+
+  // ── NEW: Format timestamp ────────────────────────────────────────
+  function formatTime(ts) {
+    if (!ts) return '';
+    const d = new Date(ts);
+    if (isNaN(d)) return '';
+    const now = new Date();
+    const isToday = d.toDateString() === now.toDateString();
+    const yesterday = new Date(now); yesterday.setDate(now.getDate() - 1);
+    const isYesterday = d.toDateString() === yesterday.toDateString();
+
+    const timeStr = d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    if (isToday)     return 'Today at ' + timeStr;
+    if (isYesterday) return 'Yesterday at ' + timeStr;
+    return d.toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' }) + ' ' + timeStr;
   }
 
   function channelTypeName(type) {
@@ -1374,68 +1586,145 @@
 
     state.rtChannel = state.client
       .channel('recent_messages:' + channelId)
-      .on(
-        'postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'recent_messages' },
-        (payload) => {
-          const row = payload.new;
-          if (String(row.channel_id) !== String(channelId)) return;
-          appendLiveMessage({
-            id:        row.message_id || row.id,
-            content:   row.content,
-            author:    row.author_username || row.author || 'unknown',
-            bot:       Boolean(row.author_bot ?? row.bot),
-            avatar:    row.author_avatar_url || null,
-            timestamp: row.created_at,
-          });
-        }
-      )
-      .on(
-        'postgres_changes',
-        { event: 'DELETE', schema: 'public', table: 'recent_messages' },
-        (payload) => {
-          if (String(payload.old.channel_id) !== String(channelId)) return;
-          const deletedId = payload.old.message_id || payload.old.id;
-          if (!deletedId) return;
-          const el = document.querySelector('.msg[data-id="' + deletedId + '"]');
-          if (el) el.remove();
-        }
-      )
-      .on(
-        'postgres_changes',
-        { event: 'UPDATE', schema: 'public', table: 'recent_messages' },
-        (payload) => {
-          if (String(payload.new.channel_id) !== String(channelId)) return;
-          const updatedId = payload.new.message_id || payload.new.id;
-          if (!updatedId) return;
-          const el = document.querySelector('.msg[data-id="' + updatedId + '"] .msg-content');
-          if (el) el.textContent = payload.new.content;
-        }
-      )
-      .subscribe((status) => {
-        setRtStatus(status === 'SUBSCRIBED');
-      });
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'recent_messages' }, (payload) => {
+        const row = payload.new;
+        if (String(row.channel_id) !== String(channelId)) return;
+        appendLiveMessage({
+          id:        row.message_id || row.id,
+          content:   row.content,
+          author:    row.author_username || row.author || 'unknown',
+          bot:       Boolean(row.author_bot ?? row.bot),
+          avatar:    row.author_avatar_url || null,
+          timestamp: row.created_at,
+          images:    [],
+        });
+      })
+      .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'recent_messages' }, (payload) => {
+        if (String(payload.old.channel_id) !== String(channelId)) return;
+        const deletedId = payload.old.message_id || payload.old.id;
+        if (!deletedId) return;
+        const el = document.querySelector('.msg[data-id="' + deletedId + '"]');
+        if (el) el.remove();
+      })
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'recent_messages' }, (payload) => {
+        if (String(payload.new.channel_id) !== String(channelId)) return;
+        const updatedId = payload.new.message_id || payload.new.id;
+        if (!updatedId) return;
+        const el = document.querySelector('.msg[data-id="' + updatedId + '"] .msg-content');
+        if (el) el.textContent = payload.new.content;
+      })
+      .subscribe((status) => { setRtStatus(status === 'SUBSCRIBED'); });
   }
+
+  // ── NEW: Profile card ─────────────────────────────────────────────
+  const profileCard = document.getElementById('profileCard');
+
+  function openProfileCard(authorName, authorId, avatarUrl, event) {
+    // Find member by username or display name (best effort match)
+    const member = state.members.find(m =>
+      m.user_id === authorId ||
+      String(m.username || '').toLowerCase() === String(authorName || '').toLowerCase() ||
+      String(m.display_name || '').toLowerCase() === String(authorName || '').toLowerCase() ||
+      String(m.global_name || '').toLowerCase() === String(authorName || '').toLowerCase()
+    );
+
+    // Avatar
+    const pcAvatar = document.getElementById('pcAvatar');
+    if (avatarUrl) {
+      pcAvatar.innerHTML = `<img src="${esc(avatarUrl)}" alt="${esc(authorName)}" onerror="this.parentElement.textContent='${esc((authorName||'?').slice(0,2).toUpperCase())}'" />`;
+    } else {
+      pcAvatar.textContent = (authorName || '?').slice(0, 2).toUpperCase();
+    }
+
+    // Names
+    document.getElementById('pcName').textContent = member?.display_name || member?.global_name || authorName || '—';
+    document.getElementById('pcUsername').textContent = member?.username ? '@' + member.username : (authorName || '—');
+
+    // Bio / description
+    const bio = member?.bio || member?.description || '';
+    const bioWrap = document.getElementById('pcBioWrap');
+    if (bio) {
+      document.getElementById('pcBio').textContent = bio;
+      bioWrap.style.display = '';
+    } else {
+      bioWrap.style.display = 'none';
+    }
+
+    // Roles
+    const pcRoles = document.getElementById('pcRoles');
+    const memberRoleIds = member?.role_ids || member?.roles || [];
+    const roleIdArray = Array.isArray(memberRoleIds) ? memberRoleIds : [];
+
+    if (roleIdArray.length && state.roles.length) {
+      const matchedRoles = state.roles.filter(r => roleIdArray.includes(r.role_id) && r.role_name !== '@everyone');
+      if (matchedRoles.length) {
+        pcRoles.innerHTML = matchedRoles.map(r => {
+          const color = r.color || '#4e5058';
+          return `<div class="pc-role"><div class="pc-role-dot" style="background:${esc(color)};"></div>${esc(r.role_name)}</div>`;
+        }).join('');
+      } else {
+        pcRoles.innerHTML = '<span class="pc-no-roles">No roles</span>';
+      }
+    } else {
+      pcRoles.innerHTML = '<span class="pc-no-roles">No role data</span>';
+    }
+
+    // Position the card near the click, keep it on screen
+    profileCard.classList.add('open');
+    const cardW = 300, cardH = profileCard.offsetHeight || 280;
+    let x = event.clientX + 12;
+    let y = event.clientY - 20;
+    if (x + cardW > window.innerWidth  - 8) x = event.clientX - cardW - 12;
+    if (y + cardH > window.innerHeight - 8) y = window.innerHeight - cardH - 8;
+    if (y < 8) y = 8;
+    profileCard.style.left = x + 'px';
+    profileCard.style.top  = y + 'px';
+  }
+
+  function closeProfileCard() {
+    profileCard.classList.remove('open');
+  }
+
+  // Close card when clicking outside it
+  document.addEventListener('click', (e) => {
+    if (profileCard.classList.contains('open') && !profileCard.contains(e.target)) {
+      const isAuthorClick = e.target.closest('[data-profile-trigger]');
+      if (!isAuthorClick) closeProfileCard();
+    }
+  });
 
   // ── Message rendering ────────────────────────────────────────────
   function msgHtml(m, isNew = false) {
     const authorName = String(m.author || 'unknown');
+    const authorId   = m.author_id || '';
     const isBot      = Boolean(m.bot);
     const initials   = authorName.slice(0, 2).toUpperCase();
-    const time       = m.timestamp ? new Date(m.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
+    const time       = formatTime(m.timestamp || m.created_at);
 
     const avatarInner = m.avatar
       ? `<img src="${esc(m.avatar)}" alt="${esc(initials)}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" /><span style="display:none;width:100%;height:100%;align-items:center;justify-content:center;">${esc(initials)}</span>`
       : esc(initials);
 
+    // Images section — attachments + embed images
+    const images = Array.isArray(m.images) ? m.images : [];
+    const imagesHtml = images.length
+      ? `<div class="msg-images">${images.map(img =>
+          `<img class="msg-img" src="${esc(img.proxy_url || img.url)}" alt="${esc(img.filename || 'image')}" data-fullsrc="${esc(img.url || img.proxy_url)}" loading="lazy" />`
+        ).join('')}</div>`
+      : '';
+
+    // Profile trigger data stored on avatar and author name
+    const profileData = `data-profile-trigger="1" data-author="${esc(authorName)}" data-author-id="${esc(authorId)}" data-avatar="${esc(m.avatar || '')}"`;
+
     return `<div class="msg${isNew ? ' new' : ''}" data-id="${esc(m.id)}">
-      <div class="msg-avatar${isBot ? ' bot' : ''}">${avatarInner}</div>
+      <div class="msg-avatar${isBot ? ' bot' : ''}" ${profileData}>${avatarInner}</div>
       <div class="msg-body">
         <div class="msg-header">
-          <span class="msg-author${isBot ? ' bot' : ''}">${esc(authorName)}${isBot ? '<span class="msg-bot-badge">APP</span>' : ''}</span>
-          <span class="msg-time">${esc(time)}</span>
+          <span class="msg-author${isBot ? ' bot' : ''}" ${profileData}>${esc(authorName)}${isBot ? '<span class="msg-bot-badge">APP</span>' : ''}</span>
+          <span class="msg-time" title="${esc(m.timestamp || m.created_at || '')}">${esc(time)}</span>
         </div>
         <div class="msg-content">${esc(m.content)}</div>
+        ${imagesHtml}
       </div>
       <div class="msg-actions">
         ${isBot ? `<button class="btn-act edit" data-action="edit" data-id="${esc(m.id)}" data-content="${esc(m.content)}">edit</button>` : ''}
@@ -1537,7 +1826,6 @@
     const guild = currentGuild();
     els.msgSidebarGuildName.textContent = guild?.guild_name || 'Text Channels';
 
-    // Separate categories and text/announcement channels
     const categories = state.channels
       .filter(c => c.channel_type === 4)
       .sort((a, b) => (a.position ?? 0) - (b.position ?? 0));
@@ -1553,7 +1841,6 @@
 
     let html = '';
 
-    // Build map: category_id -> channels
     const byCategory = {};
     const uncategorized = [];
     textChs.forEach(ch => {
@@ -1566,17 +1853,15 @@
       }
     });
 
-    // Uncategorized first
     if (uncategorized.length) {
       uncategorized.forEach(ch => {
         html += `<button class="msg-channel-item${state.activeChannelId === ch.channel_id ? ' active' : ''}" data-channel-id="${esc(ch.channel_id)}" data-channel-name="${esc(ch.channel_name)}"><span class="ch-hash">#</span>${esc(ch.channel_name)}</button>`;
       });
     }
 
-    // Then categories with their children
     categories.forEach(cat => {
       const children = byCategory[cat.channel_id] || [];
-      if (!children.length) return; // skip empty categories
+      if (!children.length) return;
       html += `<div class="msg-channel-category">
         <span class="cat-arrow">▾</span> ${esc(cat.channel_name)}
       </div>`;
@@ -1767,19 +2052,50 @@
   els.cancelEditBtn.addEventListener('click',   () => cancelEdit());
   els.msgInput.addEventListener('keydown', e => { if (e.key === 'Enter') sendMessage(); });
 
+  // Message list: edit / delete / profile card / image lightbox
   els.msgList.addEventListener('click', e => {
+    // Edit / delete buttons
     const btn = e.target.closest('button[data-action]');
-    if (!btn) return;
-    const action  = btn.dataset.action;
-    const id      = btn.dataset.id || '';
-    const content = btn.dataset.content || '';
-    if (action === 'edit')   startEdit(id, content);
-    if (action === 'delete') deleteMsg(id);
+    if (btn) {
+      const action  = btn.dataset.action;
+      const id      = btn.dataset.id || '';
+      const content = btn.dataset.content || '';
+      if (action === 'edit')   startEdit(id, content);
+      if (action === 'delete') deleteMsg(id);
+      return;
+    }
+
+    // Profile card: avatar or author name click
+    const trigger = e.target.closest('[data-profile-trigger]');
+    if (trigger) {
+      e.stopPropagation();
+      closeProfileCard();
+      const authorName = trigger.dataset.author || '';
+      const authorId   = trigger.dataset.authorId || '';
+      const avatarUrl  = trigger.dataset.avatar || '';
+      openProfileCard(authorName, authorId, avatarUrl, e);
+      return;
+    }
+
+    // Image lightbox
+    const img = e.target.closest('.msg-img');
+    if (img) {
+      const lb = document.getElementById('imgLightbox');
+      document.getElementById('lbImg').src = img.dataset.fullsrc || img.src;
+      lb.classList.add('open');
+    }
   });
 
-  // Channel sidebar click — handles both category toggles and channel clicks
+  // Close lightbox
+  document.getElementById('lbClose').addEventListener('click', () => {
+    document.getElementById('imgLightbox').classList.remove('open');
+  });
+  document.getElementById('imgLightbox').addEventListener('click', e => {
+    if (e.target === e.currentTarget) e.currentTarget.classList.remove('open');
+  });
+
+  // Channel sidebar clicks
   els.msgChannelList.addEventListener('click', async e => {
-    // Category collapse toggle
     const cat = e.target.closest('.msg-channel-category');
     if (cat) {
       const isCollapsed = cat.classList.toggle('collapsed');
